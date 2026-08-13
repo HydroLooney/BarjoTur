@@ -27,3 +27,13 @@ export interface Voyageur {
 
 // Le PIN n'apparaît JAMAIS dans un contrat transporté : il est haché et l'autorité est côté serveur
 // (refus de mutation sans jeton). Aucun champ pin/pin_hash ne transite par ce type.
+
+/**
+ * Retour de api.whoami : bootstrap d'identité depuis le code_lien (non gaté PIN), relevé par B (B007).
+ * `role` est la valeur brute renvoyée par l'API (à rapprocher de `Role` côté consommateur).
+ */
+export interface Whoami {
+  membre_id: number;
+  prenom: string;
+  role: string;
+}

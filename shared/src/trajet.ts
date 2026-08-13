@@ -26,3 +26,79 @@ export interface FigeItineraire {
   geom: LineStringGeom | MultiLineStringGeom;
   agenda: EtapeAgenda[];
 }
+
+// ---------------------------------------------------------------------------------------------------
+// Contrat fige RICHE, aligné sur api.fige_lire(p_fige_id) → jsonb { itineraire, geom, etapes, waypoints }
+// (colonnes relevées par B, B007). Clés = payload jsonb réel (snake_case), c'est un passe-plat.
+// ---------------------------------------------------------------------------------------------------
+
+/** Métadonnées d'un itinéraire figé (fige.itineraire, hors geom). */
+export interface ItineraireFige {
+  fige_id: number;
+  code: string | null;
+  label: string | null;
+  /** timestamptz ISO. */
+  fige_at: string | null;
+  km: number | null;
+  temps_min: number | null;
+  denivele_pos_m: number | null;
+  nuits: number | null;
+  ferry_interieur_eur: number | null;
+  famille: string | null;
+  archetype_key: string | null;
+  est_archetype: boolean;
+  /** jsonb libre (fiche descriptive). */
+  fiche: unknown;
+  retenu: boolean;
+  calcule_db1: boolean;
+  est_consensus: boolean;
+  membre_id: number | null;
+}
+
+/** Étape jour d'un itinéraire figé (fige.etape, ordonné par jour). */
+export interface EtapeFige {
+  fige_id: number;
+  jour: number;
+  aire_lat: number | null;
+  aire_lon: number | null;
+  stop_id: number | null;
+  nuitee_type: string | null;
+  poi_osm_ids: string[] | null;
+  tier_jour: string | null;
+  roulage_min: number | null;
+  meteo_dependant: boolean | null;
+  /** jsonb (plan de repli). */
+  repli: unknown;
+  note: string | null;
+  /** date ISO. */
+  date_jour: string | null;
+  base_id: number | null;
+  /** time (HH:MM:SS). */
+  lever: string | null;
+  coucher: string | null;
+  /** jsonb (circuit rando du jour). */
+  circuit: unknown;
+  /** jsonb (résumé du jour). */
+  resume_jour: unknown;
+}
+
+/** Retour riche de api.fige_lire : géométrie continue MultiLineString + agenda détaillé. */
+export interface FigeDetail {
+  itineraire: ItineraireFige;
+  geom: MultiLineStringGeom;
+  etapes: EtapeFige[];
+  /** fige.waypoint_impose, ordonné par `ordre` (souvent vide). Typage fin à poser plus tard. */
+  waypoints: unknown[];
+}
+
+/** Retour de api.scenario_defaut : le profil par défaut à afficher (défaut courant = consensus, fige_id 141). */
+export interface ScenarioDefaut {
+  fige_id: number | null;
+  source: 'retenu' | 'consensus' | 'aucun';
+  code?: string;
+  archetype_key?: string;
+  label?: string;
+  calcule_db1?: boolean;
+  km?: number;
+  nuits?: number;
+}
