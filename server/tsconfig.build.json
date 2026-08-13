@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "comment": "Build de production : compile src/ SANS les tests. Le typecheck (tsconfig.json) couvre les tests, le dist livré ne les embarque pas.",
+  "exclude": ["**/*.test.ts"]
+}
