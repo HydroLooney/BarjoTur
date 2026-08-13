@@ -8,4 +8,5 @@ export * from './vote.js';
 export * from './trajet.js';
 export * from './mcda.js';
 export * from './composeur.js';
+export * from './budget.js';
 export * from './api.js';

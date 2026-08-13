@@ -67,3 +67,21 @@ export interface CataloguePoi {
   /** Champs annexes du passe-plat non figés au socle. */
   [autre: string]: unknown;
 }
+
+/**
+ * Proposition du carnet perso (passe-plat de api.poi_propositions, shapes B023).
+ * `geom_type` distingue circuit (LINESTRING) et POI (POINT) au rendu ; lon/lat = point représentatif.
+ */
+export interface CarnetProposition {
+  poi_id: number;
+  osm_id: string;
+  nom: string;
+  categorie: string | null;
+  tier_defaut: string | null;
+  source: string | null;
+  niveau_confiance: number | null;
+  flag_pepite: boolean;
+  geom_type: string | null;
+  lon: number | null;
+  lat: number | null;
+}

@@ -57,6 +57,22 @@ export interface VoteUnitaireResult {
   budget?: unknown;
 }
 
+/** Quotas de vote restants pour un tier (bloc budget de api.mes_lieux_par_tier, B023). */
+export interface QuotaTier {
+  etat: string;
+  hard: number | null;
+  soft: number | null;
+  utilise: number;
+  restant_hard: number | null;
+  restant_soft: number | null;
+}
+
+/** api.mes_lieux_par_tier : les lieux votés d'un voyageur, groupés par tier, avec le budget restant par tier. */
+export interface MesLieuxParTier {
+  ok: boolean;
+  tiers: Partial<Record<VoteTier, { lieux: unknown[]; budget: QuotaTier }>>;
+}
+
 /** Vue api.base_vote_weight : poids agrégé du vote par base, borné [-0.3, +0.5]. */
 export interface PoidsVoteBase {
   base_id: number;
