@@ -5,14 +5,26 @@
 
 import { query } from './query.js';
 
-/** Liste blanche des fonctions RPC frontées. On l'étend au fil des chantiers, uniquement quand un service les câble. */
+/**
+ * Liste blanche des fonctions RPC frontées. On l'étend au fil des chantiers, uniquement quand un service les câble.
+ *
+ * - whoami, mes_votes, set_votes, set_vote, fige_lire, scenario_defaut : contrats initiaux (T009/T010/M011).
+ * - fige_enregistrer_systeme : écriture du composeur (C06). Le BFF peut déclencher la persistance
+ *   via POST /api/composer (persister:true), en complément du sidecar qui persiste directement.
+ * - catalogue, poi_in_bbox : lecture POI (phase ultérieure).
+ * - voyageur_* (M012) : exposer le vocabulaire sans rename physique — si l'API DB2 expose des fonctions
+ *   voyageur_*, les ajouter ici au fil de leur déploiement. Aucun rename des tables physiques (B006).
+ */
 export const RPC_AUTORISEES = [
   'mes_votes',
   'set_votes',
   'set_vote',
   'fige_lire',
+  'fige_enregistrer_systeme',
   'whoami',
   'scenario_defaut',
+  'catalogue',
+  'poi_in_bbox',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
@@ -20,7 +32,7 @@ export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
 /** Un argument lié, avec un cast Postgres optionnel (ex. un objet passé en jsonb). */
 export interface ArgRpc {
   valeur: unknown;
-  cast?: 'text' | 'jsonb' | 'bigint';
+  cast?: 'text' | 'jsonb' | 'bigint' | 'double precision';
 }
 
 /** Argument texte simple. */
@@ -36,6 +48,11 @@ export function argJsonb(valeur: unknown): ArgRpc {
 /** Argument entier long (bigint). On passe la valeur en chaîne pour éviter toute perte de précision. */
 export function argBigint(valeur: number): ArgRpc {
   return { valeur: String(valeur), cast: 'bigint' };
+}
+
+/** Argument flottant (double precision), pour les coordonnées et autres réels. */
+export function argFloat(valeur: number): ArgRpc {
+  return { valeur, cast: 'double precision' };
 }
 
 /**

@@ -9,6 +9,8 @@ import { routesSante } from './routes/sante.js';
 import { routesVotes } from './routes/votes.js';
 import { routesFige } from './routes/fige.js';
 import { routesIdentite } from './routes/identite.js';
+import { routesPoi } from './routes/poi.js';
+import { routesComposeur } from './routes/composeur.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
 /** CORS minimal, piloté par l'environnement. Origines vides = permissif (dev local uniquement). */
@@ -41,6 +43,8 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesIdentite);
   app.use('/api', routesVotes);
   app.use('/api', routesFige);
+  app.use('/api', routesPoi);
+  app.use('/api', routesComposeur);
 
   app.use(middlewareIntrouvable);
   app.use(middlewareErreurs);

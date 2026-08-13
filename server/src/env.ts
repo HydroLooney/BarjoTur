@@ -9,6 +9,8 @@ export interface Env {
   port: number;
   /** Origines autorisées pour le front (CORS), séparées par des virgules. Vide = tout en dev local. */
   corsOrigins: string[];
+  /** URL du sidecar composeur Python (OR-Tools). Ex. : http://localhost:8001 en dev, http://composeur en prod. */
+  sidecarUrl: string;
 }
 
 function requis(cle: string): string {
@@ -31,9 +33,13 @@ export function lireEnv(): Env {
     .map((o) => o.trim())
     .filter((o) => o.length > 0);
 
+  // SIDECAR_URL peut être absent en dev (sans sidecar lancé) : on laisse une valeur par défaut.
+  const sidecarUrl = (process.env.SIDECAR_URL ?? 'http://localhost:8001').replace(/\/$/, '');
+
   return {
     databaseUrl: requis('DATABASE_URL'),
     port,
     corsOrigins,
+    sidecarUrl,
   };
 }
