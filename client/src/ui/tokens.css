@@ -1,0 +1,91 @@
+/* ui/tokens.css
+   -------------------------------------------------------------------
+   SOURCE UNIQUE de la charte Barjøtur. Toutes les couleurs de l'app vivent ici,
+   en variables CSS. Aucune valeur hex ne doit apparaitre dans le JS/TSX (regle R03,
+   pre-requis du darkmode). Le mode sombre ne surcharge que les jetons SEMANTIQUES,
+   pas les couleurs de marque.
+
+   Palette reprise a l'identique du prototype norvege-2027 (styles.css / tokens.css) :
+   ecru / encre / ocre / glacier / granite / filet / rouge / vert. Aucune couleur inventee.
+   ------------------------------------------------------------------- */
+
+:root {
+  /* --- Neutres utilitaires --- */
+  --blanc: #ffffff;
+
+  /* --- Couleurs de marque (identiques au prototype) --- */
+  --encre: #2b2724; /* texte, fonds sombres */
+  --ecru: #f5f0e7; /* fond de page chaud */
+  --carte-fond: #efe7d5; /* fond de carte / placeholders */
+  --ocre: #c0873c; /* accent chaud, actif */
+  --glacier: #3d7080; /* accent froid, liens */
+  --granite: #9a9c98; /* texte secondaire, meta */
+  --filet: #cfc7b7; /* bordures, separateurs */
+  --rouge: #c0392b; /* alerte */
+  --papier: #fffdf8; /* fond des cartes et panneaux */
+  --vert: #2e7d4a; /* ok / verifie / famille */
+
+  /* --- Tiers TSAB (source unique, cf A11/A14) --- */
+  --tier-T: var(--ocre);
+  --tier-S: var(--ocre);
+  --tier-A: var(--vert);
+  --tier-B: var(--glacier);
+  --tier-a-classer: var(--granite);
+
+  /* --- Typographie --- */
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --serif: 'Fraunces', Georgia, serif;
+  --italique: 'Spectral', var(--serif);
+
+  /* --- Formes, ombres, cible tactile --- */
+  --rayon: 12px;
+  --rayon-s: 8px;
+  --cible-tactile: 44px; /* tactile d'abord, A06 */
+  --ombre: 0 1px 2px rgba(43, 39, 36, 0.1), 0 8px 30px rgba(43, 39, 36, 0.08);
+
+  /* --- Jetons semantiques (consommes par Tailwind + shadcn/ui). Mode clair. --- */
+  --background: var(--ecru);
+  --foreground: var(--encre);
+  --card: var(--papier);
+  --card-foreground: var(--encre);
+  --popover: var(--papier);
+  --popover-foreground: var(--encre);
+  --primary: var(--ocre);
+  --primary-foreground: var(--blanc);
+  --secondary: var(--carte-fond);
+  --secondary-foreground: var(--encre);
+  --muted: var(--carte-fond);
+  --muted-foreground: var(--granite);
+  --accent: var(--glacier);
+  --accent-foreground: var(--blanc);
+  --destructive: var(--rouge);
+  --destructive-foreground: var(--blanc);
+  --border: var(--filet);
+  --input: var(--filet);
+  --ring: var(--glacier);
+}
+
+/* Mode sombre : on ne touche PAS aux couleurs de marque, on reassigne les jetons
+   semantiques vers une echelle sombre chaude (fond encre profond, texte ecru).
+   Les accents ocre/glacier sont eclaircis pour tenir le contraste sur sombre. */
+.dark {
+  --background: #1b1815;
+  --foreground: #ece4d6;
+  --card: #23201c;
+  --card-foreground: #ece4d6;
+  --popover: #23201c;
+  --popover-foreground: #ece4d6;
+  --primary: #d2924a;
+  --primary-foreground: #1b1815;
+  --secondary: #2a2621;
+  --secondary-foreground: #ece4d6;
+  --muted: #2a2621;
+  --muted-foreground: #a9a59c;
+  --accent: #5b93a4;
+  --accent-foreground: #1b1815;
+  --destructive: #e06459;
+  --destructive-foreground: #1b1815;
+  --border: #3a352f;
+  --input: #3a352f;
+  --ring: #5b93a4;
+}
