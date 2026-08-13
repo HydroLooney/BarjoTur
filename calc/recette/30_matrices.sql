@@ -52,7 +52,8 @@ FROM pgr_aStarCostMatrix(
           cost_s AS cost, reverse_cost_s AS reverse_cost,
           x1, y1, x2, y2
    FROM mcda2.ways_van
-   WHERE x1 IS NOT NULL',
+   WHERE x1 IS NOT NULL
+     AND id NOT IN (SELECT edge_id FROM mcda2.ways_van_exclusions)',   -- A-04 : exclut les arêtes non-van (bateau passagers)
   ARRAY(SELECT node_van FROM mcda2.bases_v2 ORDER BY base_id),
   directed := true,
   heuristic := 2

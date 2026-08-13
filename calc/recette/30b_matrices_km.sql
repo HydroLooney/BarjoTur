@@ -26,7 +26,7 @@ BEGIN
   FOR b IN SELECT base_id, node_van FROM mcda2.bases_v2 ORDER BY base_id LOOP
     WITH d AS (
       SELECT * FROM pgr_dijkstra(
-        'SELECT id, source, target, cost_s AS cost, reverse_cost_s AS reverse_cost FROM mcda2.ways_van WHERE x1 IS NOT NULL',
+        'SELECT id, source, target, cost_s AS cost, reverse_cost_s AS reverse_cost FROM mcda2.ways_van WHERE x1 IS NOT NULL AND id NOT IN (SELECT edge_id FROM mcda2.ways_van_exclusions)',
         b.node_van,
         ARRAY(SELECT node_van FROM mcda2.bases_v2 WHERE base_id != b.base_id),
         directed := true)

@@ -8,4 +8,8 @@
 | 2026-08-13 | `patch_ferry_symetrique_corridors.sql` (v1) | `base_base_routes_v2` @401 | `base_base_routes_v2` @403 | 7ab51555756f | Fill miroir 6→74 ET 82→77. **Corrigé ensuite (R1, voir ligne suivante).** |
 | 2026-08-13 | REVERT R1 (M009) 82→77 + patch v2 | `base_base_routes_v2` @403 | `base_base_routes_v2` @402 | base_base_routes_v2 = ab9046709220 | **R1 M009** : l'arête routée 77→82 est l'Hardangerfjordekspressen (bateau PASSAGERS Rødne), non van-valide. Mirroir 82→77 retiré (chemin invalide). Ne reste que **6→74** (deux car-ferries réels). Asymétriques 401→**400** (6↔74 comblé ; 82↔77 = trou volontaire, re-route car-ferry Våge–Halhjem requis en 30_matrices). Coût € : 6↔74 = 198 NOK/sens (69+129). |
 
+| 2026-08-13 | `30_matrices.sql` (agent M, adopté) | ways_van + bases_v2 (105) | `mcda2.matrice_base_base` @11025 | (coût-temps A*) | Matrice A\* complète (pgr_aStarCostMatrix), 0 asymétrique, ouest sain. Fin du KNN. |
+| 2026-08-13 | `30b_matrices_km.sql` | ways_van (pgr_dijkstra one-to-many ×105) | `matrice_base_base` (km + split) | (km + roulage/ferry) | km réels + split roulage/ferry par arêtes traversées. 0 négatif (les 4 d'avant = split ferry_leg erroné). 3 min 15. Archive `staging.matrice_base_base_avant_30b`. |
+| 2026-08-13 | `01_ferry_cout.sql` + `patch_taux_nok_eur_registre.sql` (A-16) | `composeur_params` (registre) | `ferry_leg` (cout_nok/cout_eur), `composeur_params` (taux) | — | Taux 11.07 NOK/EUR (BCE/Wise 2026-07-15) remonté au registre single-source ; `cout_eur` dérivé du registre (fin du 0.09035 baké). Dédup : mes 2 patches redondants → `.trash/`. |
+
 > Les empreintes sont produites par `calc/tests/ecart/run_ecart.py --db1`. Elles figent l'état de départ ; toute divergence future se lit ici.
