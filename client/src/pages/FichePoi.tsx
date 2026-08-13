@@ -8,6 +8,7 @@ import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { MiniCarteRando } from '@/components/MiniCarteRando';
 import { CollectionsPoi } from '@/components/CollectionsPoi';
+import { Chargement, MessageVide } from '@/ui/blocs/EtatVue';
 
 // Fiche POI pleine page (/explorer/:osm). Le POI est retrouvé dans le catalogue par osm_id (pas d'appel
 // dédié). A11 : vote EN HAUT avec défaut affiché, et pour un circuit rando, le TRACÉ visible AVANT de voter.
@@ -29,9 +30,7 @@ export default function FichePoi() {
   if (!poi) {
     return (
       <section className="space-y-3">
-        <p className="text-muted-foreground">
-          {isLoading ? 'Chargement du lieu.' : 'Lieu introuvable dans le catalogue.'}
-        </p>
+        {isLoading ? <Chargement libelle="Chargement du lieu." /> : <MessageVide>Lieu introuvable dans le catalogue.</MessageVide>}
         <Link to="/explorer" className="text-sm underline">
           Retour à l'Explorer
         </Link>

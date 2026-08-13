@@ -19,9 +19,12 @@ export function Coquille() {
   // L'identite est resolue par la route /app/:code/:prenom (BootstrapIdentite dans router.tsx).
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      <a href="#contenu" className="lien-evitement">
+        Aller au contenu
+      </a>
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
         <span className="font-serif text-lg">Barjøtur</span>
-        <nav className="flex flex-wrap gap-1">
+        <nav aria-label="Navigation principale" className="flex flex-wrap gap-1">
           {LIENS.map((l) => (
             <NavLink
               key={l.to}
@@ -40,11 +43,17 @@ export function Coquille() {
             </NavLink>
           ))}
         </nav>
-        <Bouton variant="ghost" size="sm" className="ml-auto" onClick={basculerTheme}>
+        <Bouton
+          variant="ghost"
+          size="sm"
+          className="ml-auto"
+          onClick={basculerTheme}
+          aria-label="Basculer le thème clair ou sombre"
+        >
           Thème
         </Bouton>
       </header>
-      <main className="mx-auto w-full max-w-6xl p-4">
+      <main id="contenu" className="mx-auto w-full max-w-6xl p-4">
         <Suspense fallback={<p className="text-muted-foreground">Chargement en cours.</p>}>
           <Outlet />
         </Suspense>

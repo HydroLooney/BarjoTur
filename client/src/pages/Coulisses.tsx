@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useParametres, type Parametre } from '@/lib/queries/parametres';
+import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 
 // Coulisses (C09 / A08) : le registre single-source des paramètres (valeur active + recommandée +
 // justification en clair), groupé par domaine. Anti-cadrage : la méthode et les chiffres vivent ICI,
@@ -15,9 +16,10 @@ function grouperParDomaine(params: Parametre[]): Map<string, Parametre[]> {
 }
 
 export default function Coulisses() {
-  const { data, isError } = useParametres();
+  const { data, isLoading, isError } = useParametres();
   const groupes = useMemo(() => grouperParDomaine(data ?? []), [data]);
   const domaines = useMemo(() => [...groupes.keys()].sort((a, b) => a.localeCompare(b, 'fr')), [groupes]);
+  const vide = (data ?? []).length === 0;
 
   return (
     <section className="space-y-4">
@@ -27,8 +29,12 @@ export default function Coulisses() {
         recommandée par le moteur, avec la justification en clair. Ce qui explique, sans cadrer.
       </p>
 
-      {isError && (data ?? []).length === 0 ? (
-        <p className="text-muted-foreground">Paramètres indisponibles pour l'instant (le service n'est pas branché).</p>
+      {isLoading && vide ? <Chargement libelle="Chargement des paramètres." /> : null}
+      {isError && vide ? (
+        <MessageErreur>Paramètres indisponibles pour l'instant (le service n'est pas branché).</MessageErreur>
+      ) : null}
+      {!isLoading && !isError && vide ? (
+        <MessageVide>Aucun paramètre dans le registre pour l'instant.</MessageVide>
       ) : null}
 
       {domaines.map((domaine) => (
@@ -38,11 +44,11 @@ export default function Coulisses() {
             <table className="w-full text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium">Paramètre</th>
-                  <th className="px-3 py-2 text-left font-medium">Valeur</th>
-                  <th className="px-3 py-2 text-left font-medium">Recommandée</th>
-                  <th className="px-3 py-2 text-left font-medium">Source</th>
-                  <th className="px-3 py-2 text-left font-medium">Justification</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Paramètre</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Valeur</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Recommandée</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Source</th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">Justification</th>
                 </tr>
               </thead>
               <tbody>

@@ -9,6 +9,7 @@ import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
 import { CarteExplorer } from '@/components/CarteExplorer';
+import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
 const ONGLETS = [
@@ -56,11 +57,15 @@ export default function Explorer() {
         </span>
       </div>
 
-      <div className="flex gap-1 border-b border-border">
+      <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
         {ONGLETS.map((o) => (
           <button
             key={o.cle}
             type="button"
+            role="tab"
+            id={`onglet-${o.cle}`}
+            aria-selected={onglet === o.cle}
+            aria-controls={`panneau-${o.cle}`}
             onClick={() => setOnglet(o.cle)}
             className={cn(
               'px-3 py-2 text-sm transition-colors',
@@ -75,15 +80,18 @@ export default function Explorer() {
       </div>
 
       {onglet === 'carte' ? (
-        <CarteExplorer />
+        <div role="tabpanel" id="panneau-carte" aria-labelledby="onglet-carte">
+          <CarteExplorer />
+        </div>
       ) : (
-        <>
+        <div role="tabpanel" id="panneau-liste" aria-labelledby="onglet-liste" className="space-y-4">
           <BarreFiltres pois={pois} />
-          {isLoading && pois.length === 0 ? (
-            <p className="text-muted-foreground">Chargement du catalogue.</p>
-          ) : null}
+          {isLoading && pois.length === 0 ? <Chargement libelle="Chargement du catalogue." /> : null}
           {isError && pois.length === 0 ? (
-            <p className="text-muted-foreground">Catalogue indisponible pour l'instant (le service n'est pas branché).</p>
+            <MessageErreur>Catalogue indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
+          ) : null}
+          {!isLoading && !isError && liste.length === 0 && pois.length > 0 ? (
+            <MessageVide>Aucun lieu ne correspond à ces filtres. Élargissez la recherche.</MessageVide>
           ) : null}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {liste.map((p) => (
@@ -97,7 +105,7 @@ export default function Explorer() {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
     </section>
   );

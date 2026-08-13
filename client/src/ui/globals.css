@@ -17,4 +17,47 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
+  /* Accessibilite (C-19) : un anneau de focus visible et coherent au clavier, dark-safe
+     (jeton --ring, redefini en .dark). :focus-visible seulement, pour ne pas surcharger
+     le clic souris. Le contour vit hors de l'element (outline) donc n'affecte pas le flux. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--rayon-s);
+  }
+
+  /* Respect de prefers-reduced-motion : coupe les transitions et animations non essentielles. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Lien d'evitement : cache hors ecran, ramene au premier focus clavier pour sauter
+     directement au contenu principal (skip to main content). */
+  .lien-evitement {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 50;
+    transform: translateY(-150%);
+    transition: transform 0.15s ease;
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--rayon-s);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  .lien-evitement:focus {
+    transform: translateY(0);
+  }
 }
