@@ -14,7 +14,8 @@
 --     source = 'non_verifie_2026'. Honnêteté R1 : on ne publie pas un chiffre inventé.
 --     À alimenter au fur et à mesure des vérifications.
 --
--- Taux NOK/EUR : 11.07 (params_budget.taux_eur_nok, source BCE/Wise 15/07/2026).
+-- Taux NOK/EUR : 11.07 (composeur_params.taux_eur_nok = registre single-source, remonté par A-16 ;
+--   source BCE/Wise 15/07/2026). Ne dépend plus de la table legacy params_budget (supprimée en A-13).
 -- Idempotent (DROP IF EXISTS + ADD COLUMN IF NOT EXISTS + UPDATE avec conditions).
 -- Rejouable : psql -h localhost -p 5433 -d norvege_routing -f calc/recette/01_ferry_cout.sql
 --
@@ -43,7 +44,7 @@ SET source = COALESCE(source, 'non_verifie_2026'),
 -- 4. Corridor 6<->74 (74->6 dans ferry_leg) : 198 NOK/sens (sourced M009).
 -- Taux EUR/NOK depuis le registre single-source (params_budget).
 WITH taux AS (
-  SELECT valeur::numeric AS nok_eur FROM public.params_budget WHERE cle = 'taux_eur_nok'
+  SELECT soft AS nok_eur FROM mcda2.composeur_params WHERE regle = 'taux_eur_nok'  -- registre single-source (A-16)
 )
 UPDATE mcda2.ferry_leg fl
 SET cout_nok = 198,
@@ -56,7 +57,7 @@ WHERE (fl.src_base, fl.tgt_base) = (74, 6);
 -- Symétrie : 6->74 n'est PAS dans ferry_leg (arête ajoutée dans base_base_routes_v2),
 -- mais si un recalcul la produisait on la mettra à jour aussi (clause idempotente).
 WITH taux AS (
-  SELECT valeur::numeric AS nok_eur FROM public.params_budget WHERE cle = 'taux_eur_nok'
+  SELECT soft AS nok_eur FROM mcda2.composeur_params WHERE regle = 'taux_eur_nok'  -- registre single-source (A-16)
 )
 UPDATE mcda2.ferry_leg fl
 SET cout_nok = 198,
