@@ -38,7 +38,8 @@ function redirigerDepuisV2(): Response | null {
  * Si le BFF n'est pas branche : message d'erreur clair, sans crash.
  */
 function BootstrapIdentite() {
-  const { code, prenom: _prenom } = useParams<{ code: string; prenom: string }>();
+  // Le prenom de l'URL est decoratif : l'autorite sur l'identite (prenom compris) est le retour whoami.
+  const { code } = useParams<{ code: string; prenom: string }>();
   const navigate = useNavigate();
   const depuisWhoami = useIdentite((s) => s.depuisWhoami);
   const { data: whoami, isError } = useWhoami(code ?? null);

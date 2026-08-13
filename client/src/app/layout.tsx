@@ -3,7 +3,6 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { Bouton } from '@/ui/primitives/button';
 import { cn } from '@/lib/utils';
 import { useUi } from '@/stores/ui';
-import { useBootstrapIdentite } from '@/app/useBootstrapIdentite';
 
 const LIENS = [
   { to: '/', libelle: 'Accueil', exact: true },
@@ -17,8 +16,7 @@ const LIENS = [
 // (barre qui se replie, cibles tactiles). Le contenu lourd (cartes) se charge sous Suspense.
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);
-  // Resout l'identite du voyageur depuis le code de lien dans l'URL (/app/<code>/<Prenom>).
-  useBootstrapIdentite();
+  // L'identite est resolue par la route /app/:code/:prenom (BootstrapIdentite dans router.tsx).
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">

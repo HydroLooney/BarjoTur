@@ -25,6 +25,11 @@ export const RPC_AUTORISEES = [
   'scenario_defaut',
   'catalogue',
   'poi_in_bbox',
+  'ajouter_poi',
+  'poi_propositions',
+  'signaler',
+  'signalements_ouverts',
+  'mes_lieux_par_tier',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

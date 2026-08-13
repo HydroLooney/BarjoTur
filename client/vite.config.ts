@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -58,5 +58,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  // Tests scopes a src/ : on n'execute jamais un test egare dans .trash/ ou dist/.
+  test: {
+    include: ['src/**/*.test.ts'],
   },
 });

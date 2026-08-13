@@ -14,9 +14,10 @@ SELECT
   (api.whoami((SELECT code_lien FROM membre.membre WHERE role='owner'))
     ?& array['membre_id','prenom','role']) AS whoami_vocabulaire_voyageur;
 
-\echo '== 2. Forme api.mes_votes : retourne bien le champ tiers =='
+\echo '== 2. Forme api.mes_votes : champ tiers present + code inconnu -> NULL =='
 SELECT
-  (api.mes_votes((SELECT code_lien FROM membre.membre WHERE role='owner')) ? 'tiers') AS mes_votes_tiers_present;
+  (api.mes_votes((SELECT code_lien FROM membre.membre WHERE role='owner')) ? 'tiers') AS mes_votes_tiers_present,
+  (api.mes_votes('code-inexistant-xyz') IS NULL) AS mes_votes_inconnu_null;
 
 \echo '== 3. Vocabulaire voyageur_* — si des fonctions api.voyageur_* ont été créées, vérifier leur présence =='
 -- NB : au stade C06 (B006 / M012), il n'y a PAS encore de fonctions api.voyageur_* physiques ;
