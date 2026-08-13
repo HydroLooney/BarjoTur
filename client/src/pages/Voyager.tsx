@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { MultiLineString } from 'geojson';
 import { CarteItineraire } from '@/components/CarteItineraire';
+import { GalerieArchetypes } from '@/components/GalerieArchetypes';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
 import type { EtapeEntree } from '@/lib/anim-trajet';
@@ -33,6 +34,7 @@ export default function Voyager() {
         terrestre : le trace suit la geometrie continue du voyage.
       </p>
       <CarteItineraire geom={geom} etapes={etapes} />
+      <GalerieArchetypes />
     </section>
   );
 }

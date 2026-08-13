@@ -1,5 +1,6 @@
 import { useIdentite } from '@/stores/identite';
 import { useMesPropositions } from '@/lib/queries/carnet';
+import { useCollections } from '@/stores/collections';
 import { FormAjoutLieu } from '@/components/FormAjoutLieu';
 
 // Mes lieux (C15 / A11) : le « papier ». 1re couche = carnet de lieux perso (ajout + mes propositions).

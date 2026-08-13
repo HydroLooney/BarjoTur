@@ -6,6 +6,7 @@ import { useIdentite } from '@/stores/identite';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { MiniCarteRando } from '@/components/MiniCarteRando';
+import { CollectionsPoi } from '@/components/CollectionsPoi';
 
 // Fiche POI pleine page (/explorer/:osm). Le POI est retrouvé dans le catalogue par osm_id (pas d'appel
 // dédié). A11 : vote EN HAUT avec défaut affiché, et pour un circuit rando, le TRACÉ visible AVANT de voter.
@@ -62,6 +63,8 @@ export default function FichePoi() {
       ) : (
         <p className="text-sm text-muted-foreground">Repère non votable (service, information).</p>
       )}
+
+      <CollectionsPoi osmId={poi.id} />
 
       {estCircuit && geom ? (
         <div className="space-y-1">
