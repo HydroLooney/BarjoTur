@@ -48,3 +48,7 @@ data/
 .claude/
 00_Echange/
 docs/
+
+# corbeille de reconciliation (jamais commitee)
+.trash/
+**/.trash/
