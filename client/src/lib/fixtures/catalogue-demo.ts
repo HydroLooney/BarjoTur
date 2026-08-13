@@ -1,0 +1,91 @@
+import type { CataloguePoi } from '@barjotur/shared';
+
+// Fixture de DEV UNIQUEMENT (chargée dynamiquement sous import.meta.env.DEV, absente de la prod), pour la
+// vérif visuelle de la liste Explorer (cartes + sélecteur de vote + facettes) sans le BFF. Données
+// plausibles mais NON canoniques.
+function poi(o: Partial<CataloguePoi>): CataloguePoi {
+  return {
+    id: 'demo',
+    nom: 'Lieu',
+    region: null,
+    region_id: null,
+    zone_id: null,
+    categorie: null,
+    sous_categorie: null,
+    score_interet: null,
+    score_frequentation: null,
+    score_mcda: null,
+    temps_visite: null,
+    lat: 60,
+    lon: 8,
+    geometrie: null,
+    trace_reelle: null,
+    description_a_rediger: null,
+    verifie: null,
+    tier_defaut: null,
+    tier_defaut_source: null,
+    honeypot: null,
+    cruise_expose: null,
+    payant: null,
+    tarif: null,
+    saison: null,
+    parking: null,
+    votable: true,
+    exclu: null,
+    motif_exclusion: null,
+    hors_emprise: null,
+    presentation: null,
+    description: null,
+    page_guide: null,
+    provenance: null,
+    url: null,
+    image: null,
+    photos: [],
+    ...o,
+  };
+}
+
+export const catalogueDemo: CataloguePoi[] = [
+  poi({
+    id: 'preikestolen',
+    nom: 'Preikestolen',
+    region: 'Rogaland',
+    categorie: 'rando',
+    tier_defaut: 'T',
+    presentation: 'La falaise-plateau au-dessus du Lysefjord, une marche exigeante mais accessible en famille.',
+  }),
+  poi({
+    id: 'trolltunga',
+    nom: 'Trolltunga',
+    region: 'Vestland',
+    categorie: 'rando',
+    tier_defaut: 'S',
+    presentation: 'La langue de pierre suspendue au-dessus du Ringedalsvatnet, longue journée de marche.',
+  }),
+  poi({
+    id: 'voringsfossen',
+    nom: 'Vøringsfossen',
+    region: 'Vestland',
+    categorie: 'nature',
+    tier_defaut: 'A',
+    presentation: 'La cascade emblématique du Hardangervidda, passerelle panoramique récente.',
+  }),
+  poi({
+    id: 'bryggen',
+    nom: 'Bryggen (Bergen)',
+    region: 'Vestland',
+    categorie: 'culture',
+    tier_defaut: 'B',
+    payant: false,
+    presentation: 'Le quai hanséatique aux maisons de bois colorées, cœur historique de Bergen.',
+  }),
+  poi({
+    id: 'resto-fjord',
+    nom: 'Table du fjord',
+    region: 'Rogaland',
+    categorie: 'manger',
+    votable: false,
+    payant: true,
+    presentation: 'Un repère pour se restaurer, non soumis au vote.',
+  }),
+];

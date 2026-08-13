@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import type { VoteTier } from '@barjotur/shared';
+import { useEffect, useMemo, useState } from 'react';
+import type { CataloguePoi, VoteTier } from '@barjotur/shared';
 import { useCatalogue } from '@/lib/queries/catalogue';
 import { filtrerCatalogue } from '@/lib/filtrer-catalogue';
 import { useExplorer } from '@/stores/explorer';
@@ -18,11 +18,20 @@ const ONGLETS = [
 // depuis chaque carte. La carte tous-POI (couche distincte votables/non-votables) arrive à l'itération
 // suivante ; l'onglet est déjà là. Mémoire d'exploration (exploré/voté serveur) = couche suivante aussi.
 export default function Explorer() {
-  const { data: pois, isLoading, isError } = useCatalogue();
+  const { data, isLoading, isError } = useCatalogue();
+
+  // Fixture de dev (chargée dynamiquement, absente de la prod) : vérif visuelle de la liste sans BFF.
+  const [demoPois, setDemoPois] = useState<CataloguePoi[] | null>(null);
+  useEffect(() => {
+    const demo = import.meta.env.DEV && new URLSearchParams(window.location.search).has('demo');
+    if (demo && !data) void import('@/lib/fixtures/catalogue-demo').then((m) => setDemoPois(m.catalogueDemo));
+  }, [data]);
+
+  const pois = data ?? demoPois ?? [];
   const onglet = useExplorer((s) => s.onglet);
   const setOnglet = useExplorer((s) => s.setOnglet);
   const filtres = useExplorer((s) => s.filtres);
-  const liste = useMemo(() => filtrerCatalogue(pois ?? [], filtres), [pois, filtres]);
+  const liste = useMemo(() => filtrerCatalogue(pois, filtres), [pois, filtres]);
 
   const code = useIdentite((s) => s.code);
   const { data: mesVotes } = useMesVotes(code);
@@ -64,9 +73,11 @@ export default function Explorer() {
         <p className="text-muted-foreground">La carte tous-POI (couches votables et repères) arrive à l'itération suivante.</p>
       ) : (
         <>
-          <BarreFiltres pois={pois ?? []} />
-          {isLoading ? <p className="text-muted-foreground">Chargement du catalogue.</p> : null}
-          {isError ? (
+          <BarreFiltres pois={pois} />
+          {isLoading && pois.length === 0 ? (
+            <p className="text-muted-foreground">Chargement du catalogue.</p>
+          ) : null}
+          {isError && pois.length === 0 ? (
             <p className="text-muted-foreground">Catalogue indisponible pour l'instant (le service n'est pas branché).</p>
           ) : null}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
