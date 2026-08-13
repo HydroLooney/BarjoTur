@@ -29,11 +29,12 @@ export default function MesLieux() {
         <h2 className="text-sm font-medium">Mes propositions</h2>
         {propositions && propositions.length > 0 ? (
           <ul className="space-y-1">
-            {propositions.map((p, i) => (
-              <li key={p.osm_id ?? i} className="rounded-md border border-border bg-card px-3 py-2 text-sm">
+            {propositions.map((p) => (
+              <li key={p.osm_id} className="rounded-md border border-border bg-card px-3 py-2 text-sm">
                 <span className="font-medium">{p.nom}</span>
                 {p.categorie ? <span className="text-muted-foreground"> · {p.categorie}</span> : null}
-                {p.statut ? <span className="text-muted-foreground"> · {p.statut}</span> : null}
+                {p.source ? <span className="text-muted-foreground"> · {p.source}</span> : null}
+                {p.flag_pepite ? <span className="text-accent"> · pépite</span> : null}
               </li>
             ))}
           </ul>

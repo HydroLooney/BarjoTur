@@ -92,6 +92,7 @@ export default function Explorer() {
                 poi={p}
                 monTier={monTierPour(p.id)}
                 peutVoter={!!code}
+                explore={explores.includes(p.id)}
                 onVoter={(tier) => voter.mutate({ ref: `p:${p.id}`, tier: tier ?? undefined })}
               />
             ))}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { MultiLineString } from 'geojson';
 import { CarteItineraire } from '@/components/CarteItineraire';
 import { GalerieArchetypes } from '@/components/GalerieArchetypes';
+import { VueBudget } from '@/components/VueBudget';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
 import type { EtapeEntree } from '@/lib/anim-trajet';
@@ -35,6 +36,7 @@ export default function Voyager() {
       </p>
       <CarteItineraire geom={geom} etapes={etapes} />
       <GalerieArchetypes />
+      <VueBudget />
     </section>
   );
 }
