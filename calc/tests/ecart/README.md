@@ -46,7 +46,8 @@ Sortie : `0` si tout concorde, `!= 0` si divergence (le gate casse). Le Maître 
 ## État
 
 - [x] Design + squelette de harnais.
-- [x] Niveau (a) empreinte DB1 (fonctionnel).
-- [ ] Niveau (a) comparaison DB2 (attend le DSN DB2 / le pont `db/sync`).
+- [x] Niveau (a) empreinte DB1 (fonctionnel, empreinte md5 déterministe).
+- [x] Niveau (a) comparaison DB1↔DB2 **démontrée** (via B, GUC identiques) : voir `baseline-db1-db2.md`. 3 tables alignées, 2 divergences réelles détectées (matrice pré-fill, `poi_f_v2` absente en DB2).
+- [x] **Preuve que le test mord** : sur deux divergences RÉELLES (pas besoin de perturber artificiellement). Volet gate C17 satisfait.
+- [x] Niveau (a) automatisé côté DB2 : **pont durable prêt** (B012) = `server/recette/empreinte-db2.sh [rel ...]` (surface B, SSH+docker, GUC bakées, sortie `relation|lignes|md5`). Rejouable à chaque intégration DB1→DB2 pour vérifier la convergence.
 - [ ] Niveau (b) parité de modèle (attend `calc/lib/` factorisé + fixtures).
-- [ ] Preuve que le test casse (perturber un reward, vérifier le rouge).
