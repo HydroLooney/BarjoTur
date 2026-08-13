@@ -4,7 +4,8 @@
 
 import { appelerRpc, argTexte, argFloat } from '../db/rpc.js';
 import { Erreurs } from '../http/erreurs.js';
-import type { AjoutPoiInput, SignalInput } from '../domain/carnet.js';
+import type { AjoutPoiInput, SignalInput, CarnetProposition } from '../domain/carnet.js';
+import type { MesLieuxParTier } from '@barjotur/shared';
 
 function chaineNonVide(brut: unknown, nom: string): string {
   if (typeof brut !== 'string' || brut.trim() === '') {
@@ -76,13 +77,13 @@ export async function ajouterLieu(code: string, i: AjoutPoiInput): Promise<unkno
 }
 
 /** Mes propositions de lieux (voyageur). */
-export async function lesPropositions(code: string): Promise<unknown> {
-  return appelerRpc<unknown>('poi_propositions', [argTexte(code)]);
+export async function lesPropositions(code: string): Promise<{ ok: boolean; propositions: CarnetProposition[] }> {
+  return appelerRpc<{ ok: boolean; propositions: CarnetProposition[] }>('poi_propositions', [argTexte(code)]);
 }
 
 /** Mes lieux classés par tier. */
-export async function mesLieuxParTier(code: string): Promise<unknown> {
-  return appelerRpc<unknown>('mes_lieux_par_tier', [argTexte(code)]);
+export async function mesLieuxParTier(code: string): Promise<MesLieuxParTier> {
+  return appelerRpc<MesLieuxParTier>('mes_lieux_par_tier', [argTexte(code)]);
 }
 
 /** Signale un POI (gaté PIN côté RPC). */

@@ -2,8 +2,10 @@
 // confiance basse, tier TSAB provisoire, votable), consulte ses propositions et ses lieux par tier, et signale un POI.
 // L'ajout et le signalement sont gatés PIN (corrections/ajouts de POI, A03/M052) ; la lecture non.
 //
-// Types locaux au BFF (DTO d'entrée + passe-plat de sortie). À canoniser dans @barjotur/shared/poi.ts si le front
-// en a besoin (demande à poser à M le cas échéant).
+// Le DTO de SORTIE `CarnetProposition` est canonique dans @barjotur/shared (M024) : on le re-exporte.
+// Restent locaux les DTO d'ENTRÉE HTTP (corps de requête), propres au BFF.
+
+export type { CarnetProposition } from '@barjotur/shared';
 
 /** Corps validé d'un ajout de lieu voyageur (api.ajouter_poi). */
 export interface AjoutPoiInput {

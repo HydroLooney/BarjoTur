@@ -3,16 +3,16 @@
 
 import { appelerRpc, argBigint } from '../db/rpc.js';
 import { query } from '../db/query.js';
-import type { Parametre } from '../domain/budget.js';
+import type { Parametre, BudgetComparatif } from '../domain/budget.js';
 
 /** Budgets comparés par scénario (van, carburant, hébergement, repas, ferry, activités...). Passe-plat. */
-export async function budgetComparatif(): Promise<unknown> {
-  return appelerRpc<unknown>('budget_comparatif', []);
+export async function budgetComparatif(): Promise<BudgetComparatif[]> {
+  return appelerRpc<BudgetComparatif[]>('budget_comparatif', []);
 }
 
 /** Budget détaillé d'un itinéraire figé donné. Passe-plat. */
-export async function budgetVariante(figeId: number): Promise<unknown> {
-  return appelerRpc<unknown>('budget_variante', [argBigint(figeId)]);
+export async function budgetVariante(figeId: number): Promise<BudgetComparatif> {
+  return appelerRpc<BudgetComparatif>('budget_variante', [argBigint(figeId)]);
 }
 
 /** Registre single-source des paramètres (recommandé vs choisi, justification). Pour la page Coulisses. */

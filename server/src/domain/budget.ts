@@ -1,8 +1,10 @@
 // Budget et paramètres single-source (Budget C13, Coulisses C09). Le budget est un passe-plat des RPC ;
 // les paramètres viennent de la vue api.parametres (registre single-source budget.parametre).
 //
-// Types locaux au BFF (passe-plat + un `Parametre` calqué sur la vue). À canoniser dans @barjotur/shared/budget.ts
-// si le front en a besoin (demande à poser à M).
+// `BudgetComparatif` est canonique dans @barjotur/shared (M024) : on le re-exporte. `Parametre` (vue api.parametres)
+// reste local au BFF pour l'instant.
+
+export type { BudgetComparatif } from '@barjotur/shared';
 
 /** Une ligne du registre single-source (vue api.parametres). recommandé vs choisi, avec justification. */
 export interface Parametre {
