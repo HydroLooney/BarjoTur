@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { VoteTier } from '@barjotur/shared';
 import { useCatalogue } from '@/lib/queries/catalogue';
 import { useIdentite } from '@/stores/identite';
+import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { MiniCarteRando } from '@/components/MiniCarteRando';
@@ -18,6 +19,12 @@ export default function FichePoi() {
   const code = useIdentite((s) => s.code);
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
+
+  // Mémoire d'exploration (A11) : ouvrir la fiche marque le POI « exploré » (déjà vu).
+  const marquerExplore = useMemoireExploration((s) => s.marquerExplore);
+  useEffect(() => {
+    if (poi) marquerExplore(poi.id);
+  }, [poi, marquerExplore]);
 
   if (!poi) {
     return (

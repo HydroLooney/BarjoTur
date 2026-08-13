@@ -4,6 +4,7 @@ import { useCatalogue } from '@/lib/queries/catalogue';
 import { filtrerCatalogue } from '@/lib/filtrer-catalogue';
 import { useExplorer } from '@/stores/explorer';
 import { useIdentite } from '@/stores/identite';
+import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
@@ -37,6 +38,8 @@ export default function Explorer() {
   const code = useIdentite((s) => s.code);
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
+  const explores = useMemoireExploration((s) => s.explores);
+  const nbExplores = liste.filter((p) => explores.includes(p.id)).length;
 
   const monTierPour = (osmId: string): VoteTier | null => {
     const v = mesVotes?.tiers[`p:${osmId}`];
@@ -49,6 +52,7 @@ export default function Explorer() {
         <h1 className="font-serif text-2xl">Explorer</h1>
         <span className="text-sm text-muted-foreground">
           {liste.length} lieu{liste.length === 1 ? '' : 'x'}
+          {nbExplores > 0 ? ` · ${nbExplores} déjà vu${nbExplores === 1 ? '' : 's'}` : ''}
         </span>
       </div>
 

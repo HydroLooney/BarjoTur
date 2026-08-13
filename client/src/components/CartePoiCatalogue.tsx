@@ -9,6 +9,8 @@ interface Props {
   onVoter: (tier: VoteTier | null) => void;
   /** false si l'identité n'est pas résolue (on affiche le vote mais désactivé). */
   peutVoter: boolean;
+  /** true si le POI a déjà été ouvert (mémoire d'exploration A11). */
+  explore?: boolean;
 }
 
 function varianteBadge(tier: string): BadgeProps['variant'] {
@@ -29,7 +31,7 @@ function varianteBadge(tier: string): BadgeProps['variant'] {
 // Carte d'un POI dans la liste Explorer : nom, tier par défaut, catégorie/région, présentation en clair
 // (ce que le lieu EST, sans score brut, A11), et le sélecteur de vote si le lieu est votable. Les lieux
 // non votables (repères, services) sont affichés distinctement, sans geste de vote.
-export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter }: Props) {
+export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter, explore }: Props) {
   return (
     <Carte className="flex flex-col">
       <CarteEntete>
@@ -41,6 +43,7 @@ export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter }: Props) {
           {poi.categorie ? <span>{poi.categorie}</span> : null}
           {poi.region ? <span>· {poi.region}</span> : null}
           {poi.payant ? <span>· payant</span> : null}
+          {explore ? <span className="text-accent">· déjà vu</span> : null}
         </div>
       </CarteEntete>
       {poi.presentation ? (

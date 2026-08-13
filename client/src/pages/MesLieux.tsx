@@ -8,6 +8,7 @@ import { FormAjoutLieu } from '@/components/FormAjoutLieu';
 export default function MesLieux() {
   const code = useIdentite((s) => s.code);
   const { data: propositions } = useMesPropositions(code);
+  const collections = useCollections((s) => s.collections);
 
   if (!code) {
     return (
@@ -39,6 +40,20 @@ export default function MesLieux() {
         ) : (
           <p className="text-sm text-muted-foreground">Aucune proposition pour l'instant.</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <h2 className="text-sm font-medium">Mes collections</h2>
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(collections).map(([nom, refs]) => (
+            <span key={nom} className="rounded-md border border-border bg-card px-3 py-2 text-sm">
+              {nom} <span className="text-muted-foreground">({refs.length})</span>
+            </span>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Regroupements perso (privés, locaux). Rangez un lieu depuis sa fiche.
+        </p>
       </div>
     </section>
   );
