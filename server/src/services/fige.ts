@@ -2,8 +2,8 @@
 // Ne connaît pas Express. La géométrie renvoyée est la source unique (continue), jamais recollée leg par leg.
 
 import { appelerRpc, argBigint } from '../db/rpc.js';
-import { Erreurs } from '../http/erreurs.js';
-import type { FigeLu } from '../domain/fige.js';
+import { Erreurs, exigerPresent } from '../http/erreurs.js';
+import type { FigeDetail, ScenarioDefaut } from '../domain/fige.js';
 
 /** Analyse et valide un identifiant de figé. fige_id est un bigint strictement positif. Pure, testable sans DB. */
 export function parseFigeId(brut: string): number {
@@ -18,10 +18,15 @@ export function parseFigeId(brut: string): number {
 }
 
 /** Lit l'itinéraire figé complet (métadonnées, géométrie continue, agenda, waypoints). 404 si inconnu. */
-export async function lireFige(id: number): Promise<FigeLu> {
-  const res = await appelerRpc<FigeLu | null>('fige_lire', [argBigint(id)]);
-  if (res === null || res === undefined) {
-    throw Erreurs.figeIntrouvable();
-  }
-  return res;
+export async function lireFige(id: number): Promise<FigeDetail> {
+  const res = await appelerRpc<FigeDetail | null>('fige_lire', [argBigint(id)]);
+  return exigerPresent(res, Erreurs.figeIntrouvable);
+}
+
+/**
+ * Profil d'itinéraire à afficher par défaut : le retenu, sinon le consensus, sinon aucun.
+ * Sert de point d'entrée à la carte pour la vérif visuelle (C, gate C16). Jamais 404 : rend {source:'aucun'} si vide.
+ */
+export async function lireScenarioDefaut(): Promise<ScenarioDefaut> {
+  return appelerRpc<ScenarioDefaut>('scenario_defaut', []);
 }

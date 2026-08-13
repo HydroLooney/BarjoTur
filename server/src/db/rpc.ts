@@ -11,6 +11,8 @@ export const RPC_AUTORISEES = [
   'set_votes',
   'set_vote',
   'fige_lire',
+  'whoami',
+  'scenario_defaut',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

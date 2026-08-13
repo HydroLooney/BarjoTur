@@ -13,6 +13,17 @@ export class ErreurRequete extends Error {
   }
 }
 
+/**
+ * Renvoie la valeur si elle est présente, sinon lève l'erreur fournie. Centralise le passage
+ * « RPC a renvoyé NULL (cible inconnue) → erreur HTTP » pour ne pas le réécrire dans chaque service.
+ */
+export function exigerPresent<T>(valeur: T | null | undefined, erreur: () => ErreurRequete): T {
+  if (valeur === null || valeur === undefined) {
+    throw erreur();
+  }
+  return valeur;
+}
+
 /** Raccourcis pour les cas courants. */
 export const Erreurs = {
   codeInconnu: () =>

@@ -8,6 +8,7 @@ import type { Env } from './env.js';
 import { routesSante } from './routes/sante.js';
 import { routesVotes } from './routes/votes.js';
 import { routesFige } from './routes/fige.js';
+import { routesIdentite } from './routes/identite.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
 /** CORS minimal, piloté par l'environnement. Origines vides = permissif (dev local uniquement). */
@@ -37,6 +38,7 @@ export function creerApp(env: Env): Express {
   app.use(express.json({ limit: '256kb' }));
 
   app.use('/api', routesSante);
+  app.use('/api', routesIdentite);
   app.use('/api', routesVotes);
   app.use('/api', routesFige);
 

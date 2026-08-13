@@ -8,7 +8,7 @@
 
 import { appelerRpc, argTexte, argJsonb } from '../db/rpc.js';
 import { query } from '../db/query.js';
-import { Erreurs } from '../http/erreurs.js';
+import { Erreurs, exigerPresent } from '../http/erreurs.js';
 import type {
   VoteTier,
   VotesMap,
@@ -56,10 +56,7 @@ export function validerTiers(tiers: unknown): VotesMap {
 /** Lit les votes du porteur du lien. 404 si le lien est inconnu ou inactif. */
 export async function lireMesVotes(code: string): Promise<MesVotes> {
   const res = await appelerRpc<MesVotes | null>('mes_votes', [argTexte(code)]);
-  if (res === null || res === undefined) {
-    throw Erreurs.codeInconnu();
-  }
-  return res;
+  return exigerPresent(res, Erreurs.codeInconnu);
 }
 
 /** Remplace l'intégralité des votes du porteur (dernier écrit gagne, historisé par triggers). */
