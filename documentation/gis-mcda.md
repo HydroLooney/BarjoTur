@@ -40,6 +40,15 @@ un rang relatif qui se retourne quand le catalogue change, ce qui interdit un ch
 surclassement, PROMETHEE et ELECTRE, donnent un ordre et non une valeur cardinale, et leur coût devient prohibitif
 sur des milliers de lieux. Elles restent excellentes pour un autre usage, décrit plus bas.
 
+Agréger des critères suppose d'abord qu'ils ne comptent pas deux fois la même chose. Le moteur mesure donc leur
+redondance avant de les combiner, par un diagnostic d'inflation de la variance qui distingue l'indépendance réelle
+d'une simple corrélation. Quand deux critères se recoupent mais portent chacun un sens, ils ne sont pas supprimés en
+silence : l'accès facile en van et la tranquillité, par exemple, s'opposent et dessinent un même axe, accès contre
+solitude, qu'on documente et qu'on garde comme une tension du voyage. Les poids, de leur côté, ne sortent pas d'un
+seul avis. Un jeu de poids objectif, tiré du contraste et de la dispersion des critères eux-mêmes, se confronte au
+jeu de poids issu de la philosophie du voyage, et l'OWA agrège les deux, jamais l'un sans l'autre. C'est la règle des
+quatre couches, tenue jusque dans le détail du calcul.
+
 ## Une qualité continue sur le réseau accessible
 
 L'intérêt d'un lieu ne se propage pas à vol d'oiseau mais le long des routes et des sentiers qu'on peut réellement
