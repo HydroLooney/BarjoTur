@@ -30,6 +30,12 @@ export const RPC_AUTORISEES = [
   'signaler',
   'signalements_ouverts',
   'mes_lieux_par_tier',
+  'budget_comparatif',
+  'budget_variante',
+  'mon_esprit',
+  'set_esprit',
+  'esprit_famille',
+  'esprit_aggregate',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

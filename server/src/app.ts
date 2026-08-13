@@ -11,6 +11,8 @@ import { routesFige } from './routes/fige.js';
 import { routesIdentite } from './routes/identite.js';
 import { routesPoi } from './routes/poi.js';
 import { routesCarnet } from './routes/carnet.js';
+import { routesBudget } from './routes/budget.js';
+import { routesEsprit } from './routes/esprit.js';
 import { routesComposeur } from './routes/composeur.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
@@ -46,6 +48,8 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesFige);
   app.use('/api', routesPoi);
   app.use('/api', routesCarnet);
+  app.use('/api', routesBudget);
+  app.use('/api', routesEsprit);
   app.use('/api', routesComposeur);
 
   app.use(middlewareIntrouvable);
