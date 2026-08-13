@@ -14,9 +14,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // On ne construit pas l'offline maintenant : on structure pour que PWA puis Capacitor
-      // ne soient qu'un branchement (A06). registerType 'prompt' = pas de mise a jour silencieuse.
-      registerType: 'prompt',
+      // PWA-ready ET offline (C11) : le shell est precache (Workbox), les tuiles carto et l'API sont
+      // cachees au runtime. Installable (icone SVG). autoUpdate = le SW se met a jour tout seul.
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Barjøtur',
         short_name: 'Barjøtur',
@@ -25,7 +26,35 @@ export default defineConfig({
         theme_color: '#2B2724',
         background_color: '#F5F0E7',
         display: 'standalone',
-        icons: [],
+        start_url: '/',
+        icons: [{ src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+      },
+      workbox: {
+        // Repli de navigation offline sur l'app shell (SPA).
+        navigateFallback: '/index.html',
+        runtimeCaching: [
+          {
+            // Fonds de carte OpenFreeMap : cache-first (les tuiles bougent peu), pour une carte offline.
+            urlPattern: /^https:\/\/tiles\.openfreemap\.org\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tuiles-openfreemap',
+              expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // API du BFF : network-first (fraicheur), repli sur le dernier cache si hors ligne.
+            urlPattern: /\/api\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-barjotur',
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],
