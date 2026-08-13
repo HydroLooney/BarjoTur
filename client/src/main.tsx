@@ -11,7 +11,8 @@ if (!racine) throw new Error('Element #root introuvable dans index.html');
 createRoot(racine).render(
   <StrictMode>
     <Providers>
-      <RouterProvider router={router} />
+      {/* v7_startTransition : on opte tot pour le comportement React Router v7 (transitions), sans warning. */}
+      <RouterProvider router={router} future={{ v7_startTransition: true }} />
     </Providers>
   </StrictMode>,
 );
