@@ -30,3 +30,8 @@ export async function lireFige(id: number): Promise<FigeDetail> {
 export async function lireScenarioDefaut(): Promise<ScenarioDefaut> {
   return appelerRpc<ScenarioDefaut>('scenario_defaut', []);
 }
+
+/** Galerie des archétypes (dernière version figée par archétype) : à parcourir, comparer, voter. Passe-plat. */
+export async function lesArchetypes(): Promise<unknown> {
+  return appelerRpc<unknown>('archetypes', []);
+}

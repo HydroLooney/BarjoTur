@@ -36,6 +36,7 @@ export const RPC_AUTORISEES = [
   'set_esprit',
   'esprit_famille',
   'esprit_aggregate',
+  'archetypes',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

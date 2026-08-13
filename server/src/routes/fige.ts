@@ -5,9 +5,17 @@ import { Router } from 'express';
 import { asyncHandler } from '../middleware/erreurs.js';
 import { ok } from '../http/envelope.js';
 import { exigerParam } from '../http/params.js';
-import { parseFigeId, lireFige, lireScenarioDefaut } from '../services/fige.js';
+import { parseFigeId, lireFige, lireScenarioDefaut, lesArchetypes } from '../services/fige.js';
 
 export const routesFige = Router();
+
+// Galerie des archétypes (itinéraires de référence).
+routesFige.get(
+  '/archetypes',
+  asyncHandler(async (_req, res) => {
+    res.json(ok(await lesArchetypes()));
+  }),
+);
 
 // Profil par défaut (retenu, sinon consensus). Défini avant `/fige/:id` pour ne pas être capté comme un id.
 routesFige.get(
