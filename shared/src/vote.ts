@@ -70,6 +70,8 @@ export interface QuotaTier {
 /** api.mes_lieux_par_tier : les lieux votés d'un voyageur, groupés par tier, avec le budget restant par tier. */
 export interface MesLieuxParTier {
   ok: boolean;
+  /** Identité résolue du voyageur (racine de la réponse RPC, relevée à la source DB2, B024). */
+  membre_id: number;
   tiers: Partial<Record<VoteTier, { lieux: unknown[]; budget: QuotaTier }>>;
 }
 
