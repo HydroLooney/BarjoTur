@@ -14,6 +14,7 @@ import { routesCarnet } from './routes/carnet.js';
 import { routesBudget } from './routes/budget.js';
 import { routesEsprit } from './routes/esprit.js';
 import { routesComposeur } from './routes/composeur.js';
+import { entetesCache } from './middleware/cache.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
 /** CORS minimal, piloté par l'environnement. Origines vides = permissif (dev local uniquement). */
@@ -40,6 +41,7 @@ export function creerApp(env: Env): Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(cors(env.corsOrigins));
+  app.use(entetesCache);
   app.use(express.json({ limit: '256kb' }));
 
   app.use('/api', routesSante);
