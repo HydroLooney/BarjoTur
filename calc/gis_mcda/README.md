@@ -15,9 +15,17 @@ Faisabilité (orienteering routé) calculée à part.
 | Étape | Script | Sortie | État |
 |---|---|---|---|
 | 1. Critères F + **orthogonalité VIF / poids CRITIC** | `f_vif_critic.py` | rapport | **FAIT** (voir ci-dessous) |
-| 2. **Standardisation floue** (Large/Small/Gaussian par sémantique) | `f_standardise.*` | critères ∈ [0,1] | à écrire |
-| 3. **Krigeage réseau** par arête (~35 m, variance conservée, anti-MAUP) | `f_krigeage.*` | qualité + variance sur arêtes | à écrire |
-| 4. **OWA** (orness ~0,65, généralise WLC ; ni TOPSIS ni PROMETHEE au scoring) | `f_owa.*` | `qualite_poi` | à écrire |
+| 2. **Standardisation floue** (Large/Small/Gaussian par sémantique) | `f_standardise.*` | critères ∈ [0,1] | à écrire (dépend des critères BRUTS ; F v2 déjà ∈ [0,1]) |
+| 3. **Krigeage réseau** par arête (~35 m, variance conservée, anti-MAUP) | `f_krigeage.*` | qualité continue sur arêtes (rayonnement bases) | à écrire |
+| 4. **OWA** (orness 0,65, généralise WLC ; ni TOPSIS ni PROMETHEE au scoring) | `f_owa.py` | `mcda2.qualite_poi` | **FAIT** |
+
+## Étape 4 : OWA → `qualite_poi` — résultat
+
+`f_owa.py` : **WOWA (Torra)** combine les poids de critère CRITIC (étape 1) et des poids de rang OWA à **entropie maximale calés sur orness 0,65** (bisection, orness réel 0,650). Poids de rang décroissants (0,232 pour le meilleur critère → 0,054 pour le pire) : un lieu qui excelle sur quelques critères est récompensé sans devoir être bon partout.
+
+- **`mcda2.qualite_poi`** (785 POI) : score cardinal stable ∈ [0,1]. min 0,076 · moy 0,288 · méd 0,279 · max 0,782.
+- Contrôle de bon sens (top 5) : Fosseråsa, Route Lysevegen, Storsæterfossen, Westerås Cabin — des lieux nature/panorama marquants. Cohérent.
+- Krigeage réseau (étape 3) = champ CONTINU sur les arêtes (pour le rayonnement des bases), distinct du score par POI ; standardisation floue (étape 2) = refonte depuis les critères bruts. À suivre.
 
 PROMETHEE réservé au choix final entre quelques voyages complets (pas au scoring des milliers de POI).
 
