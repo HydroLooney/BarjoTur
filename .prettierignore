@@ -1,0 +1,7 @@
+node_modules/
+**/dist/
+data/
+docs/
+00_Echange/
+*.geojson
+*.json
