@@ -1,0 +1,50 @@
+# dépendances
+node_modules/
+**/node_modules/
+
+# build
+dist/
+build/
+client/dist/
+server/dist/
+shared/dist/
+*.tsbuildinfo
+
+# env et secrets (jamais dans le repo, cf socle references/secrets.md)
+.env
+.env.*
+!.env.example
+secrets.env
+**/secrets.env
+.config/
+
+# données lourdes et exports (vivent hors git, sur USB / OneDrive)
+_exports/
+_norvege_exports/
+data/raw/
+*.dump
+*.sql.gz
+*.gpkg
+*.pmtiles
+
+# python sidecar / calc
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# système
+.DS_Store
+Thumbs.db
+
+# échange interne (heartbeats vivants, journaux volumineux : suivis mais pas les gros logs)
+00_Echange/**/*.lock
+
+# données sources locales (lourdes, hors git)
+data/
+
+# scaffolding interne (jamais dans un repo qui deviendra public : zero tell d'IA)
+# vit en local pour le dev + dans le vault de conception ; docs publics cures au gate C14
+.claude/
+00_Echange/
+docs/
