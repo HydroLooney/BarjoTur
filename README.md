@@ -51,8 +51,9 @@ les migrations et le dictionnaire de données. `tiles/` la configuration Martin.
 
 ## Documentation
 
-Le moteur d'aide à la décision, expliqué pas à pas : `documentation/gis-mcda.md`. Le vocabulaire, côté famille et
-côté coulisses : `documentation/glossaire.md`. La mise en ligne : `deploy/RUNBOOK.md`.
+La vue d'ensemble : `documentation/architecture.md`. Le moteur d'aide à la décision, expliqué pas à pas :
+`documentation/gis-mcda.md`. Le vocabulaire, côté famille et côté coulisses : `documentation/glossaire.md`. Le
+contenu des aides de l'application : `documentation/aide-en-ligne.md`. La mise en ligne : `deploy/RUNBOOK.md`.
 
 ## État
 
