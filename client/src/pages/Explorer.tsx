@@ -7,6 +7,7 @@ import { useIdentite } from '@/stores/identite';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
+import { CarteExplorer } from '@/components/CarteExplorer';
 import { cn } from '@/lib/utils';
 
 const ONGLETS = [
@@ -70,7 +71,7 @@ export default function Explorer() {
       </div>
 
       {onglet === 'carte' ? (
-        <p className="text-muted-foreground">La carte tous-POI (couches votables et repères) arrive à l'itération suivante.</p>
+        <CarteExplorer />
       ) : (
         <>
           <BarreFiltres pois={pois} />
