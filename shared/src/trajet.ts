@@ -82,21 +82,31 @@ export interface EtapeFige {
   resume_jour: unknown;
 }
 
+/** Waypoint imposé d'un itinéraire figé (fige.waypoint_impose, ordonné par `ordre`). Colonnes relevées par B (B009). */
+export interface WaypointImpose {
+  fige_id: number;
+  kind: string | null;
+  ref_id: string | null;
+  node: number | null;
+  ordre: number;
+}
+
 /** Retour riche de api.fige_lire : géométrie continue MultiLineString + agenda détaillé. */
 export interface FigeDetail {
   itineraire: ItineraireFige;
   geom: MultiLineStringGeom;
   etapes: EtapeFige[];
-  /** fige.waypoint_impose, ordonné par `ordre` (souvent vide). Typage fin à poser plus tard. */
-  waypoints: unknown[];
+  /** fige.waypoint_impose, ordonné par `ordre` (souvent vide). */
+  waypoints: WaypointImpose[];
 }
 
 /** Retour de api.scenario_defaut : le profil par défaut à afficher (défaut courant = consensus, fige_id 141). */
 export interface ScenarioDefaut {
   fige_id: number | null;
   source: 'retenu' | 'consensus' | 'aucun';
-  code?: string;
-  archetype_key?: string;
+  /** null pour le consensus (label "consensus"), sinon le code du profil (B009). */
+  code?: string | null;
+  archetype_key?: string | null;
   label?: string;
   calcule_db1?: boolean;
   km?: number;
