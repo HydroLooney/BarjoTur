@@ -23,7 +23,7 @@ BEGIN
   SELECT node_id INTO nb FROM mcda2.base_node_van WHERE base_id=b;
   IF na IS NULL OR nb IS NULL OR na=nb THEN
     INSERT INTO mcda2.leg_astar_cache VALUES(a,b,NULL,0,0,false) ON CONFLICT (src_base,tgt_base) DO NOTHING;
-    RETURN (a,b,NULL,0,0,false);
+    RETURN (a,b,NULL::geometry(LineString,4326),0::numeric,0::double precision,false);   -- casts stricts (geom typmod, km numeric, cost_s float8) ; bugs latents masqués par le cache
   END IF;
   SELECT ST_LineMerge(ST_Collect(e.geom ORDER BY x.seq)), COALESCE(SUM(e.cost_s),0) INTO g, res.cost_s
   FROM pgr_aStar(
@@ -39,7 +39,7 @@ BEGIN
     SELECT geom INTO ga FROM mcda2.bases_v2 WHERE base_id=a;
     IF ST_Distance(ST_StartPoint(g), ga) > ST_Distance(ST_EndPoint(g), ga) THEN g := ST_Reverse(g); END IF;
   ELSIF g IS NOT NULL THEN g := NULL; END IF;
-  res := (a, b, g, round((ST_Length(g::geography)/1000)::numeric,1), res.cost_s, (g IS NOT NULL));
+  res := (a, b, g::geometry(LineString,4326), round((ST_Length(g::geography)/1000)::numeric,1), res.cost_s, (g IS NOT NULL));
   INSERT INTO mcda2.leg_astar_cache VALUES (a,b,g,res.km,res.cost_s,(g IS NOT NULL))
     ON CONFLICT (src_base,tgt_base) DO UPDATE SET geom=EXCLUDED.geom, km=EXCLUDED.km, cost_s=EXCLUDED.cost_s, found=EXCLUDED.found;
   RETURN res;
