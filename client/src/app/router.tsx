@@ -1,6 +1,8 @@
-import { lazy } from 'react';
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { lazy, useEffect } from 'react';
+import { createBrowserRouter, redirect, useNavigate, useParams } from 'react-router-dom';
 import { Coquille } from './layout';
+import { useWhoami } from '@/lib/queries/whoami';
+import { useIdentite } from '@/stores/identite';
 
 // Vues lourdes en lazy : chaque route tire son propre chunk (les cartes restent hors du chemin critique).
 const Accueil = lazy(() => import('@/pages/Accueil'));
@@ -29,6 +31,42 @@ function redirigerDepuisV2(): Response | null {
   return null;
 }
 
+/**
+ * Route /app/:code/:prenom : bootstrap whoami + redirection vers /explorer.
+ * L'identite est resolue autoritairement cote serveur (whoami non gate PIN, A03).
+ * On monte ce composant, il fetche whoami, pose l'identite dans le store, puis navigue.
+ * Si le BFF n'est pas branche : message d'erreur clair, sans crash.
+ */
+function BootstrapIdentite() {
+  const { code, prenom: _prenom } = useParams<{ code: string; prenom: string }>();
+  const navigate = useNavigate();
+  const depuisWhoami = useIdentite((s) => s.depuisWhoami);
+  const { data: whoami, isError } = useWhoami(code ?? null);
+
+  useEffect(() => {
+    if (whoami && code) {
+      depuisWhoami(code, whoami);
+      void navigate('/explorer', { replace: true });
+    }
+  }, [whoami, code, depuisWhoami, navigate]);
+
+  if (isError) {
+    return (
+      <section className="space-y-2 p-4">
+        <p className="text-muted-foreground">
+          Lien non reconnu. Verifiez votre lien d'invitation et reessayez.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="p-4">
+      <p className="text-muted-foreground">Identification en cours...</p>
+    </section>
+  );
+}
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -41,6 +79,8 @@ export const router = createBrowserRouter([
       { path: 'mes-lieux', element: <MesLieux /> },
       { path: 'coulisses', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },
+      // Bootstrap identite : /app/<code>/<Prenom> (non gate PIN, A03).
+      { path: 'app/:code/:prenom', element: <BootstrapIdentite /> },
     ],
   },
 ]);
