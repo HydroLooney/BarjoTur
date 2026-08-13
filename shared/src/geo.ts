@@ -14,8 +14,23 @@ export interface LineStringGeom {
   coordinates: Position[];
 }
 
-/** Géométrie de base. À élargir (MultiLineString, Polygon...) quand un module en a besoin. */
-export type Geometry = PointGeom | LineStringGeom;
+export interface MultiLineStringGeom {
+  type: 'MultiLineString';
+  coordinates: Position[][];
+}
+
+/** Collection hétérogène. Utile pour la carte animée `fige.geom` (tronçons + points). */
+export interface GeometryCollectionGeom {
+  type: 'GeometryCollection';
+  geometries: Geometry[];
+}
+
+/** Géométrie de base. Élargie sur demande de C (T012, carte animée). Étendre encore au besoin. */
+export type Geometry =
+  | PointGeom
+  | LineStringGeom
+  | MultiLineStringGeom
+  | GeometryCollectionGeom;
 
 export interface Feature<P = Record<string, unknown>> {
   type: 'Feature';

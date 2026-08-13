@@ -1,4 +1,4 @@
-import type { LineStringGeom } from './geo.js';
+import type { LineStringGeom, MultiLineStringGeom } from './geo.js';
 
 // Contrat de lecture d'un itinéraire figé (cf api.fige_lire en DB2, brique carte animée `fige.geom`).
 // La géométrie est CONTINUE (pas des segments recollés), l'agenda l'accompagne.
@@ -19,7 +19,10 @@ export interface EtapeAgenda {
 
 export interface FigeItineraire {
   profil: Profil;
-  /** fige.geom : géométrie continue de l'itinéraire retenu. */
-  geom: LineStringGeom;
+  /**
+   * fige.geom : géométrie de l'itinéraire retenu. Continue par défaut (LineString) ; MultiLineString
+   * admis pour les tracés à tronçons (traversées, discontinuités de rendu). Cf brique carte animée (C, T012).
+   */
+  geom: LineStringGeom | MultiLineStringGeom;
   agenda: EtapeAgenda[];
 }

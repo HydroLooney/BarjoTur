@@ -10,7 +10,7 @@
     "client"
   ],
   "scripts": {
-    "build": "npm run build --workspace shared && npm run build --workspace server",
+    "build": "npm run build --workspace shared && npm run build --workspace server && npm run build --workspace client",
     "typecheck": "tsc --noEmit -p shared && tsc --noEmit -p server && tsc --noEmit -p client",
     "lint": "eslint shared/src server/src client/src",
     "format": "prettier --write shared server client",
