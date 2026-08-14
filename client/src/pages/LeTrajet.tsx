@@ -3,6 +3,7 @@ import { GalerieArchetypes } from '@/components/GalerieArchetypes';
 import { ComposeurItineraire } from '@/components/ComposeurItineraire';
 import { ReglageBudgetTemps } from '@/components/ReglageBudgetTemps';
 import { ArbitrageLiaison } from '@/components/ArbitrageLiaison';
+import { SuggestionsAuPassage } from '@/components/SuggestionsAuPassage';
 import { Comparateur } from '@/components/Comparateur';
 
 // Espace « Le trajet » (A20 §10, ex-Composer) : composer l'itinéraire (ambiances, bases), gérer les étapes
@@ -20,6 +21,7 @@ export default function LeTrajet() {
       <ComposeurItineraire />
       <ReglageBudgetTemps />
       <ArbitrageLiaison />
+      <SuggestionsAuPassage />
       <Comparateur />
     </section>
   );

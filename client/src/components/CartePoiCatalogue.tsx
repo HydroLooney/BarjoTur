@@ -2,6 +2,7 @@ import type { CataloguePoi, VoteTier } from '@barjotur/shared';
 import { Carte, CarteEntete, CarteTitre, CarteContenu } from '@/ui/primitives/card';
 import { Badge, type BadgeProps } from '@/ui/primitives/badge';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
+import { EtiquetteMiseEnAvant } from '@/components/EtiquetteMiseEnAvant';
 
 interface Props {
   poi: CataloguePoi;
@@ -37,7 +38,10 @@ export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter, explore }:
       <CarteEntete>
         <div className="flex items-start justify-between gap-2">
           <CarteTitre>{poi.nom}</CarteTitre>
-          {poi.tier_defaut ? <Badge variant={varianteBadge(poi.tier_defaut)}>{poi.tier_defaut}</Badge> : null}
+          <div className="flex shrink-0 flex-wrap justify-end gap-1">
+            <EtiquetteMiseEnAvant score={poi.score_mcda} />
+            {poi.tier_defaut ? <Badge variant={varianteBadge(poi.tier_defaut)}>{poi.tier_defaut}</Badge> : null}
+          </div>
         </div>
         <div className="flex flex-wrap gap-x-2 text-xs text-muted-foreground">
           {poi.categorie ? <span>{poi.categorie}</span> : null}

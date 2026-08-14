@@ -9,6 +9,7 @@ import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { MiniCarteRando } from '@/components/MiniCarteRando';
 import { CollectionsPoi } from '@/components/CollectionsPoi';
+import { EtiquetteMiseEnAvant } from '@/components/EtiquetteMiseEnAvant';
 import { Chargement, MessageVide } from '@/ui/blocs/EtatVue';
 
 // Fiche POI pleine page (/explorer/:osm). Le POI est retrouvé dans le catalogue par osm_id (pas d'appel
@@ -49,7 +50,10 @@ export default function FichePoi() {
       <Link to="/explorer" className="text-sm text-muted-foreground hover:text-foreground">
         ← Explorer
       </Link>
-      <h1 className="font-serif text-2xl">{poi.nom}</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <h1 className="font-serif text-2xl">{poi.nom}</h1>
+        <EtiquetteMiseEnAvant score={poi.score_mcda} />
+      </div>
       <div className="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
         {poi.categorie ? <span>{poi.categorie}</span> : null}
         {poi.region ? <span>· {poi.region}</span> : null}
