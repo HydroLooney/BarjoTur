@@ -3,7 +3,8 @@ import type { Role, Whoami } from '@barjotur/shared';
 
 const ROLES: readonly Role[] = ['organisateur_principal', 'organisateur', 'voyageur', 'demo', 'invite'];
 
-// L'API whoami renvoie le role en texte brut : on le rapproche du type canonique (repli 'voyageur').
+// whoami renvoie desormais le role NORMALISE au vocabulaire du contrat (B035, cote BFF). On le prend tel
+// quel ; ce garde reste en defense en profondeur (un role inconnu retombe sur 'voyageur', jamais organisateur).
 function normaliserRole(r: string): Role {
   return (ROLES as readonly string[]).includes(r) ? (r as Role) : 'voyageur';
 }

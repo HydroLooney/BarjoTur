@@ -1,7 +1,23 @@
+import type { CranId, Role } from '@barjotur/shared';
+
 // Tableau central des libellés user-facing (M061 / M067). MIROIR du glossaire figé
 // (`documentation/glossaire.md`, source de vérité tenue par l'agent rédaction) : un mot par chose, un
 // changement en UN endroit qui se propage partout. Enfant-compatible, zéro jargon. Les composants lisent
 // ici plutôt que de coder leurs libellés en dur ; adoption incrémentale.
+
+/**
+ * Libellés SIMPLES des crans du fil (A18), tranchés par Guillaume (T040 / M070). Les `CranId` du contrat ne
+ * changent pas ; seul l'affichage passe à la version enfant-compatible. `BandeauParcours` et `CransParcours`
+ * lisent ici, pas le `Cran.libelle` du contrat.
+ */
+export const CRANS: Record<CranId, string> = {
+  cadrage: "L'idée",
+  reservation_van: 'Le van',
+  exploration: 'Explorer',
+  composition: 'Composer',
+  logistique: 'Préparer',
+  depart: 'Le départ',
+};
 
 /** Les 7 espaces de l'app (A20), titres explicites pour un enfant. */
 export const ESPACES = {
@@ -46,3 +62,15 @@ export const NATURE_ETAPE = {
   experience: 'expérience',
   transit: 'transit',
 } as const;
+
+/**
+ * Libellés des rôles d'accès (A03, `shared/role.ts`), affichés dans l'admin des voyageurs (T039).
+ * Enfant-compatible, sans jargon. Le rôle technique ne change pas, seul l'affichage passe ici.
+ */
+export const ROLES_LABEL: Record<Role, string> = {
+  organisateur_principal: 'Organisateur en chef',
+  organisateur: 'Organisateur',
+  voyageur: 'Voyageur',
+  demo: 'Démo',
+  invite: 'Invité',
+};

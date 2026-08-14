@@ -21,7 +21,35 @@ export function PremiersPas() {
   const vu = useOnboarding((s) => s.vu);
   const marquerVu = useOnboarding((s) => s.marquerVu);
   const prenom = useIdentite((s) => s.prenom);
+  const code = useIdentite((s) => s.code);
   if (vu) return null;
+
+  // Variante « pas encore de lien » (T042) : un visiteur sans code perso ne peut pas voter (son vote ne serait
+  // rattaché à personne). On l'accueille, on explique que l'organisateur envoie un lien perso, et on l'invite à
+  // regarder les lieux en attendant. Pas de fausse promesse de vote.
+  if (code === null) {
+    return (
+      <section aria-label="Premiers pas" className="space-y-3 rounded-lg border border-primary bg-card p-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 className="font-serif text-lg">Bienvenue</h2>
+          <button
+            type="button"
+            onClick={marquerVu}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Masquer
+          </button>
+        </div>
+        <p className="max-w-prose text-sm text-muted-foreground">
+          Ce carnet aide toute la famille à choisir le voyage ensemble. Pour voter et que votre voix compte, il vous
+          faut votre lien perso : l'organisateur vous l'envoie. En attendant, vous pouvez déjà regarder les lieux.
+        </p>
+        <Bouton size="sm" asChild>
+          <Link to="/explorer">Regarder les lieux</Link>
+        </Bouton>
+      </section>
+    );
+  }
 
   return (
     <section aria-label="Premiers pas" className="space-y-3 rounded-lg border border-primary bg-card p-4">

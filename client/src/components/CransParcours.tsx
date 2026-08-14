@@ -9,7 +9,7 @@ import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { Champ } from '@/ui/primitives/input';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
-import { ETATS_CRAN } from '@/lib/libelles';
+import { CRANS, ETATS_CRAN } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Fil du parcours (A18 / M046) : la machine à crans du voyage. Chaque cran montre son état de validation
@@ -119,7 +119,7 @@ export function CransParcours() {
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs tabular-nums text-muted-foreground">{c.ordre}</span>
-                <span className="font-medium">{c.libelle}</span>
+                <span className="font-medium">{CRANS[c.id] ?? c.libelle}</span>
                 <Badge variant={lisible.variant}>{lisible.texte}</Badge>
                 {courant ? <span className="text-xs text-primary">en cours</span> : null}
                 {invalide ? <span className="text-xs text-accent">à refaire</span> : null}

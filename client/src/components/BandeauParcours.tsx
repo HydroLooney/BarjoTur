@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { parcoursDemo } from '@/lib/fixtures/parcours-demo';
+import { CRANS } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Bandeau parcours persistant (A20 §10) : rappel compact des crans en tête de CHAQUE vue, l'anti-« perdu ».
@@ -29,7 +30,7 @@ export function BandeauParcours() {
                   : 'text-foreground',
             )}
           >
-            {c.libelle}
+            {CRANS[c.id] ?? c.libelle}
           </span>
         ))}
         {courant ? (
