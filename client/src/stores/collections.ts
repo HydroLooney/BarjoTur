@@ -11,6 +11,8 @@ interface EtatCollections {
   basculer: (collection: string, osmId: string) => void;
   creer: (nom: string) => void;
   supprimer: (collection: string) => void;
+  /** Hydratation serveur (C-16 sync) : remplace l'état par le blob serveur (source versionnée). */
+  remplacer: (collections: Record<string, string[]>) => void;
 }
 
 function initiales(): Record<string, string[]> {
@@ -38,6 +40,7 @@ export const useCollections = create<EtatCollections>()(
           delete c[collection];
           return { collections: c };
         }),
+      remplacer: (collections) => set({ collections }),
     }),
     { name: 'barjotur-collections' },
   ),

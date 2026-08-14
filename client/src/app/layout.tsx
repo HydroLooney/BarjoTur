@@ -4,6 +4,7 @@ import { Bouton } from '@/ui/primitives/button';
 import { LimiteErreur } from './LimiteErreur';
 import { cn } from '@/lib/utils';
 import { useUi } from '@/stores/ui';
+import { useSyncMemoire } from '@/hooks/useSyncMemoire';
 
 const LIENS = [
   { to: '/', libelle: 'Accueil', exact: true },
@@ -18,6 +19,8 @@ const LIENS = [
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);
   const location = useLocation();
+  // Sync mémoire perso (C-16/C-18/C-17) : inerte tant que le drapeau live est off (pré-bascule).
+  useSyncMemoire();
   // L'identite est resolue par la route /app/:code/:prenom (BootstrapIdentite dans router.tsx).
   return (
     <div className="min-h-dvh bg-background text-foreground">

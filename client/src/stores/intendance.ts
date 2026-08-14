@@ -36,6 +36,8 @@ interface EtatIntendance {
   ajouterMateriel: (libelle: string) => void;
   basculerMateriel: (id: string) => void;
   supprimerMateriel: (id: string) => void;
+  /** Hydratation serveur (C-17 sync) : remplace l'intendance par le blob serveur (source versionnée). */
+  remplacer: (blob: { recettes: Recette[]; menus: MenuItem[]; materiel: MaterielItem[] }) => void;
 }
 
 function id(): string {
@@ -59,6 +61,7 @@ export const useIntendance = create<EtatIntendance>()(
           materiel: s.materiel.map((m) => (m.id === mid ? { ...m, coche: !m.coche } : m)),
         })),
       supprimerMateriel: (mid) => set((s) => ({ materiel: s.materiel.filter((m) => m.id !== mid) })),
+      remplacer: (blob) => set({ recettes: blob.recettes, menus: blob.menus, materiel: blob.materiel }),
     }),
     { name: 'barjotur-intendance' },
   ),

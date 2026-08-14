@@ -7,6 +7,8 @@ import { persist } from 'zustand/middleware';
 interface EtatMemoire {
   explores: string[];
   marquerExplore: (osmId: string) => void;
+  /** Hydratation serveur (C-18 sync) : fusionne les marques du serveur avec le local (union non destructive). */
+  fusionnerServeur: (osmIds: string[]) => void;
   oublierTout: () => void;
 }
 
@@ -16,6 +18,8 @@ export const useMemoireExploration = create<EtatMemoire>()(
       explores: [],
       marquerExplore: (osmId) =>
         set((s) => (s.explores.includes(osmId) ? {} : { explores: [...s.explores, osmId] })),
+      fusionnerServeur: (osmIds) =>
+        set((s) => ({ explores: [...new Set([...s.explores, ...osmIds])] })),
       oublierTout: () => set({ explores: [] }),
     }),
     { name: 'barjotur-exploration' },
