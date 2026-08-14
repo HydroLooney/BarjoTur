@@ -43,6 +43,9 @@ Thumbs.db
 # données sources locales (lourdes, hors git)
 data/
 
+# artefacts de synchronisation DB1→DB2 (dumps dérivées + manifestes d'empreintes, transitoires par run)
+db/sync/dumps/
+
 # scaffolding interne (jamais dans un repo qui deviendra public : zero tell d'IA)
 # vit en local pour le dev + dans le vault de conception ; docs publics cures au gate C14
 .claude/
