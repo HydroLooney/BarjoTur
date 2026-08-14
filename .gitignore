@@ -55,3 +55,7 @@ docs/
 # corbeille de reconciliation (jamais commitee)
 .trash/
 **/.trash/
+
+# Captures de vérification Playwright (artefacts, hors repo)
+client/captures-verif/
+client/*.png
