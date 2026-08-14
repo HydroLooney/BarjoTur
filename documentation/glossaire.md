@@ -56,6 +56,8 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Budget d'avis.** La réserve d'avis de chacun, qui empêche de tout mettre au sommet et se rééquilibre à mesure qu'on vote.
 
+**Envie par thème.** Dire à quel point on aime un thème, la mer, la faune, le patrimoine, pour que le voyage donne plus de temps aux lieux de ce genre. À la différence de l'envie plafonnée, elle ne compte pas des lieux, elle pèse sur le temps qu'on leur consacre.
+
 ## Assembler le voyage
 
 **Le trajet.** L'itinéraire assemblé par l'app : les haltes choisies sous le temps disponible, les vrais chemins, les bateaux, les nuitées.
@@ -72,13 +74,33 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Varier les plaisirs.** La règle qui évite d'empiler dix lieux du même genre.
 
+**Camp de base.** Le lieu où l'on pose le van pour rayonner alentour quelques jours. Le voyage se compose en enchaînant des camps de base et ce qu'on visite autour.
+
+**Temps sur place.** Le temps qu'on passe à un endroit, en plus du trajet pour y aller. Chaque lieu a le sien, ajustable, avec un minimum sensé, une baignade au moins une heure.
+
+**Flânerie.** Un temps libre dans la journée, sans programme, pour une balade, un marché, des pauses. Compté à part des visites, pour ne pas gonfler deux fois la même heure.
+
+**Demi-journée et journée.** Certaines activités se prennent en bloc, un kayak par exemple, pas en petits bouts. On leur choisit une demi-journée, autour de quatre heures, ou une journée, autour de huit.
+
+**Argent et temps.** Le réglage entre payer moins et aller plus vite : un ferry payant mais rapide contre une route gratuite mais longue. Le curseur dit ce qu'on préfère, l'app choisit la variante en conséquence.
+
 ## La carte
 
 **Carte.** L'espace où l'itinéraire retenu se déroule, jour après jour, un repère avançant au rythme des journées. Les traversées en bateau s'y distinguent du reste.
 
+**Difficulté d'un sentier.** Le niveau d'un chemin de randonnée, sur l'échelle norvégienne : Non gradé, Facile, Moyen, Difficile, Expert. Les sentiers apparaissent sur la carte quand on zoome, coloriés selon leur niveau.
+
 ## Préparer le concret
 
-**Budget.** La prévision de dépense du voyage, ventilée par poste : Van, Carburant, Hébergement, Repas et courses, Ferries intérieurs, Ferry international, Activités, Transit. Donnée en estimation prudente et en estimation plus serrée, et par adulte.
+**Budget.** La prévision de dépense du voyage, ventilée par poste : Van, Carburant, Hébergement, Repas et courses, Ferries intérieurs, Ferry international, Activités, Transit. Donnée en fourchette, de l'estimation basse à l'estimation haute, et par adulte.
+
+**Estimation basse et estimation haute.** Les deux bords de la fourchette du budget : l'estimation basse sans coussin, l'estimation haute avec la marge de sécurité. La vérité probable est entre les deux.
+
+**Marge de sécurité.** Un coussin ajouté au budget, en pourcentage réglable, pour ne pas être pris de court. C'est lui qui sépare l'estimation basse de l'estimation haute.
+
+**Surconsommation.** Le carburant en plus que le van boit chargé ou en montagne, réglé en pourcentage de sa consommation de base. La consommation de base tient au véhicule ; la surconsommation s'ajuste.
+
+**Ristourne AutoPASS.** La réduction sur le prix des ferries qu'offre une carte de prépaiement norvégienne, réglable en pourcentage. Laissée à zéro par défaut, on ne compte alors que le plein tarif.
 
 **Intendance.** Les trois listes privées du voyage : recettes, menus, matériel. Elles restent sur l'appareil.
 
