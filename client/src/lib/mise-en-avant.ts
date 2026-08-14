@@ -1,9 +1,11 @@
-// Mise en avant d'un lieu (A24 / M110) : étiquette « à la Michelin » dérivée du score (reward + endossement des
-// guides, calculé par A, gaté DSN). Trois niveaux au-dessus du lot, rien en dessous. Les libellés sont au
-// glossaire ; les couleurs passent par les variants de Badge existants (dark-safe, zéro nouvelle palette). Les
-// SEUILS ci-dessous sont une présentation front illustrative (R1) : au flip, A peut fournir l'étiquette
-// directement, ou l'on cale les seuils sur le vrai score. La DÉCISION du composeur (score continu) est côté B.
-export type MiseEnAvant = 'vaut_le_voyage' | 'vaut_le_detour' | 'au_passage';
+import type { MiseEnAvant } from '@barjotur/shared';
+
+// Mise en avant d'un lieu (A24 / M110) : étiquette « à la Michelin » précalculée par A (reward + endossement des
+// guides, gaté DSN). Le TYPE est SOURCE UNIQUE dans `@barjotur/shared` (M121), on le réexporte. Trois niveaux
+// au-dessus du lot, rien en dessous. Libellés au glossaire ; couleurs par variants de Badge existants (dark-safe).
+// Les SEUILS ci-dessous ne sont qu'un repli front illustratif (R1) pour dériver l'étiquette d'un `score_mcda` tant
+// que A ne fournit pas le `MiseEnAvant` direct ; le composant accepte déjà un `niveau` shared direct.
+export type { MiseEnAvant };
 
 export const LIBELLE_MISE_EN_AVANT: Record<MiseEnAvant, string> = {
   vaut_le_voyage: 'Vaut le voyage',
