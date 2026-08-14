@@ -24,6 +24,14 @@ Un composeur d'itinéraire qui optimise sous contraintes réelles, une carte ani
 retenu, des votes sur l'esprit du voyage et sur les lieux, un agenda jour par jour, un budget, une intendance
 (repas, matériel, réservations).
 
+## Aperçu
+
+Les captures d'écran arrivent avec la première mise en ligne de l'interface. En attendant, l'application se décrit
+mieux par ce qu'elle enchaîne : une carte qui rejoue l'itinéraire retenu, un explorateur des lieux, un composeur qui
+propose des variantes de voyage, un comparateur qui montre honnêtement ce que chacun gagne et ce qu'il cède.
+
+<!-- captures à ajouter dès l'interface en ligne : carte animée /voyager, explorateur, composeur, comparateur, atlas -->
+
 ## Comment ça marche, dit simplement
 
 Le moteur sépare quatre couches qu'il ne mélange jamais : la **qualité** mesurée d'un lieu, la **philosophie** du
@@ -33,6 +41,24 @@ restos), et les **votes** de la famille. La faisabilité se calcule à part, par
 Le parcours de l'utilisateur suit ce fil : une idée, l'exploration des lieux, les votes, la composition d'un
 itinéraire, la logistique, puis le voyage. À chaque étape, ce qui est décidé se verrouille et le reste reste ouvert.
 Le détail de la méthode est dans `documentation/gis-mcda.md`.
+
+## Fonctionnalités à venir
+
+Le noyau tient, le reste de la roadmap s'y greffe module par module, toujours libre et auto-hébergé.
+
+- **Déplacement multimodal** : au van s'ajoutent la marche et les transports en commun, avec des isochrones et un
+  routage propre à chaque mode.
+- **Randonnée** : les sentiers de la base nationale norvégienne (Turrutebasen) affichés et routés, pensés pour une
+  famille de bons marcheurs.
+- **Enrichissement des lieux** : une chaîne d'intégration qui complète et fiabilise le catalogue depuis plusieurs
+  sources, dont Foursquare en couche de fond. L'exploration, elle, reste sobre et centrée sur les vrais lieux
+  d'intérêt, jamais noyée sous la masse.
+- **Notes de voyage** : garder au fil de l'eau ce qu'on veut retenir, avant, pendant et après.
+- **Partage des dépenses** : un décompte commun dans l'esprit d'un tricount, mais libre et sans compte marchand.
+- **Recettes et menus** : prolonger l'intendance par une vraie gestion des repas.
+- **Plusieurs voyages, plusieurs tribus** : à terme, un mode où chaque organisateur monte son propre voyage et
+  invite les siens, avec un portail d'administration. Un voyage de démonstration de bout en bout servira de vitrine,
+  après la première mise en ligne. La commercialisation reste hors sujet, c'est un outil pour des familles.
 
 ## Le socle technique
 
