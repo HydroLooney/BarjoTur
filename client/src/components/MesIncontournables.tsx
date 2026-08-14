@@ -4,6 +4,7 @@ import { useCatalogue } from '@/lib/queries/catalogue';
 import { useMesVotes } from '@/lib/queries/votes';
 import { AVIS } from '@/lib/libelles';
 import { Badge } from '@/ui/primitives/badge';
+import { EtiquetteMiseEnAvant } from '@/components/EtiquetteMiseEnAvant';
 import { cn } from '@/lib/utils';
 
 // Mes incontournables (A26 / M112) : mes coups de cœur (votes forts, T/S) et les lieux où je veux vraiment du
@@ -20,7 +21,8 @@ export function MesIncontournables() {
     .filter(([, t]) => t === 'T' || t === 'S')
     .map(([ref, t]) => ({ osmId: ref.replace(/^p:/, ''), tier: t }));
 
-  const nom = (osmId: string) => catalogue?.find((p) => p.id === osmId)?.nom ?? osmId;
+  const poiDe = (osmId: string) => catalogue?.find((p) => p.id === osmId);
+  const nom = (osmId: string) => poiDe(osmId)?.nom ?? osmId;
 
   return (
     <section className="space-y-2">
@@ -43,23 +45,33 @@ export function MesIncontournables() {
         <ul className="space-y-2">
           {forts.map((f) => {
             const epingle = incontournables.includes(f.osmId);
+            const poi = poiDe(f.osmId);
+            // R1 (M122) : un lieu épinglé dont l'intérêt n'est pas encore calculé (score absent) le dit
+            // honnêtement, sans jamais inventer un chiffre.
+            const sansEstimation = epingle && (poi?.score_mcda == null);
             return (
-              <li key={f.osmId} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3">
-                <span className="flex items-center gap-2">
-                  <span className="font-medium">{nom(f.osmId)}</span>
-                  <Badge variant="contour">{AVIS[f.tier as keyof typeof AVIS] ?? f.tier}</Badge>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => epingler(f.osmId)}
-                  aria-pressed={epingle}
-                  className={cn(
-                    'flex min-h-tactile items-center rounded-md border px-3 text-sm transition-colors',
-                    epingle ? 'border-primary bg-muted text-foreground' : 'border-border text-muted-foreground hover:bg-muted',
-                  )}
-                >
-                  {epingle ? 'Temps réservé ✓' : 'Je veux du temps ici'}
-                </button>
+              <li key={f.osmId} className="rounded-md border border-border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{nom(f.osmId)}</span>
+                    <Badge variant="contour">{AVIS[f.tier as keyof typeof AVIS] ?? f.tier}</Badge>
+                    <EtiquetteMiseEnAvant score={poi?.score_mcda} />
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => epingler(f.osmId)}
+                    aria-pressed={epingle}
+                    className={cn(
+                      'flex min-h-tactile items-center rounded-md border px-3 text-sm transition-colors',
+                      epingle ? 'border-primary bg-muted text-foreground' : 'border-border text-muted-foreground hover:bg-muted',
+                    )}
+                  >
+                    {epingle ? 'Temps réservé ✓' : 'Je veux du temps ici'}
+                  </button>
+                </div>
+                {sansEstimation ? (
+                  <p className="mt-1 text-xs text-muted-foreground">Pas encore d'estimation de son intérêt.</p>
+                ) : null}
               </li>
             );
           })}

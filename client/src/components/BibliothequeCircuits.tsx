@@ -60,6 +60,11 @@ export function BibliothequeCircuits() {
                   {e.duree_min != null ? (
                     <span className="text-muted-foreground"> ({formatDuree(e.duree_min)})</span>
                   ) : null}
+                  {/* R1 (M122) : une étape du guide pas encore appariée à la base est un point nommé « à confirmer »
+                      (pas de reward ni de vote), l'adoption ne plante jamais. */}
+                  {e.poi_id == null ? (
+                    <span className="text-xs text-muted-foreground"> · lieu du guide, à confirmer</span>
+                  ) : null}
                 </span>
                 <button
                   type="button"

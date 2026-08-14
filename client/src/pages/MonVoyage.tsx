@@ -10,6 +10,12 @@ import { AppetitsThematiques } from '@/components/AppetitsThematiques';
 export default function MonVoyage() {
   const cadence = useCadence((s) => s.cadence);
   const setCadence = useCadence((s) => s.setCadence);
+  const dureeSurPlacePct = useCadence((s) => s.dureeSurPlacePct);
+  const flaneriePct = useCadence((s) => s.flaneriePct);
+  const plafondJourH = useCadence((s) => s.plafondJourH);
+  const setDureeSurPlace = useCadence((s) => s.setDureeSurPlace);
+  const setFlanerie = useCadence((s) => s.setFlanerie);
+  const setPlafondJour = useCadence((s) => s.setPlafondJour);
   const peutVoter = usePeut('voter');
 
   return (
@@ -38,6 +44,46 @@ export default function MonVoyage() {
           step={5}
           onChange={setCadence}
         />
+
+        {/* Réglage fin optionnel (divulgation progressive, M122) : le débutant ne voit que la densité ; qui veut
+            affine, dans des bornes de sécurité. */}
+        <details className="rounded-md border border-border">
+          <summary className="flex min-h-tactile cursor-pointer items-center px-3 text-sm text-muted-foreground">
+            Réglage fin (facultatif)
+          </summary>
+          <div className="space-y-3 border-t border-border p-3">
+            <p className="max-w-prose text-xs text-muted-foreground">
+              Ces réglages restent dans des bornes raisonnables : le voyage protège vos journées.
+            </p>
+            <CurseurValeur
+              label="Temps sur place"
+              valeur={dureeSurPlacePct}
+              min={0}
+              max={100}
+              step={5}
+              suffixe="%"
+              onChange={setDureeSurPlace}
+            />
+            <CurseurValeur
+              label="Flânerie"
+              valeur={flaneriePct}
+              min={0}
+              max={100}
+              step={5}
+              suffixe="%"
+              onChange={setFlanerie}
+            />
+            <CurseurValeur
+              label="Plafond par jour"
+              valeur={plafondJourH}
+              min={4}
+              max={12}
+              step={1}
+              suffixe="h"
+              onChange={setPlafondJour}
+            />
+          </div>
+        </details>
       </section>
 
       <MesIncontournables />

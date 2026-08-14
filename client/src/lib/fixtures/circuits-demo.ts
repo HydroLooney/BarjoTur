@@ -13,7 +13,7 @@ export const circuitsDemo: Circuit[] = [
     duree: '24h',
     zone: 'Lysefjord',
     etapes: [
-      { ordre: 1, nom: 'Preikestolen (rando)', duree_min: 300, horaire: '7h30', note: 'Partir tôt pour éviter la foule.' },
+      { ordre: 1, nom: 'Preikestolen (rando)', poi_id: 101, duree_min: 300, horaire: '7h30', note: 'Partir tôt pour éviter la foule.' },
       { ordre: 2, nom: 'Baignade à Jørpeland', duree_min: 60, horaire: '14h00' },
       { ordre: 3, nom: 'Nuit en autonomie près du fjord', horaire: '19h00' },
     ],
@@ -28,8 +28,8 @@ export const circuitsDemo: Circuit[] = [
     jours: 3,
     zone: 'Vestland',
     etapes: [
-      { ordre: 1, nom: 'Bryggen (quartier hanséatique)', duree_min: 120 },
-      { ordre: 2, nom: 'Train de Flåm', duree_min: 120, note: 'Un des plus beaux trajets ferroviaires.' },
+      { ordre: 1, nom: 'Bryggen (quartier hanséatique)', poi_id: 102, duree_min: 120 },
+      { ordre: 2, nom: 'Train de Flåm', poi_id: 103, duree_min: 120, note: 'Un des plus beaux trajets ferroviaires.' },
       { ordre: 3, nom: 'Croisière Nærøyfjord', duree_min: 150 },
       { ordre: 4, nom: 'Mont Fløyen (funiculaire ou rando)', duree_min: 90 },
     ],
