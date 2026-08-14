@@ -1,3 +1,4 @@
+import { PremiersPas } from '@/components/PremiersPas';
 import { InstanceVoyage } from '@/components/InstanceVoyage';
 import { FilDuParcours } from '@/components/FilDuParcours';
 import { CransParcours } from '@/components/CransParcours';
@@ -14,6 +15,7 @@ export default function Accueil() {
           Le voyage qui vous ressemble. Voici où en est le parcours et ce qu'il reste à décider.
         </p>
       </div>
+      <PremiersPas />
       <InstanceVoyage />
       <FilDuParcours />
       <CransParcours />

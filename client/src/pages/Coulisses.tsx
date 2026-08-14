@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useParametres, type Parametre } from '@/lib/queries/parametres';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
+import { Bouton } from '@/ui/primitives/button';
+import { useOnboarding } from '@/stores/onboarding';
 
 // Coulisses (C09 / A08) : le registre single-source des paramètres (valeur active + recommandée +
 // justification en clair), groupé par domaine. Anti-cadrage : la méthode et les chiffres vivent ICI,
@@ -20,14 +22,21 @@ export default function Coulisses() {
   const groupes = useMemo(() => grouperParDomaine(data ?? []), [data]);
   const domaines = useMemo(() => [...groupes.keys()].sort((a, b) => a.localeCompare(b, 'fr')), [groupes]);
   const vide = (data ?? []).length === 0;
+  const reafficherPremiersPas = useOnboarding((s) => s.reafficher);
 
   return (
     <section className="space-y-4">
-      <h1 className="font-serif text-2xl">Coulisses</h1>
+      <h1 className="font-serif text-2xl">Réglages</h1>
       <p className="max-w-prose text-muted-foreground">
         La mécanique du choix : les paramètres du registre single-source, leur valeur active et la valeur
         recommandée par le moteur, avec la justification en clair. Ce qui explique, sans cadrer.
       </p>
+
+      <div>
+        <Bouton size="sm" variant="outline" onClick={reafficherPremiersPas}>
+          Revoir les premiers pas
+        </Bouton>
+      </div>
 
       {isLoading && vide ? <Chargement libelle="Chargement des paramètres." /> : null}
       {isError && vide ? (

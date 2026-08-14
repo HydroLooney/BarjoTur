@@ -9,6 +9,7 @@ import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { Champ } from '@/ui/primitives/input';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
+import { ETATS_CRAN } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Fil du parcours (A18 / M046) : la machine à crans du voyage. Chaque cran montre son état de validation
@@ -22,9 +23,9 @@ const PARCOURS_LIVE_ENV = import.meta.env.VITE_PARCOURS_LIVE === '1';
 type VariantBadge = 'neutre' | 'contour' | 'primaire';
 
 function etatLisible(c: Cran): { texte: string; variant: VariantBadge } {
-  if (c.etat === 'valide_verrouille') return { texte: 'cadenas fermé', variant: 'primaire' };
-  if (c.etat === 'valide_modifiable') return { texte: 'cadenas ouvert', variant: 'contour' };
-  return { texte: 'brouillon', variant: 'neutre' };
+  if (c.etat === 'valide_verrouille') return { texte: ETATS_CRAN.valide_verrouille, variant: 'primaire' };
+  if (c.etat === 'valide_modifiable') return { texte: ETATS_CRAN.valide_modifiable, variant: 'contour' };
+  return { texte: ETATS_CRAN.brouillon, variant: 'neutre' };
 }
 
 export function CransParcours() {

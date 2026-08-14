@@ -8,6 +8,7 @@ import { CarteItineraire } from '@/components/CarteItineraire';
 import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
+import { NATURE_ETAPE } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Arrêts imposés du faisceau (épinglés / réservés) : contrainte dure poussée au calcul (M062). Depuis la
@@ -162,7 +163,7 @@ export function Composeur() {
                 >
                   <span className="text-xs tabular-nums text-muted-foreground">{et.ordre}</span>
                   <Badge variant={et.nature === 'transit' ? 'neutre' : 'contour'}>
-                    {et.nature === 'transit' ? 'transit' : 'expérience'}
+                    {et.nature === 'transit' ? NATURE_ETAPE.transit : NATURE_ETAPE.experience}
                   </Badge>
                   {et.statut === 'en_attente_corridor' ? (
                     <span className="text-xs text-muted-foreground">en attente du corridor</span>

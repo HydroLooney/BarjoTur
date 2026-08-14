@@ -7,6 +7,7 @@ import { basculerAutonomie, libelleArret, nouvelleEtapeTransit } from '@/lib/tra
 import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageVide } from '@/ui/blocs/EtatVue';
+import { NATURE_ETAPE } from '@/lib/libelles';
 
 // Transit app-side (A19 / M055) : distingue les étapes de TRANSIT (repositionnement, on minimise) des
 // étapes d'EXPÉRIENCE (la boucle, on maximise le beau). Une étape de transit montre son corridor et son
@@ -59,7 +60,7 @@ export function EtapesTransit() {
         {ordonnees.map((e) => (
           <li key={e.id} className="rounded-lg border border-border p-3">
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <Badge variant="neutre">transit</Badge>
+              <Badge variant="neutre">{NATURE_ETAPE.transit}</Badge>
               <span className="font-medium">{e.depuis.label}</span>
               <span className="text-muted-foreground">→ {e.vers.label}</span>
               {e.jalon_date ? <span className="text-xs text-accent">jalon {e.jalon_date}</span> : null}

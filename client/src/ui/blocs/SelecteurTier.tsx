@@ -1,15 +1,11 @@
 import type { VoteTier } from '@barjotur/shared';
 import { cn } from '@/lib/utils';
+import { AVIS } from '@/lib/libelles';
 
 // Echelle de vote cote FAMILLE : T/S/A/B (les niveaux C/D existent en base mais ne sont pas proposes
-// au vote famille). Libelles en clair, sans score brut (anti-cadrage A11).
+// au vote famille). Libelles en clair (tableau central `libelles.AVIS`, miroir du glossaire), sans score
+// brut (anti-cadrage A11).
 const TIERS: VoteTier[] = ['T', 'S', 'A', 'B'];
-const LIBELLE: Record<string, string> = {
-  T: 'Coup de coeur',
-  S: 'Vraiment envie',
-  A: 'Bien',
-  B: 'Pourquoi pas',
-};
 const CLASSE_TIER: Record<string, string> = {
   T: 'bg-tier-T',
   S: 'bg-tier-S',
@@ -42,7 +38,7 @@ export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, classN
               type="button"
               disabled={disabled}
               aria-pressed={actif}
-              title={LIBELLE[t]}
+              title={AVIS[t as keyof typeof AVIS] ?? t}
               onClick={() => onChoisir(actif ? null : t)}
               className={cn(
                 'flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50',
