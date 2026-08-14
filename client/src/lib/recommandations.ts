@@ -1,4 +1,5 @@
 import type { CataloguePoi, VoteTier } from '@barjotur/shared';
+import { RECOMMANDATIONS } from '@/lib/libelles';
 
 // Rails de recommandation de l'Explorer (A20 §11 / M057). Recommander, pas lister à plat : des rails curés
 // au-dessus du parcours libre. Honnêteté R1 : chaque item dit POURQUOI il est là (qualité ? votre vote ?
@@ -64,10 +65,10 @@ export function railPourChacun(pois: CataloguePoi[], mesTiers: Record<string, Vo
 /** Construit les rails non vides, dans l'ordre d'affichage. */
 export function construireRails(pois: CataloguePoi[], mesTiers: Record<string, VoteTier>): Rail[] {
   const defs: Rail[] = [
-    { cle: 'incontournables', titre: 'Les incontournables', description: 'Les repères à ne pas manquer.', items: railIncontournables(pois) },
-    { cle: 'pour-chacun', titre: 'Pour chacun', description: 'À partir de vos votes.', items: railPourChacun(pois, mesTiers) },
-    { cle: 'famille', titre: 'La famille adore', description: 'Les valeurs sûres pour tous.', items: railFamille(pois) },
-    { cle: 'pepites', titre: 'Pépites', description: 'Les trouvailles hors des sentiers battus.', items: railPepites(pois) },
+    { cle: 'incontournables', titre: RECOMMANDATIONS.incontournables, description: 'Les repères à ne pas manquer.', items: railIncontournables(pois) },
+    { cle: 'pour-chacun', titre: RECOMMANDATIONS.pourChacun, description: 'À partir de vos votes.', items: railPourChacun(pois, mesTiers) },
+    { cle: 'famille', titre: RECOMMANDATIONS.famille, description: 'Les valeurs sûres pour tous.', items: railFamille(pois) },
+    { cle: 'pepites', titre: RECOMMANDATIONS.pepites, description: 'Les trouvailles hors des sentiers battus.', items: railPepites(pois) },
   ];
   return defs.filter((r) => r.items.length > 0);
 }

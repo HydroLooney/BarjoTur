@@ -4,23 +4,25 @@ import { Bouton } from '@/ui/primitives/button';
 import { LimiteErreur } from './LimiteErreur';
 import { BandeauParcours } from '@/components/BandeauParcours';
 import { cn } from '@/lib/utils';
+import { ESPACES } from '@/lib/libelles';
 import { useUi } from '@/stores/ui';
 import { useSyncMemoire } from '@/hooks/useSyncMemoire';
 
 // Socle d'app A20 : titres explicites pour un enfant (zéro jargon), nav mobile au pouce (barre du bas),
 // bandeau parcours persistant en tête de chaque vue (anti-« perdu »), squelette commun. Responsive-first,
 // petit écran d'abord : la nav primaire passe en barre basse sur mobile, inline en tête sur desktop.
+// Libellés depuis le tableau central (miroir du glossaire figé, M067).
 const PRIMAIRES = [
-  { to: '/', libelle: 'Le voyage', exact: true },
-  { to: '/explorer', libelle: 'Explorer', exact: false },
-  { to: '/le-trajet', libelle: 'Le trajet', exact: false },
-  { to: '/carte', libelle: 'Carte', exact: false },
-  { to: '/preparatifs', libelle: 'Préparatifs', exact: false },
+  { to: '/', libelle: ESPACES.voyage, exact: true },
+  { to: '/explorer', libelle: ESPACES.explorer, exact: false },
+  { to: '/le-trajet', libelle: ESPACES.trajet, exact: false },
+  { to: '/carte', libelle: ESPACES.carte, exact: false },
+  { to: '/preparatifs', libelle: ESPACES.preparatifs, exact: false },
 ] as const;
 
 const SECONDAIRES = [
-  { to: '/mes-envies', libelle: 'Mes envies', exact: false },
-  { to: '/reglages', libelle: 'Réglages', exact: false },
+  { to: '/mes-envies', libelle: ESPACES.envies, exact: false },
+  { to: '/reglages', libelle: ESPACES.reglages, exact: false },
 ] as const;
 
 export function Coquille() {

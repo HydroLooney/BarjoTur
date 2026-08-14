@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import type { Geometry } from 'geojson';
-import type { ComposeInput, ComposeReponse } from '@barjotur/shared';
+import type { ArretImpose, ComposeInput, ComposeReponse } from '@barjotur/shared';
 import { useArchetypes, useComposer } from '@/lib/queries/composeur';
 import { basesCandidatesDemo, composeReponseDemo } from '@/lib/fixtures/compose-demo';
+import { transitDemo } from '@/lib/fixtures/voyage-demo';
 import { CarteItineraire } from '@/components/CarteItineraire';
+import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
+
+// Arrêts imposés du faisceau (épinglés / réservés) : contrainte dure poussée au calcul (M062). Depuis la
+// fixture transit pour l'instant ; viendront de l'instance voyage live au flip.
+const ARRETS_IMPOSES: ArretImpose[] = transitDemo
+  .flatMap((e) => e.faisceau)
+  .filter((a) => a.epingle)
+  .map((a) => ({ lat: a.lat, lon: a.lon }));
 
 // Coquille compose-launch (C-11 / M029), flip-ready. Formulaire `ComposeInput` (bases candidates + ambiance
 // + agenda), appel du composeur derrière un DRAPEAU `live` : à false, on lit la fixture (contrat déjà typé,
@@ -31,7 +40,13 @@ export function Composeur() {
     setBases((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
   const lancer = () => {
-    const input: ComposeInput = { bases, archetype_key: archetypeKey, avec_agenda: avecAgenda, persister: false };
+    const input: ComposeInput = {
+      bases,
+      archetype_key: archetypeKey,
+      avec_agenda: avecAgenda,
+      persister: false,
+      arretsImposes: ARRETS_IMPOSES,
+    };
     if (live) composer.mutate(input);
     else setResultatDemo(composeReponseDemo(input));
   };
@@ -131,6 +146,38 @@ export function Composeur() {
               {live ? '' : ' Tracé de démonstration (fixture).'}
             </p>
           ) : null}
+        </div>
+      ) : null}
+
+      {resultat?.etapes && resultat.etapes.length > 0 ? (
+        <div className="space-y-1">
+          <h4 className="text-xs font-medium text-muted-foreground">La suite des étapes</h4>
+          <ol className="space-y-1">
+            {[...resultat.etapes]
+              .sort((a, b) => a.ordre - b.ordre)
+              .map((et) => (
+                <li
+                  key={et.ordre}
+                  className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+                >
+                  <span className="text-xs tabular-nums text-muted-foreground">{et.ordre}</span>
+                  <Badge variant={et.nature === 'transit' ? 'neutre' : 'contour'}>
+                    {et.nature === 'transit' ? 'transit' : 'expérience'}
+                  </Badge>
+                  {et.statut === 'en_attente_corridor' ? (
+                    <span className="text-xs text-muted-foreground">en attente du corridor</span>
+                  ) : null}
+                  {et.meta ? (
+                    <span className="text-xs text-muted-foreground">
+                      {et.meta.nuits} nuits · {Math.round(et.meta.drive_h)} h
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+          </ol>
+          <p className="text-xs text-muted-foreground">
+            La carte anime la boucle d'expérience ; les tracés de transit s'ajouteront avec le corridor.
+          </p>
         </div>
       ) : null}
     </div>
