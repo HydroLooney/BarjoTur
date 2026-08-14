@@ -10,6 +10,12 @@ Chaque lieu porte une petite fiche : une photo, un nom, ce qu'on y fait. On prom
 donne son avis. Les lieux qui viennent des guides et de la communauté sont déjà là, avec une réputation de départ.
 On peut aussi ajouter un lieu à soi.
 
+## Ma mémoire de voyage
+
+Chacun garde sa propre trace, sans rien effacer à personne. On marque un lieu comme vu ou comme déjà exploré, on tient
+un carnet des lieux qu'on a soi-même proposés, on regroupe ce qu'on veut en collections. Cette mémoire est
+personnelle et se retrouve d'un appareil à l'autre. Elle n'a pas besoin de code, car elle n'abîme rien de commun.
+
 ## Donner son avis
 
 L'avis se donne en quatre crans, du plus fort au plus léger : Trésor, Super, Sympa, Bof. Chacun a un budget d'avis,
@@ -46,6 +52,11 @@ tant qu'une chose n'est pas figée.
 
 Une fois l'itinéraire retenu, la carte le rejoue : le tracé se déroule dans l'ordre réel du voyage, les traversées
 en mer se distinguent du reste, et un repère avance au rythme des journées. C'est le voyage tel qu'on le vivra.
+
+## L'atlas à emporter
+
+Le voyage se met aussi sur papier : une page par jour, avec l'étape, ce qu'on y fait et le trajet, à imprimer ou à
+enregistrer en PDF. De quoi garder le voyage en main quand le réseau manque, au fond d'un fjord.
 
 ## Budget et intendance
 
