@@ -10,6 +10,7 @@ export * from './mcda.js';
 export * from './composeur.js';
 export * from './activite.js';
 export * from './circuit.js';
+export * from './enrichissement.js';
 export * from './arbitrage.js';
 export * from './allocation.js';
 export * from './composition.js';

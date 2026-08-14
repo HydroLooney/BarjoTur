@@ -48,6 +48,8 @@ export interface Circuit {
   conseils?: string[];
   /** Zone ou région où se déroule le circuit. */
   zone?: string;
+  /** Origine : tiré d'un guide, ou proposé par la communauté (A28). Défaut : guide. */
+  origine?: 'guide' | 'communaute';
 }
 
 /**
