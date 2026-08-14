@@ -48,12 +48,13 @@ SELECT
   -- Ici on met NULL pour les nouvelles paires ; à compléter par le script 30b_matrices_km.sql.
   NULL::numeric     AS km_calcule
 FROM pgr_aStarCostMatrix(
-  'SELECT id, source, target,
-          cost_s AS cost, reverse_cost_s AS reverse_cost,
-          x1, y1, x2, y2
-   FROM mcda2.ways_van
-   WHERE x1 IS NOT NULL
-     AND id NOT IN (SELECT edge_id FROM mcda2.ways_van_exclusions)',   -- A-04 : exclut les arêtes non-van (bateau passagers)
+  'SELECT w.id, w.source, w.target,
+          COALESCE(o.cost_s, w.cost_s) AS cost, COALESCE(o.cost_s, w.reverse_cost_s) AS reverse_cost,   -- A-19 : recoût ferry par override
+          w.x1, w.y1, w.x2, w.y2
+   FROM mcda2.ways_van w
+   LEFT JOIN mcda2.ways_van_cout_override o ON o.edge_id = w.id
+   WHERE w.x1 IS NOT NULL
+     AND w.id NOT IN (SELECT edge_id FROM mcda2.ways_van_exclusions)',   -- A-04/A-17 : exclut bateaux-passagers + artefacts
   ARRAY(SELECT node_van FROM mcda2.bases_v2 ORDER BY base_id),
   directed := true,
   heuristic := 2
