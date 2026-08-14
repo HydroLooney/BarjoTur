@@ -14,6 +14,10 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Code.** Le code de l'organisateur, demandé pour valider ou rouvrir une étape, ou pour un geste qui touche à l'identité d'un voyageur. Voter et explorer ne demandent jamais de code.
 
+**Invité.** Quelqu'un à qui l'on ouvre le voyage en découverte : il voit l'itinéraire retenu, sa carte, les lieux choisis, mais ne vote pas et ne compose pas. Un lien d'invité montre sans donner la main.
+
+**Démonstration.** Un voyage d'exemple, ouvert pour faire le tour de l'app. On y voit tout et on peut essayer de voter, mais rien n'y engage un vrai voyage.
+
 ## Le fil du voyage
 
 **Le fil du voyage.** La suite des six moments par lesquels le voyage avance : L'idée, Le van, Explorer, Composer, Préparer, Le départ. Un bandeau le rappelle en haut de chaque écran.
