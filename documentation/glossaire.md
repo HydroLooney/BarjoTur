@@ -44,6 +44,8 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Pépite.** Une trouvaille hors des sentiers battus, signalée comme telle.
 
+**Vaut le voyage, vaut le détour, au passage.** Trois crans de mise en avant d'un lieu, selon combien il justifie qu'on s'écarte de sa route : « vaut le voyage » pour l'exceptionnel qui vaut un grand détour, « vaut le détour » pour un écart modéré, « au passage » pour ce qui est presque sur le chemin. En dessous, un lieu n'est pas mis en avant. Le composeur s'en sert pour décider quoi glisser dans une journée sans l'alourdir.
+
 **Mes lieux.** La mémoire personnelle de chacun : les lieux déjà vus, les collections, les propositions. Elle est à soi, sans code, et suit d'un appareil à l'autre.
 
 **Déjà vu.** La marque posée sur un lieu dont on a ouvert la fiche, pour ne pas y repasser.
