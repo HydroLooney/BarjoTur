@@ -25,16 +25,16 @@ export function validerAppetit(corps: unknown): AppetitThematique {
 }
 
 /** Les appétits thématiques du membre porteur du lien. Passe-plat. Lecture ouverte au lien. */
-export async function lireAppetits(code: string): Promise<AppetitThematique[]> {
-  const res = await appelerRpc<AppetitThematique[] | null>('appetit_lire', [argTexte(code)]);
+export async function lireAppetits(code: string, rpc = appelerRpc): Promise<AppetitThematique[]> {
+  const res = await rpc<AppetitThematique[] | null>('appetit_lire', [argTexte(code)]);
   return res ?? [];
 }
 
 /** Écrit (upsert) un appétit du voyageur porteur du lien. Gaté capacité `voter` (autorité serveur). Idempotent. */
-export async function ecrireAppetit(code: string, appetit: AppetitThematique): Promise<AppetitThematique> {
-  const qui = await lireWhoami(code);
+export async function ecrireAppetit(code: string, appetit: AppetitThematique, rpc = appelerRpc): Promise<AppetitThematique> {
+  const qui = await lireWhoami(code, rpc);
   exigerCapacite(qui.role, 'voter');
-  const res = await appelerRpc<{ ok: boolean; error?: string; theme?: string; appetit?: number }>('appetit_ecrire', [
+  const res = await rpc<{ ok: boolean; error?: string; theme?: string; appetit?: number }>('appetit_ecrire', [
     argTexte(code),
     argTexte(appetit.theme),
     argFloat(appetit.appetit),

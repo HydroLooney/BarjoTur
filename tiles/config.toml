@@ -73,6 +73,26 @@ id_column = "circuit_id"
 properties = ["circuit_id", "nom", "distance_km", "denivele_pos", "tier_defaut", "votable"]
 
 # ---------------------------------------------------------------------------
+# Couche sentiers de randonnée (T048, A060 — Turrutebasen, 139 241 segments, lignes, zoom 8-14)
+# diffusion.v_web_sentiers : objid (clé de tuile), nom, difficulte (facile|moyen|difficile|expert|non gradé),
+# surface, saison, length_m. Géométrie 4326 déjà simplifiée 10 m (bon z8-13). Style par `difficulte` (5 classes)
+# côté front (C). Si les tuiles lointaines pèsent, A livre un LOD (`v_web_sentiers_lod`, A060) — on ajustera minzoom.
+# ---------------------------------------------------------------------------
+[[postgres.tables]]
+schema = "diffusion"
+table = "v_web_sentiers"
+srid = 4326
+geometry_column = "geom"
+geometry_type = "LineString"
+clip_geom = true
+buffer = 8
+extent = 4096
+minzoom = 8
+maxzoom = 14
+id_column = "objid"
+properties = ["objid", "nom", "difficulte", "surface", "saison", "length_m"]
+
+# ---------------------------------------------------------------------------
 # Couche routes base-à-base (lignes, zoom 4-12)
 # diffusion.v_web_base_routes : paires base src/tgt, geometry assemblée, temps_reel_s
 # ---------------------------------------------------------------------------

@@ -69,18 +69,23 @@ function refusRpc(error: string | undefined): ErreurRequete {
 // --- Orchestration flip-ready (RPC câblées au DSN) -----------------------------------------------------------
 
 /** Liste la tribu d'un voyage (capacité administrer_voyageurs). Le demandeur prouve son rôle par son lien (whoami). */
-export async function lireVoyageurs(voyageId: number, codeDemandeur: string): Promise<Voyageur[]> {
-  const qui = await lireWhoami(codeDemandeur);
+export async function lireVoyageurs(voyageId: number, codeDemandeur: string, rpc = appelerRpc): Promise<Voyageur[]> {
+  const qui = await lireWhoami(codeDemandeur, rpc);
   exigerCapacite(qui.role, 'administrer_voyageurs');
-  const lignes = await appelerRpc<MembreBrut[] | null>('voyageurs_lire', [argBigint(voyageId)]);
+  const lignes = await rpc<MembreBrut[] | null>('voyageurs_lire', [argBigint(voyageId)]);
   return (lignes ?? []).map(versVoyageur);
 }
 
 /** Change le rôle d'un voyageur cible. Autorité BFF (peut) ; la RPC RE-vérifie organisateur + PIN (autorité serveur). */
-export async function changerRole(voyageId: number, codeDemandeur: string, d: DemandeRole): Promise<Voyageur> {
-  const qui = await lireWhoami(codeDemandeur);
+export async function changerRole(
+  voyageId: number,
+  codeDemandeur: string,
+  d: DemandeRole,
+  rpc = appelerRpc,
+): Promise<Voyageur> {
+  const qui = await lireWhoami(codeDemandeur, rpc);
   exigerCapacite(qui.role, 'administrer_voyageurs');
-  const res = await appelerRpc<{ ok: boolean; error?: string; membre?: MembreBrut }>('voyageur_role_changer', [
+  const res = await rpc<{ ok: boolean; error?: string; membre?: MembreBrut }>('voyageur_role_changer', [
     argBigint(voyageId),
     argBigint(d.membre_id),
     argTexte(d.role),
@@ -96,10 +101,11 @@ export async function regenererLien(
   voyageId: number,
   codeDemandeur: string,
   d: DemandeRegenererLien,
+  rpc = appelerRpc,
 ): Promise<Voyageur> {
-  const qui = await lireWhoami(codeDemandeur);
+  const qui = await lireWhoami(codeDemandeur, rpc);
   exigerCapacite(qui.role, 'administrer_voyageurs');
-  const res = await appelerRpc<{ ok: boolean; error?: string; membre?: MembreBrut }>('voyageur_lien_regenerer', [
+  const res = await rpc<{ ok: boolean; error?: string; membre?: MembreBrut }>('voyageur_lien_regenerer', [
     argBigint(voyageId),
     argBigint(d.membre_id),
     argTexte(codeDemandeur),

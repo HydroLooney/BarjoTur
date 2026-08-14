@@ -19,6 +19,6 @@ export function parsePoiId(brut: string): number {
 }
 
 /** Lit le budget-temps résolu d'un POI (durée modulée + thèmes). Passe-plat de la RPC. Flip-ready (DSN + producteur A). */
-export async function lireBudgetTempsPoi(poiId: number): Promise<BudgetTempsPoi> {
-  return appelerRpc<BudgetTempsPoi>('budget_temps_poi', [argEntier(poiId)]);
+export async function lireBudgetTempsPoi(poiId: number, rpc = appelerRpc): Promise<BudgetTempsPoi> {
+  return rpc<BudgetTempsPoi>('budget_temps_poi', [argEntier(poiId)]);
 }
