@@ -24,6 +24,15 @@ interface EtatCadence {
   setDureeSurPlace: (v: number) => void;
   setFlanerie: (v: number) => void;
   setPlafondJour: (v: number) => void;
+  /** Hydratation depuis le serveur au flip (sync perso). Le serveur gagne s'il existe (blob versionné). */
+  remplacer: (
+    etat: Partial<
+      Pick<
+        EtatCadence,
+        'cadence' | 'incontournables' | 'dureeSurPlacePct' | 'flaneriePct' | 'plafondJourH'
+      >
+    >,
+  ) => void;
 }
 
 export const useCadence = create<EtatCadence>()(
@@ -45,6 +54,7 @@ export const useCadence = create<EtatCadence>()(
       setDureeSurPlace: (v) => set({ dureeSurPlacePct: v }),
       setFlanerie: (v) => set({ flaneriePct: v }),
       setPlafondJour: (v) => set({ plafondJourH: v }),
+      remplacer: (etat) => set((s) => ({ ...s, ...etat })),
     }),
     { name: 'barjotur-cadence' },
   ),
