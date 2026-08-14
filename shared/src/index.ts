@@ -11,4 +11,5 @@ export * from './composeur.js';
 export * from './budget.js';
 export * from './memoire.js';
 export * from './parcours.js';
+export * from './voyage.js';
 export * from './api.js';
