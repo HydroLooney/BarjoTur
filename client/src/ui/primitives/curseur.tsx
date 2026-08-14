@@ -56,7 +56,7 @@ export function CurseurValeur({
             step={step}
             value={valeur}
             onChange={(e) => poser(Number(e.target.value))}
-            className="h-9 w-20"
+            className="min-h-tactile w-20"
             aria-label={label ?? 'valeur'}
           />
           {suffixe ? <span className="text-sm text-muted-foreground">{suffixe}</span> : null}
