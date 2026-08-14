@@ -21,12 +21,12 @@ export const DIFFICULTES: NiveauDifficulte[] = [
   { code: 'moyen', libelle: 'Moyen', token: '--accent' },
   { code: 'difficile', libelle: 'Difficile', token: '--ocre' },
   { code: 'expert', libelle: 'Expert', token: '--destructive' },
-  { code: 'non gradé', libelle: 'Non classé', token: '--muted-foreground' },
+  { code: 'non gradé', libelle: 'Non gradé', token: '--muted-foreground' },
 ];
 
 /** Libellé lisible d'une difficulté (repli sur la valeur brute si inconnue). */
 export function libelleDifficulte(code: string | null | undefined): string {
-  return DIFFICULTES.find((d) => d.code === code)?.libelle ?? (code ? String(code) : 'Non classé');
+  return DIFFICULTES.find((d) => d.code === code)?.libelle ?? (code ? String(code) : 'Non gradé');
 }
 
 /**

@@ -2,6 +2,7 @@ import type { CataloguePoi, Tier } from '@barjotur/shared';
 import { Champ } from '@/ui/primitives/input';
 import { useExplorer } from '@/stores/explorer';
 import { categoriesDisponibles } from '@/lib/filtrer-catalogue';
+import { AVIS } from '@/lib/libelles';
 
 const TIERS: Tier[] = ['T', 'S', 'A', 'B'];
 const CLASSE_SELECT =
@@ -40,12 +41,12 @@ export function BarreFiltres({ pois }: { pois: CataloguePoi[] }) {
         className={CLASSE_SELECT}
         value={filtres.tier ?? ''}
         onChange={(e) => setFiltres({ tier: (e.target.value || null) as Tier | null })}
-        aria-label="Filtrer par tier par défaut"
+        aria-label="Filtrer par avis par défaut"
       >
-        <option value="">Tous tiers</option>
+        <option value="">Tous les avis</option>
         {TIERS.map((t) => (
           <option key={t} value={t}>
-            {t}
+            {AVIS[t as keyof typeof AVIS] ?? t}
           </option>
         ))}
       </select>

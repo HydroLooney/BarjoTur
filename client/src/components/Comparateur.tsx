@@ -93,7 +93,7 @@ export function Comparateur() {
 
       {consensus && ecarts.length > 0 ? (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium">Consensus égalitariste : ce que chacun cède</h2>
+          <h2 className="text-sm font-medium">Le compromis de la famille : ce que chacun cède</h2>
           <p className="max-w-prose text-xs text-muted-foreground">
             L'itinéraire retenu se tient entre les itinéraires proposés. Voici, pour chacun, l'écart mesuré à
             son idéal (durée, distance, budget). Ce n'est pas un jugement, c'est la distance au choix commun.
