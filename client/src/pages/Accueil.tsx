@@ -18,6 +18,8 @@ export default function Accueil() {
         </p>
       </div>
       <PremiersPas />
+      <BandeauAToiDeJouer />
+      <FilDepuisDerniereVisite />
       <InstanceVoyage />
       <FilDuParcours />
       <CransParcours />

@@ -7,6 +7,7 @@ import { useIdentite } from '@/stores/identite';
 import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useOnboarding } from '@/stores/onboarding';
 import { usePeut } from '@/hooks/usePeut';
+import { useGrandEcran } from '@/hooks/useMediaQuery';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
@@ -42,6 +43,7 @@ export default function Explorer() {
 
   const code = useIdentite((s) => s.code);
   const peutVoter = usePeut('voter');
+  const grandEcran = useGrandEcran();
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
   const explores = useMemoireExploration((s) => s.explores);
@@ -58,6 +60,33 @@ export default function Explorer() {
     const v = mesVotes?.tiers[`p:${osmId}`];
     return v ?? null;
   };
+
+  // Panneau liste (contenu), réutilisé tel quel sur mobile (un onglet à la fois) ET sur grand écran (à côté de
+  // la carte). Extrait pour ne pas dupliquer la grille de cartes entre les deux mises en page.
+  const panneauListe = (
+    <div className="space-y-4">
+      <BarreFiltres pois={pois} />
+      {isLoading && pois.length === 0 ? <Chargement libelle="Chargement du catalogue." /> : null}
+      {isError && pois.length === 0 ? (
+        <MessageErreur>Catalogue indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
+      ) : null}
+      {!isLoading && !isError && liste.length === 0 && pois.length > 0 ? (
+        <MessageVide>Aucun lieu ne correspond à ces filtres. Élargissez la recherche.</MessageVide>
+      ) : null}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        {liste.map((p) => (
+          <CartePoiCatalogue
+            key={p.id}
+            poi={p}
+            monTier={monTierPour(p.id)}
+            peutVoter={peutVoter}
+            explore={explores.includes(p.id)}
+            onVoter={(tier) => voter.mutate({ ref: `p:${p.id}`, tier: tier ?? undefined })}
+          />
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <section className="space-y-4">
@@ -92,66 +121,60 @@ export default function Explorer() {
 
       <ActiviteIdealeZone />
 
-      <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
-        {ONGLETS.map((o, i) => (
-          <button
-            key={o.cle}
-            type="button"
-            role="tab"
-            id={`onglet-${o.cle}`}
-            aria-selected={onglet === o.cle}
-            aria-controls={`panneau-${o.cle}`}
-            // Pattern ARIA tabs : roving tabindex (seul l'onglet actif est tabbable) + flèches gauche/droite.
-            tabIndex={onglet === o.cle ? 0 : -1}
-            onKeyDown={(e) => {
-              if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-              e.preventDefault();
-              const dir = e.key === 'ArrowRight' ? 1 : -1;
-              const cible = ONGLETS[(i + dir + ONGLETS.length) % ONGLETS.length];
-              if (!cible) return;
-              setOnglet(cible.cle);
-              document.getElementById(`onglet-${cible.cle}`)?.focus();
-            }}
-            onClick={() => setOnglet(o.cle)}
-            className={cn(
-              'inline-flex min-h-tactile items-center px-3 py-2 text-sm transition-colors',
-              onglet === o.cle
-                ? 'border-b-2 border-primary font-medium text-foreground'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            {o.libelle}
-          </button>
-        ))}
-      </div>
-
-      {onglet === 'carte' ? (
-        <div role="tabpanel" id="panneau-carte" aria-labelledby="onglet-carte">
-          <CarteExplorer />
-        </div>
-      ) : (
-        <div role="tabpanel" id="panneau-liste" aria-labelledby="onglet-liste" className="space-y-4">
-          <BarreFiltres pois={pois} />
-          {isLoading && pois.length === 0 ? <Chargement libelle="Chargement du catalogue." /> : null}
-          {isError && pois.length === 0 ? (
-            <MessageErreur>Catalogue indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
-          ) : null}
-          {!isLoading && !isError && liste.length === 0 && pois.length > 0 ? (
-            <MessageVide>Aucun lieu ne correspond à ces filtres. Élargissez la recherche.</MessageVide>
-          ) : null}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {liste.map((p) => (
-              <CartePoiCatalogue
-                key={p.id}
-                poi={p}
-                monTier={monTierPour(p.id)}
-                peutVoter={peutVoter}
-                explore={explores.includes(p.id)}
-                onVoter={(tier) => voter.mutate({ ref: `p:${p.id}`, tier: tier ?? undefined })}
-              />
-            ))}
+      {/* Multi-format (A26 / M112) : grand écran = liste ET carte côte à côte (deux volets) ; mobile = un onglet
+          à la fois (un écran, une tâche). La carte lourde (A05) n'est montée que lorsqu'elle est visible. */}
+      {grandEcran ? (
+        <div className="grid grid-cols-2 gap-4">
+          <div aria-label="Liste des lieux">{panneauListe}</div>
+          <div aria-label="Carte des lieux">
+            <CarteExplorer hauteur="calc(100dvh - 15rem)" />
           </div>
         </div>
+      ) : (
+        <>
+          <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
+            {ONGLETS.map((o, i) => (
+              <button
+                key={o.cle}
+                type="button"
+                role="tab"
+                id={`onglet-${o.cle}`}
+                aria-selected={onglet === o.cle}
+                aria-controls={`panneau-${o.cle}`}
+                // Pattern ARIA tabs : roving tabindex (seul l'onglet actif est tabbable) + flèches gauche/droite.
+                tabIndex={onglet === o.cle ? 0 : -1}
+                onKeyDown={(e) => {
+                  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                  e.preventDefault();
+                  const dir = e.key === 'ArrowRight' ? 1 : -1;
+                  const cible = ONGLETS[(i + dir + ONGLETS.length) % ONGLETS.length];
+                  if (!cible) return;
+                  setOnglet(cible.cle);
+                  document.getElementById(`onglet-${cible.cle}`)?.focus();
+                }}
+                onClick={() => setOnglet(o.cle)}
+                className={cn(
+                  'inline-flex min-h-tactile items-center px-3 py-2 text-sm transition-colors',
+                  onglet === o.cle
+                    ? 'border-b-2 border-primary font-medium text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {o.libelle}
+              </button>
+            ))}
+          </div>
+
+          {onglet === 'carte' ? (
+            <div role="tabpanel" id="panneau-carte" aria-labelledby="onglet-carte">
+              <CarteExplorer />
+            </div>
+          ) : (
+            <div role="tabpanel" id="panneau-liste" aria-labelledby="onglet-liste">
+              {panneauListe}
+            </div>
+          )}
+        </>
       )}
     </section>
   );

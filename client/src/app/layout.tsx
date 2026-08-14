@@ -8,6 +8,24 @@ import { ESPACES } from '@/lib/libelles';
 import { useUi } from '@/stores/ui';
 import { useSyncMemoire } from '@/hooks/useSyncMemoire';
 import { useEnLigne } from '@/hooks/useEnLigne';
+import { signalBoucleDemo } from '@/lib/fixtures/signal-boucle-demo';
+
+// Libellé de nav avec pastille discrète « du nouveau ici » (M112) quand la route porte des nouveautés. Fixture
+// hors live ; au flip, l'état vient du serveur (ce qui a bougé depuis mon dernier passage).
+function LabelNav({ to, libelle }: { to: string; libelle: string }) {
+  const nouveaute = (signalBoucleDemo.nouveautes[to] ?? 0) > 0;
+  return (
+    <span className="inline-flex items-center gap-1">
+      {libelle}
+      {nouveaute ? (
+        <>
+          <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+          <span className="sr-only">du nouveau</span>
+        </>
+      ) : null}
+    </span>
+  );
+}
 
 // Socle d'app A20 : titres explicites pour un enfant (zéro jargon), nav mobile au pouce (barre du bas),
 // bandeau parcours persistant en tête de chaque vue (anti-« perdu »), squelette commun. Responsive-first,
@@ -54,7 +72,7 @@ export function Coquille() {
                 )
               }
             >
-              {l.libelle}
+              <LabelNav to={l.to} libelle={l.libelle} />
             </NavLink>
           ))}
         </nav>
@@ -71,7 +89,7 @@ export function Coquille() {
                 )
               }
             >
-              {l.libelle}
+              <LabelNav to={l.to} libelle={l.libelle} />
             </NavLink>
           ))}
         </nav>
@@ -118,7 +136,7 @@ export function Coquille() {
               )
             }
           >
-            {l.libelle}
+            <LabelNav to={l.to} libelle={l.libelle} />
           </NavLink>
         ))}
       </nav>
