@@ -10,6 +10,7 @@ import {
   type Nature,
 } from '@/lib/anim-trajet';
 import { charte } from '@/ui/theme';
+import { CENTRE_NORVEGE, FOND_CARTE } from '@/lib/carte-config';
 import { useUi } from '@/stores/ui';
 
 // Carte itineraire animee (T012 / C16). Consomme la math PURE de lib/anim-trajet (rendu strict
@@ -19,8 +20,6 @@ import { useUi } from '@/stores/ui';
 // Rendu : trace complet estompe (ghost) + segments terrestres pleins (boucle) + traversees d'eau
 // TIRETEES (liaison), plus un marqueur qui parcourt le trace au prorata du TEMPS (A05).
 
-const FOND = 'https://tiles.openfreemap.org/styles/positron';
-const CENTRE_NORVEGE = { longitude: 10, latitude: 63, zoom: 3.4 };
 const DUREE_BOUCLE_MS = 12000;
 
 // Reference stable pour la valeur par defaut d'`etapes` : un `[]` inline serait recree a chaque
@@ -152,7 +151,7 @@ export function CarteItineraire({ geom, etapes = ETAPES_VIDES, hauteur = '70vh' 
 
   return (
     <div className="relative overflow-hidden rounded-lg border border-border" style={{ height: hauteur }}>
-      <Map initialViewState={CENTRE_NORVEGE} mapStyle={FOND} style={{ width: '100%', height: '100%' }}>
+      <Map initialViewState={CENTRE_NORVEGE} mapStyle={FOND_CARTE} style={{ width: '100%', height: '100%' }}>
         <NavigationControl position="top-right" />
         {!vide && (
           <>

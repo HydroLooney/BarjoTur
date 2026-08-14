@@ -3,13 +3,12 @@ import { useEffect, useMemo } from 'react';
 import { Map, Source, Layer, Marker, useMap } from '@vis.gl/react-maplibre';
 import type { FeatureCollection, Geometry, Position } from 'geojson';
 import { charte } from '@/ui/theme';
+import { FOND_CARTE } from '@/lib/carte-config';
 import { useUi } from '@/stores/ui';
 
 // Mini-carte STATIQUE du tracé d'un circuit rando (A11 : voir le circuit avant de voter). Un seul
 // contexte WebGL, non interactive (aperçu). Ligne pour un circuit, marqueur pour un point. Couleur
 // par jeton (zéro hex). Alimentée par la géométrie du POI (CataloguePoi.geometrie), pas d'appel dédié.
-
-const FOND = 'https://tiles.openfreemap.org/styles/positron';
 
 type Bornes = [[number, number], [number, number]];
 
@@ -76,7 +75,7 @@ export function MiniCarteRando({ geom, hauteur = '220px' }: { geom: Geometry; ha
     <div className="overflow-hidden rounded-md border border-border" style={{ height: hauteur }}>
       <Map
         initialViewState={{ longitude: lon0 ?? 8, latitude: lat0 ?? 61, zoom: 8 }}
-        mapStyle={FOND}
+        mapStyle={FOND_CARTE}
         style={{ width: '100%', height: '100%' }}
         interactive={false}
       >

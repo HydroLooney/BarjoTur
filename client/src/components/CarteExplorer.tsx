@@ -6,6 +6,7 @@ import type { VoteTier } from '@barjotur/shared';
 import { useBboxPois, type BBox } from '@/lib/queries/poi-bbox';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { charte } from '@/ui/theme';
+import { FOND_CARTE } from '@/lib/carte-config';
 import { useUi } from '@/stores/ui';
 import { useIdentite } from '@/stores/identite';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
@@ -15,7 +16,6 @@ import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 // couleur de score portée sur la carte. Cliquer un POI ouvre un panneau où le vote est reposable
 // (réutilise SelecteurTier). Un seul contexte WebGL, couleurs par jetons (zéro hex, darkmode-aware).
 
-const FOND = 'https://tiles.openfreemap.org/styles/positron';
 const VUE_INITIALE = { longitude: 8, latitude: 61, zoom: 4.2 };
 const LAYER_VOTABLE = 'poi-votable';
 const LAYER_REPERE = 'poi-repere';
@@ -66,7 +66,7 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
     <div className="relative overflow-hidden rounded-lg border border-border" style={{ height: hauteur }}>
       <Map
         initialViewState={VUE_INITIALE}
-        mapStyle={FOND}
+        mapStyle={FOND_CARTE}
         style={{ width: '100%', height: '100%' }}
         interactiveLayerIds={[LAYER_VOTABLE, LAYER_REPERE]}
         onLoad={(e) => majBounds(e.target)}
