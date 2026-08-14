@@ -30,6 +30,12 @@ Le catalogue des lieux. On y découvre, on cherche, on garde les siens, on donne
 
 **Lire les recommandations.** En tête, quatre sélections triées : Les incontournables, Pour chacun, La famille adore, Pépites. Chacune dit pourquoi un lieu s'y trouve. Exemple : dans Pour chacun, un lieu apparaît avec la mention « vous l'avez mis en Coup de coeur ».
 
+**Repérer ce qui vaut le voyage.** Un lieu peut porter une mention qui pèse son intérêt au regard du chemin pour l'atteindre : « vaut le voyage » pour l'exceptionnel, « vaut le détour » pour un écart modéré, « au passage » pour ce qui est presque sur la route. Exemple : voir qu'une cascade « vaut le voyage » et s'organiser pour ne pas la rater.
+
+**Adopter un circuit tout fait.** L'app garde des parcours de guides, une suite de lieux avec leurs conseils. On en reprend un, il vient dans le voyage, et on l'adapte : retirer une halte, en ajouter, inverser deux jours ; l'app retrace le chemin à chaque fois. Exemple : reprendre un circuit des Lofoten et en retirer l'étape qui ne dit rien à personne.
+
+**Voir l'activité conseillée par endroit.** À certaines zones, un guide attache une activité de prédilection, kayak, rafting, faune. Les lieux de ce genre y remontent, d'autant plus si vous avez dit aimer ce thème. Exemple : aimer le nautique fait ressortir les fjords où le guide conseille le kayak.
+
 **Marquer un lieu vu.** Une fois une fiche ouverte, le lieu se marque comme déjà vu, pour ne pas y repasser. Exemple : après avoir parcouru vingt fiches, on voit d'un coup d'œil celles qu'on n'a pas encore regardées.
 
 **Faire une collection.** On regroupe des lieux à sa guise, par thème ou par envie. Exemple : une collection « cascades » et une collection « villages de pêcheurs ».

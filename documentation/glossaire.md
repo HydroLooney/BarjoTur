@@ -46,6 +46,10 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Vaut le voyage, vaut le détour, au passage.** Trois crans de mise en avant d'un lieu, selon combien il justifie qu'on s'écarte de sa route : « vaut le voyage » pour l'exceptionnel qui vaut un grand détour, « vaut le détour » pour un écart modéré, « au passage » pour ce qui est presque sur le chemin. En dessous, un lieu n'est pas mis en avant. Le composeur s'en sert pour décider quoi glisser dans une journée sans l'alourdir.
 
+**Circuit.** Un parcours tout fait tiré d'un guide, une enfilade de lieux dans l'ordre, avec ses conseils. On le reprend tel quel et on l'adapte à sa guise, re-tracé pour le van ou la marche. Il sert aussi de repère à l'app, qui tient pour recommandables les lieux qu'un guide a jugés dignes d'un parcours.
+
+**Activité idéale d'une zone.** Ce qu'un guide conseille de faire à tel endroit : du kayak ici, du rafting là. L'app en tient compte pour mettre en avant les lieux de ce genre dans cette zone, d'autant plus pour qui a dit aimer ce thème.
+
 **Mes lieux.** La mémoire personnelle de chacun : les lieux déjà vus, les collections, les propositions. Elle est à soi, sans code, et suit d'un appareil à l'autre.
 
 **Déjà vu.** La marque posée sur un lieu dont on a ouvert la fiche, pour ne pas y repasser.
@@ -91,6 +95,16 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 **Demi-journée et journée.** Certaines activités se prennent en bloc, un kayak par exemple, pas en petits bouts. On leur choisit une demi-journée, autour de quatre heures, ou une journée, autour de huit.
 
 **Argent et temps.** Le réglage entre payer moins et aller plus vite : un ferry payant mais rapide contre une route gratuite mais longue. Le curseur dit ce qu'on préfère, l'app choisit la variante en conséquence.
+
+## Mon voyage et le voyage commun
+
+**Mon voyage.** L'espace à soi de chaque voyageur, où l'on façonne son voyage idéal : sa cadence, ses lieux tenus pour incontournables, ses envies. L'app en tire l'itinéraire qu'on ferait seul, gardé comme repère pour mesurer plus tard l'écart au voyage commun.
+
+**Cadence.** Le curseur entre rusher et flâner, propre à chaque voyageur. Poussé vers rusher, les visites raccourcissent, la flânerie se réduit, les journées se remplissent, on voit plus de lieux ; poussé vers flâner, l'inverse. Il règle d'un geste tous les temps du voyage, dans des bornes communes qui protègent chacun, les enfants d'abord : pas de journée épuisante, pas de route tard le soir.
+
+**Écart à l'idéal.** De combien le voyage commun s'éloigne de l'idéal calculé pour un voyageur donné. Chacun garde le sien sous les yeux ; quand l'itinéraire bouge, on voit tout de suite qui il avantage et qui il lèse, et de combien.
+
+**À toi de jouer, du nouveau.** Les deux repères de la boucle collaborative. « À toi de jouer » dit qu'on attend un geste de vous, plutôt qu'une réaction des autres. « Du nouveau » signale, sans bruit, ce qui a changé depuis votre dernière visite : une proposition, un vote, un itinéraire qui a bougé.
 
 ## La carte
 

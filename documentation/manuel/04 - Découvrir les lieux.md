@@ -25,6 +25,22 @@ Quatre sélections, quand elles ont de quoi se remplir.
 
 Chaque lieu proposé porte sa raison en clair : « repère majeur », « vous l'avez mis en Coup de coeur », « pépite signalée ». On sait toujours d'où vient la recommandation.
 
+## Ce qui vaut le voyage, ce qui vaut le détour
+
+Tous les lieux ne se valent pas, et l'app le dit franchement. Un lieu peut porter une mention qui pèse son intérêt à l'aune du chemin qu'il faut faire pour l'atteindre. « Vaut le voyage » signale l'exceptionnel, celui pour lequel un grand détour se justifie. « Vaut le détour » va à un écart modéré. « Au passage » désigne ce qui est presque sur la route, qu'on attrape sans presque s'écarter. En dessous, un lieu reste au catalogue mais sans mise en avant.
+
+Cette mention sert deux fois. À la découverte, elle situe d'un coup d'œil ce qui mérite qu'on s'organise autour. Au moment d'assembler le trajet, elle aide l'app à décider quoi glisser dans une journée sans l'alourdir : on s'écarte volontiers pour ce qui vaut le voyage, on hésite pour le reste.
+
+## Les circuits tout faits
+
+Les guides ne donnent pas que des lieux isolés, ils proposent des parcours entiers, une enfilade de lieux dans un ordre, avec leurs conseils. L'app en garde une bibliothèque, à reprendre tels quels. On choisit un circuit qui plaît, il vient se poser dans le voyage, et rien n'y est figé : on retire une halte, on en ajoute une, on inverse deux jours. L'app retrace alors le chemin pour le van ou pour la marche, selon le circuit, et recalcule à chaque changement.
+
+Un circuit adopté reste malléable de bout en bout. On part du travail d'un guide plutôt que de la page blanche, et on le façonne jusqu'à ce qu'il devienne le sien.
+
+## L'activité conseillée par endroit
+
+À certaines zones, un guide attache une activité de prédilection : du kayak dans tel fjord, du rafting sur telle rivière, l'observation de la faune à tel autre endroit. L'app s'en sert pour mettre en avant, dans cette zone, les lieux de ce genre. Et cette mise en avant se règle sur vos envies : qui a dit aimer le nautique voit remonter les zones où le guide conseille le kayak. Le conseil du guide et le goût du voyageur se rejoignent ainsi au même endroit.
+
 ## Garder les siens
 
 Chacun garde sa propre trace des lieux, sans rien effacer à personne. Cette mémoire est personnelle : elle vous suit d'un appareil à l'autre et n'a pas besoin de code, car elle ne touche à rien de commun.
