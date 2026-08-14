@@ -2,7 +2,7 @@
 
 La vue d'ensemble de Barjøtur, au niveau qui ne bouge pas, et à jour de la conception. Le détail d'implémentation vit
 dans le code et le dictionnaire de données ; cette page fixe les principes et les surfaces, et sert de carte à
-l'équipe comme au lecteur extérieur. Le détail des choix est dans les notes de conception (`docs/architecture/`).
+l'équipe comme au lecteur extérieur.
 
 ## Ce qu'est Barjøtur
 
@@ -82,10 +82,12 @@ ses méthodes et ses sources, est dans `gis-mcda.md`.
 
 ## L'organisation de l'app
 
-Le principe : **personne n'est jamais perdu**. Sept espaces, chacun une intention claire, cousus par le fil du parcours
-persistant : Le voyage (l'avancement), Explorer (les lieux), Mes envies (l'esprit et les votes), Le trajet (la
-composition), Carte (l'itinéraire animé), Préparatifs (budget, repas, matériel, réservations), Réglages (les
-paramètres et l'aide). Les titres se veulent clairs pour un enfant comme pour tout voyageur.
+Le principe : **personne n'est jamais perdu**. Huit espaces, chacun une intention claire, cousus par le fil du parcours
+persistant : Le voyage (l'avancement), Explorer (les lieux et les votes), Mes envies (l'esprit et la cadence), Mon
+voyage (l'idéal de chacun et son écart au commun), Notre Voyage (la composition, le consensus, le gel par
+réservations), Carte (l'itinéraire animé), Préparatifs (budget et réservations), Réglages (les paramètres et l'aide).
+Sur le téléphone, cinq espaces tiennent dans la barre du bas, Le voyage, Explorer, Notre Voyage, Carte, Préparatifs ;
+les trois autres se rejoignent par l'avatar. Les titres se veulent clairs pour un enfant comme pour tout voyageur.
 
 La navigation est **pensée pour le petit écran d'abord** (l'app se vit au téléphone, dans le van) : une barre au pouce
 pour les cinq gestes du quotidien, des cibles larges, aucune dépendance au survol, une carte lisible en petit. La

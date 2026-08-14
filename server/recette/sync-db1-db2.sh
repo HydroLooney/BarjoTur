@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # sync-db1-db2.sh (B-15, pré-écrit sur feu M037 — NON exécuté tant que A n'a pas livré le dump dérivées-seules).
 #
-# Sync owner-safe des tables DÉRIVÉES de DB1 (norvege_routing, USB) vers DB2 (norvege_v2, Bomp4rd), en généralisant
+# Sync owner-safe des tables DÉRIVÉES de DB1 (norvege_routing, USB) vers DB2 (norvege_v2, serveur de déploiement), en généralisant
 # la convergence C16 déjà prouvée (dérivées-seules, empreinte avant/après, zéro perte votes, truncate cache A*).
 #
 # INVARIANT (M037) : ne touche JAMAIS les tables PRÉCIEUSES de DB2 (decision.*, membre.*, fige.*, votes + _hist).
@@ -19,8 +19,9 @@
 #     --apply        exécute réellement le swap (sinon dry-run : contrôles + empreinte AVANT seulement).
 set -euo pipefail
 
-SSH_HOST="bomp4rd"
-CONTAINER="norvege-db"
+# Config d'accès hors repo : BJT_DEPLOY_SSH (host SSH), BJT_DB2_CONTAINER (conteneur Docker DB2).
+SSH_HOST="${BJT_DEPLOY_SSH:-deploy-host}"
+CONTAINER="${BJT_DB2_CONTAINER:-app-db}"
 DB="norvege_v2"
 DBUSER="norvege"
 BACKUP_DIR="~/barjotur-backups"
@@ -140,6 +141,15 @@ BEGIN;
 -- TRUNCATE mcda2.bases_v2;          INSERT INTO mcda2.bases_v2          SELECT * FROM stage.bases_v2;
 -- TRUNCATE mcda2.poi_f_v2;          INSERT INTO mcda2.poi_f_v2          SELECT * FROM stage.poi_f_v2;
 -- TRUNCATE mcda2.reward_inputs;     INSERT INTO mcda2.reward_inputs     SELECT * FROM stage.reward_inputs;
+-- GRAPHE ROUTABLE (M116/A27, contrat A063) : nécessaire à l'A* LIVE du composeur en DB2. 3 tables d'arêtes
+-- AUTOPORTANTES, topologie NATIVE (source/target sur l'arête ; PAS de *_vertices_pgr, PAS de createTopology,
+-- pgRouting 4.0.1). Colonnes : id, source, target, cost_s, reverse_cost_s, length_m, geom (van + is_ferry/is_tunnel/
+-- samband/ferry_eur/peage_eur, +x1/y1/x2/y2 pour pgr_aStar). La RPC d'A* aliase `cost_s AS cost`, `reverse_cost_s AS
+-- reverse_cost`. Grosses tables (van ~2,24 M, piéton ~2,1 M, rando 139 241) : dump/pg_restore. À déverrouiller au dump
+-- FINAL d'A (M091, snapshot `mcda2.ways_van` stable, pas `staging`).
+-- TRUNCATE mcda2.ways_van;    INSERT INTO mcda2.ways_van    SELECT * FROM stage.ways_van;
+-- TRUNCATE mcda2.ways_pieton; INSERT INTO mcda2.ways_pieton SELECT * FROM stage.ways_pieton;
+-- TRUNCATE mcda2.ways_rando;  INSERT INTO mcda2.ways_rando  SELECT * FROM stage.ways_rando;
 SELECT poi.merge_from_stage();
 COMMIT;
 SQL

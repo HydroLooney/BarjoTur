@@ -59,3 +59,7 @@ docs/
 # Captures de vérification Playwright (artefacts, hors repo)
 client/captures-verif/
 client/*.png
+
+# Photothèque de dev, curation par POI (sources multiples A + M), pour revue et complément
+# manuel de Guillaume. Volumineuse et à droits hétérogènes : JAMAIS poussée sur GitHub.
+photos/
