@@ -32,8 +32,10 @@ test('refuse toute transition à un rôle non organisateur', () => {
     assert.equal(r.ok, false);
     assert.match(r.raison ?? '', /organisateur/i);
   }
-  // organisateur_principal est bien organisateur
+  // organisateur_principal est bien organisateur (le physique 'owner' est normalisé par whoami EN AMONT, M052 :
+  // l'engine ne voit que le vocabulaire contrat).
   assert.equal(appliquerTransition(e, 'valider', 'cadrage', { ...ORG, role: 'organisateur_principal' }).ok, true);
+  assert.equal(appliquerTransition(e, 'valider', 'cadrage', { ...ORG, role: 'owner' }).ok, false);
 });
 
 test('valider fait passer brouillon → valide_modifiable et horodate', () => {

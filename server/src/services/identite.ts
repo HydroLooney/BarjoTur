@@ -3,9 +3,13 @@
 
 import { appelerRpc, argTexte } from '../db/rpc.js';
 import { Erreurs, exigerPresent } from '../http/erreurs.js';
+import { normaliserRole } from '../domain/identite.js';
 import type { Whoami } from '../domain/identite.js';
 
+/** Résout l'identité et NORMALISE le rôle physique DB2 vers le vocabulaire d'accès du contrat (M052) : whoami est la
+ *  source de vérité unique du rôle d'accès ; les consommateurs (garde organisateur, gating UI) n'ont plus à mapper. */
 export async function lireWhoami(code: string): Promise<Whoami> {
   const res = await appelerRpc<Whoami | null>('whoami', [argTexte(code)]);
-  return exigerPresent(res, Erreurs.codeInconnu);
+  const who = exigerPresent(res, Erreurs.codeInconnu);
+  return { ...who, role: normaliserRole(who.role) };
 }

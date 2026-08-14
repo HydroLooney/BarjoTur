@@ -16,7 +16,11 @@ export type {
 import type { Role } from '@barjotur/shared';
 import type { Cran, CranId, EtatParcours } from '@barjotur/shared';
 
-/** Seul un organisateur (principal ou non) fait évoluer un cran (M047, A03). */
+/**
+ * Seul un organisateur fait évoluer un cran (M047, A03). Teste le vocabulaire d'ACCÈS du contrat (`organisateur`,
+ * `organisateur_principal`) : `whoami` normalise le rôle physique DB2 (`owner`→`organisateur_principal`, etc.) EN AMONT
+ * (M052, option A2), donc l'engine ne voit jamais que le vocabulaire contrat. Pas de rustine physique ici.
+ */
 export function estOrganisateur(role: string | Role): boolean {
   return role === 'organisateur' || role === 'organisateur_principal';
 }

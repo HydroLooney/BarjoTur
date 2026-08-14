@@ -3,8 +3,8 @@
 -- (file de recompute), l'unicité d'osm_id sur poi.poi (clé naturelle du merge), et `poi.merge_from_stage`.
 --
 -- SURFACE : DB2 (norvege_v2, Bomp4rd). Écriture couverte par la règle DB2 permanente owner-safe (Guillaume, M034).
--- INVARIANT owner-safe (M037) : ce fichier ne touche JAMAIS decision.*, membre.*, fige.*, ni les votes/_hist.
--- Seules les tables DÉRIVÉES transitent par la sync ; les PRÉCIEUSES vivent en DB2 uniquement.
+-- INVARIANT owner-safe (M037/M050) : ce fichier ne touche JAMAIS decision.*, membre.*, fige.*, parcours.*, ni les
+-- votes/_hist. Seules les tables DÉRIVÉES transitent par la sync ; les PRÉCIEUSES vivent en DB2 uniquement.
 --
 -- IDEMPOTENT : CREATE ... IF NOT EXISTS + CREATE OR REPLACE. Rejouable sans effet de bord.
 -- A DE PLUS À VALIDER : poi.poi est sa surface (schéma poi). La logique de merge ci-dessous (préserve

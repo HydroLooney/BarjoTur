@@ -6,7 +6,7 @@
 
 import { appelerRpc, argBigint, argJsonb, argTexte } from '../db/rpc.js';
 import { Erreurs } from '../http/erreurs.js';
-import { estOrganisateur } from '../domain/parcours.js';
+import { estOrganisateur, parcoursNeuf } from '../domain/parcours.js';
 import type { ActionCran, Cran, CranId, EtatParcours, TransitionResult } from '../domain/parcours.js';
 
 /** Contexte d'une transition : qui la demande, quand. Purs paramètres (pas de Date.now dans l'engine). */
@@ -91,9 +91,11 @@ export function appliquerTransition(
 
 // --- Orchestration flip-ready (persistance DB2 câblée au DSN) -------------------------------------------------
 
-/** Charge l'état de parcours d'un voyage depuis DB2 (RPC posée au flip). Passe-plat. */
+/** Charge l'état de parcours d'un voyage depuis DB2 (RPC posée au flip) ; seed un parcours neuf si aucun n'est
+ *  encore persisté (idempotent : lire un voyage jamais touché rend l'état par défaut). */
 export async function lireParcours(voyageId: number): Promise<EtatParcours> {
-  return appelerRpc<EtatParcours>('parcours_lire', [argBigint(voyageId)]);
+  const etat = await appelerRpc<EtatParcours | null>('parcours_lire', [argBigint(voyageId)]);
+  return etat ?? parcoursNeuf(voyageId);
 }
 
 /**

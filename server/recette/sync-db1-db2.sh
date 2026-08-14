@@ -41,7 +41,8 @@ psql_c() { ssh "$SSH_HOST" "docker exec $CONTAINER psql -U $DBUSER -d $DB -v ON_
 psql_i() { ssh "$SSH_HOST" "docker exec -i $CONTAINER psql -U $DBUSER -d $DB -v ON_ERROR_STOP=1"; }
 
 # Liste des tables PRÉCIEUSES (denylist du contrôle d'entrée) et des DÉRIVÉES (payload attendu).
-PRECIEUSES_RE='(^|\.)(decision|membre|fige)\.|vote|_hist'
+# parcours.* (M050) et voyage.* (M055) ajoutés : état vivant (machine à crans, instance voyage), précieux, jamais dans le dump.
+PRECIEUSES_RE='(^|\.)(decision|membre|fige|parcours|voyage)\.|vote|_hist'
 
 echo "== 0. Contrôle d'entrée : le dump doit être dérivées-seules =="
 TOC="$(pg_restore -l "$DUMP" 2>/dev/null | grep -E 'TABLE DATA|TABLE ' || true)"
@@ -55,7 +56,7 @@ echo "OK : aucune table précieuse dans le dump."
 echo "== 1. BACKUP (précieuses + dérivées courantes) =="
 if [ "$APPLY" = 1 ]; then
   ssh "$SSH_HOST" "mkdir -p $BACKUP_DIR && \
-    docker exec $CONTAINER pg_dump -U $DBUSER -d $DB -n decision -n membre -n fige -Fc > $BACKUP_DIR/bjt-precious-$STAMP.dump && \
+    docker exec $CONTAINER pg_dump -U $DBUSER -d $DB -n decision -n membre -n fige -n parcours -n voyage -Fc > $BACKUP_DIR/bjt-precious-$STAMP.dump && \
     docker exec $CONTAINER pg_dump -U $DBUSER -d $DB -n mcda2 -n poi -n decoupage -Fc > $BACKUP_DIR/bjt-derive-$STAMP.dump"
   echo "Backups : $BACKUP_DIR/bjt-{precious,derive}-$STAMP.dump"
 else
