@@ -9,6 +9,7 @@ import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
 import { CarteExplorer } from '@/components/CarteExplorer';
+import { Recommandations } from '@/components/Recommandations';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +57,8 @@ export default function Explorer() {
           {nbExplores > 0 ? ` · ${nbExplores} déjà vu${nbExplores === 1 ? '' : 's'}` : ''}
         </span>
       </div>
+
+      <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
 
       <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
         {ONGLETS.map((o, i) => (
