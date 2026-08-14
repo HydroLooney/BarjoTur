@@ -37,6 +37,10 @@ export const RPC_AUTORISEES = [
   'esprit_famille',
   'esprit_aggregate',
   'archetypes',
+  'exploration_lire',
+  'exploration_marquer',
+  'collection_lire',
+  'collection_ecrire',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
