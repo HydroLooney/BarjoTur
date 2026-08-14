@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import type { ActionCran, Cran, EtatParcours, TransitionCran } from '@barjotur/shared';
 import { useIdentite } from '@/stores/identite';
 import { useVoyageContexte } from '@/stores/voyage';
-import { appliquerTransition, estOrganisateur } from '@/lib/parcours';
+import { usePeut } from '@/hooks/usePeut';
+import { appliquerTransition } from '@/lib/parcours';
 import { parcoursDemo } from '@/lib/fixtures/parcours-demo';
 import { useParcoursServeur, useTransitionParcours } from '@/lib/queries/parcours';
 import { Badge } from '@/ui/primitives/badge';
@@ -32,7 +33,7 @@ export function CransParcours() {
   const forceLive = import.meta.env.DEV && new URLSearchParams(window.location.search).has('parcours');
   const live = PARCOURS_LIVE_ENV || forceLive;
   const role = useIdentite((s) => s.role);
-  const orga = estOrganisateur(role);
+  const peutTransitionner = usePeut('transitionner_cran');
   const voyageId = useVoyageContexte((s) => s.voyageId);
 
   const serveur = useParcoursServeur(voyageId, live);
@@ -73,7 +74,7 @@ export function CransParcours() {
     }
   }
 
-  const pinManquant = orga && pin.trim().length === 0;
+  const pinManquant = peutTransitionner && pin.trim().length === 0;
 
   return (
     <section className="space-y-3">
@@ -82,11 +83,13 @@ export function CransParcours() {
         <p className="max-w-prose text-xs text-muted-foreground">
           Les étapes du voyage et leur état. Un cadenas ouvert peut être rouvert (l'aval sera à refaire) ; un
           cadenas fermé est figé par un fait extérieur (réservation, dates, ferry).
-          {orga ? " En tant qu'organisateur, vous faites évoluer chaque cran." : ' Avancement en lecture.'}
+          {peutTransitionner
+            ? " En tant qu'organisateur, vous faites évoluer chaque cran."
+            : ' Avancement en lecture.'}
         </p>
       </div>
 
-      {orga ? (
+      {peutTransitionner ? (
         <div className="flex flex-wrap items-center gap-2">
           <label htmlFor="pin-parcours" className="text-xs text-muted-foreground">
             PIN organisateur
@@ -132,7 +135,7 @@ export function CransParcours() {
                 <p className="mt-1 text-xs text-muted-foreground">Fige : {c.gele.join(', ')}.</p>
               ) : null}
 
-              {orga ? (
+              {peutTransitionner ? (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {c.etat === 'brouillon' ? (
                     <Bouton size="sm" variant="outline" disabled={pinManquant} onClick={() => agir(c, 'valider')}>

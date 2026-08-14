@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useIntendance } from '@/stores/intendance';
+import { usePeut } from '@/hooks/usePeut';
 import { Champ } from '@/ui/primitives/input';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageVide } from '@/ui/blocs/EtatVue';
@@ -177,6 +178,8 @@ function Menus() {
 }
 
 export function Intendance() {
+  // Intendance privée (T043) : masquée à qui n'a pas la capacité (invité). Autorité côté serveur au flip sync.
+  if (!usePeut('voir_intendance')) return null;
   return (
     <div className="space-y-4">
       <div>

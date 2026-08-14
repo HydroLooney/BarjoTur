@@ -1,5 +1,6 @@
 import type { BudgetComparatif } from '@barjotur/shared';
 import { useBudgetComparatif } from '@/lib/queries/budget';
+import { usePeut } from '@/hooks/usePeut';
 
 // Vue budget (C-17 / intendance) : ventilation par poste + deux lectures (prudente / non prudente) +
 // budget par adulte + alertes de plafond. Prévisionnel prudent, pas une cible (honnêteté R1).
@@ -19,8 +20,12 @@ function euro(n: number): string {
 }
 
 export function VueBudget() {
+  // Financier nominatif détaillé (T043) : réservé aux capables (organisateurs, voyageurs adultes) ; masqué à
+  // l'invité et, quand la qualification sera portée par whoami, à l'enfant. Autorité de fond côté serveur.
+  const peutVoirBudget = usePeut('voir_budget_detaille');
   const { data } = useBudgetComparatif();
   const b: BudgetComparatif | undefined = data?.[0];
+  if (!peutVoirBudget) return null;
   if (!b) return null;
 
   return (

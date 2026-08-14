@@ -9,6 +9,7 @@ import { charte } from '@/ui/theme';
 import { FOND_CARTE } from '@/lib/carte-config';
 import { useUi } from '@/stores/ui';
 import { useIdentite } from '@/stores/identite';
+import { usePeut } from '@/hooks/usePeut';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 
 // Carte Explorer (C15 / A05) : TOUS les POI de l'emprise visible, en deux couches DISTINCTES (votables
@@ -43,6 +44,7 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
   const [clique, setClique] = useState<PoiClique | null>(null);
 
   const code = useIdentite((s) => s.code);
+  const peutVoter = usePeut('voter');
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
 
@@ -129,7 +131,7 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
               <SelecteurTier
                 monTier={monTier}
                 tierDefaut={clique.tierDefaut}
-                disabled={!code}
+                disabled={!peutVoter}
                 onChoisir={(tier) => voter.mutate({ ref: `p:${clique.osmId}`, tier: tier ?? undefined })}
               />
             ) : (

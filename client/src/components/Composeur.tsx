@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Geometry } from 'geojson';
 import type { ArretImpose, ComposeInput, ComposeReponse } from '@barjotur/shared';
 import { useArchetypes, useComposer } from '@/lib/queries/composeur';
+import { usePeut } from '@/hooks/usePeut';
 import { basesCandidatesDemo, composeReponseDemo } from '@/lib/fixtures/compose-demo';
 import { transitDemo } from '@/lib/fixtures/voyage-demo';
 import { CarteItineraire } from '@/components/CarteItineraire';
@@ -52,7 +53,8 @@ export function Composeur() {
     else setResultatDemo(composeReponseDemo(input));
   };
 
-  const peutComposer = bases.length > 0 && !composer.isPending;
+  const aLeDroitDeComposer = usePeut('composer');
+  const peutComposer = aLeDroitDeComposer && bases.length > 0 && !composer.isPending;
   const resultat: ComposeReponse | null = live ? composer.data ?? null : resultatDemo;
   const geom: Geometry | null = (resultat?.geom as Geometry | undefined) ?? null;
   const meta = resultat?.compose;
@@ -132,7 +134,11 @@ export function Composeur() {
         <Bouton type="button" size="sm" onClick={lancer} disabled={!peutComposer}>
           {composer.isPending ? 'Composition en cours' : 'Composer'}
         </Bouton>
-        {bases.length === 0 ? <span className="text-xs text-muted-foreground">Choisissez au moins une base.</span> : null}
+        {!aLeDroitDeComposer ? (
+          <span className="text-xs text-muted-foreground">Votre lien ne permet pas de composer.</span>
+        ) : bases.length === 0 ? (
+          <span className="text-xs text-muted-foreground">Choisissez au moins une base.</span>
+        ) : null}
       </div>
 
       {composer.isError ? <MessageErreur>La composition a échoué (service non joignable).</MessageErreur> : null}

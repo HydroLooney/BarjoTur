@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Role, Whoami } from '@barjotur/shared';
+import type { Qualification, Role, Whoami } from '@barjotur/shared';
 
 const ROLES: readonly Role[] = ['organisateur_principal', 'organisateur', 'voyageur', 'demo', 'invite'];
 
@@ -15,6 +15,8 @@ interface EtatIdentite {
   membreId: number | null;
   prenom: string | null;
   role: Role | null;
+  /** Adulte / enfant : conditionne le financier détaillé (T043, `peut`). null si whoami ne le porte pas encore. */
+  qualification: Qualification | null;
   depuisWhoami: (code: string, w: Whoami) => void;
   deconnecter: () => void;
 }
@@ -26,7 +28,11 @@ export const useIdentite = create<EtatIdentite>((set) => ({
   membreId: null,
   prenom: null,
   role: null,
+  qualification: null,
+  // whoami ne porte pas encore la qualification (adulte/enfant) : on la met à null en attendant que B
+  // l'ajoute (gap remonté à M). D'ici là, le masque enfant du budget détaillé reste assuré par B (autorité).
   depuisWhoami: (code, w) =>
-    set({ code, membreId: w.membre_id, prenom: w.prenom, role: normaliserRole(w.role) }),
-  deconnecter: () => set({ code: null, membreId: null, prenom: null, role: null }),
+    set({ code, membreId: w.membre_id, prenom: w.prenom, role: normaliserRole(w.role), qualification: null }),
+  deconnecter: () =>
+    set({ code: null, membreId: null, prenom: null, role: null, qualification: null }),
 }));

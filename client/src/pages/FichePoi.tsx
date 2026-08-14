@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { VoteTier } from '@barjotur/shared';
 import { useCatalogue } from '@/lib/queries/catalogue';
 import { useIdentite } from '@/stores/identite';
+import { usePeut } from '@/hooks/usePeut';
 import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
@@ -18,6 +19,7 @@ export default function FichePoi() {
   const poi = useMemo(() => catalogue?.find((p) => p.id === osm) ?? null, [catalogue, osm]);
 
   const code = useIdentite((s) => s.code);
+  const peutVoter = usePeut('voter');
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
 
@@ -61,10 +63,14 @@ export default function FichePoi() {
           <SelecteurTier
             monTier={monTier}
             tierDefaut={poi.tier_defaut}
-            disabled={!code}
+            disabled={!peutVoter}
             onChoisir={(t) => voter.mutate({ ref: `p:${poi.id}`, tier: t ?? undefined })}
           />
-          {!code ? <p className="mt-2 text-xs text-muted-foreground">Ouvrez votre lien perso pour voter.</p> : null}
+          {!peutVoter ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {code ? 'Ce lien ne permet pas de voter.' : 'Ouvrez votre lien perso pour voter.'}
+            </p>
+          ) : null}
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">Repère non votable (service, information).</p>

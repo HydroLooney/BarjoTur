@@ -1,19 +1,20 @@
-import { useProfilsDeplacement } from '@/lib/queries/profils';
+import { useParametres } from '@/lib/queries/parametres';
+import { profilsDepuisParametres } from '@/lib/profils';
 import { profilsDemo } from '@/lib/fixtures/profils-demo';
 import { PROFILS_MODE } from '@/lib/libelles';
 import { Badge } from '@/ui/primitives/badge';
 
-// Profils de déplacement (T038, décision M074) : AFFICHAGE seul des réglages de trajet par mode
+// Profils de déplacement (T038, décisions M074 + M076) : AFFICHAGE seul des réglages de trajet par mode
 // (van/piéton/rando/TC), valeur + recommandée + raison en clair, le van gelé une fois réservé (A18). L'édition
-// est reportée (elle couple au recompute et au portail organisateur T027). Flip-ready : hors live, fixture
-// illustrative ; en live, endpoint de lecture B/M (à confirmer). Zéro contrat inventé (réutilise `Parametre`).
-const PROFILS_LIVE_ENV = import.meta.env.VITE_PROFILS_LIVE === '1';
+// est reportée (elle couple au recompute et au portail organisateur T027). PAS de nouvel endpoint : on lit le
+// registre `Parametre` existant, filtré sur le domaine « Profil * » (`profilsDepuisParametres`). Tant que le
+// registre live n'expose pas de profils, on retombe sur la fixture illustrative (marquée R1).
 
 export function ProfilsDeplacement() {
-  const forceLive = import.meta.env.DEV && new URLSearchParams(window.location.search).has('profils');
-  const live = PROFILS_LIVE_ENV || forceLive;
-  const serveur = useProfilsDeplacement(live);
-  const profils = live && serveur.data ? serveur.data : profilsDemo;
+  const { data } = useParametres();
+  const depuisRegistre = profilsDepuisParametres(data ?? []);
+  const profils = depuisRegistre.length > 0 ? depuisRegistre : profilsDemo;
+  const live = depuisRegistre.length > 0;
 
   return (
     <section className="space-y-3">

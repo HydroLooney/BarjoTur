@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Role, Voyageur } from '@barjotur/shared';
 import { useIdentite } from '@/stores/identite';
 import { useVoyageContexte } from '@/stores/voyage';
-import { estOrganisateur } from '@/lib/parcours';
+import { usePeut } from '@/hooks/usePeut';
 import { voyageursDemo } from '@/lib/fixtures/voyageurs-demo';
 import { useChangerRole, useRegenererLien, useVoyageurs } from '@/lib/queries/admin';
 import { ROLES_LABEL } from '@/lib/libelles';
@@ -26,13 +26,13 @@ const ROLES_ATTRIBUABLES: Role[] = ['organisateur', 'voyageur', 'invite'];
 export function AdminVoyageurs() {
   const forceLive = import.meta.env.DEV && new URLSearchParams(window.location.search).has('admin');
   const live = ADMIN_LIVE_ENV || forceLive;
-  const role = useIdentite((s) => s.role);
-  const orga = estOrganisateur(role);
+  const peutAdministrer = usePeut('administrer_voyageurs');
+  const code = useIdentite((s) => s.code);
   const voyageId = useVoyageContexte((s) => s.voyageId);
 
-  const serveur = useVoyageurs(voyageId, live && orga);
-  const changerRole = useChangerRole(voyageId);
-  const regenererLien = useRegenererLien(voyageId);
+  const serveur = useVoyageurs(voyageId, code, live && peutAdministrer);
+  const changerRole = useChangerRole(voyageId, code);
+  const regenererLien = useRegenererLien(voyageId, code);
 
   const [roster, setRoster] = useState<Voyageur[]>(voyageursDemo);
   const [pin, setPin] = useState('');
@@ -43,7 +43,7 @@ export function AdminVoyageurs() {
     if (live && serveur.data) setRoster(serveur.data);
   }, [live, serveur.data]);
 
-  if (!orga) return null;
+  if (!peutAdministrer) return null;
 
   const pinManquant = pin.trim().length === 0;
 
@@ -55,7 +55,7 @@ export function AdminVoyageurs() {
     if (nouveau === v.role) return;
     setRefus(null);
     if (live) {
-      const r = await changerRole.mutateAsync({ membre_id: v.id, role: nouveau, pin: pin || undefined }).catch(() => null);
+      const r = await changerRole.mutateAsync({ membre_id: v.id, role: nouveau, pin }).catch(() => null);
       if (r) remplacer(r);
       else setRefus('Changement de rôle refusé par le service (PIN ou droits).');
     } else {
@@ -67,7 +67,7 @@ export function AdminVoyageurs() {
     setRefus(null);
     setConfirmLien(null);
     if (live) {
-      const r = await regenererLien.mutateAsync({ membre_id: v.id, pin: pin || undefined }).catch(() => null);
+      const r = await regenererLien.mutateAsync({ membre_id: v.id, pin }).catch(() => null);
       if (r) remplacer(r);
       else setRefus('Régénération du lien refusée par le service (PIN ou droits).');
     } else {

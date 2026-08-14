@@ -1,4 +1,4 @@
-import type { ProfilModeVue } from '@/lib/queries/profils';
+import type { ProfilModeVue } from '@/lib/profils';
 
 // Profils de déplacement (T038, affichage), hors live. Valeurs ILLUSTRATIVES tant que le service n'expose pas
 // les vrais `routing_params` (R1 : ne pas les faire passer pour des données réelles). Elles disent la FORME de

@@ -6,6 +6,7 @@ import { useExplorer } from '@/stores/explorer';
 import { useIdentite } from '@/stores/identite';
 import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useOnboarding } from '@/stores/onboarding';
+import { usePeut } from '@/hooks/usePeut';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
@@ -39,6 +40,7 @@ export default function Explorer() {
   const liste = useMemo(() => filtrerCatalogue(pois, filtres), [pois, filtres]);
 
   const code = useIdentite((s) => s.code);
+  const peutVoter = usePeut('voter');
   const { data: mesVotes } = useMesVotes(code);
   const voter = useVoteUnitaire(code);
   const explores = useMemoireExploration((s) => s.explores);
@@ -49,7 +51,7 @@ export default function Explorer() {
   const astuceVoteVue = useOnboarding((s) => s.astuceVoteVue);
   const masquerAstuceVote = useOnboarding((s) => s.masquerAstuceVote);
   const aVote = mesVotes ? Object.keys(mesVotes.tiers).length > 0 : false;
-  const montrerAstuce = code !== null && !astuceVoteVue && !aVote;
+  const montrerAstuce = peutVoter && !astuceVoteVue && !aVote;
 
   const monTierPour = (osmId: string): VoteTier | null => {
     const v = mesVotes?.tiers[`p:${osmId}`];
@@ -137,7 +139,7 @@ export default function Explorer() {
                 key={p.id}
                 poi={p}
                 monTier={monTierPour(p.id)}
-                peutVoter={!!code}
+                peutVoter={peutVoter}
                 explore={explores.includes(p.id)}
                 onVoter={(tier) => voter.mutate({ ref: `p:${p.id}`, tier: tier ?? undefined })}
               />
