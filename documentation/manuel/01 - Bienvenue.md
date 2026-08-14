@@ -10,4 +10,14 @@ L'app est pensée pour le téléphone d'abord, parce qu'on la consulte surtout d
 
 Une personne du voyage est un voyageur, adulte ou enfant. Chacun a son propre lien pour ouvrir l'app et retrouver son voyage. L'un des voyageurs est l'organisateur : c'est lui qui valide les grandes étapes et garde la main sur ce qui se fige. Voter, explorer, donner son avis, tout le monde peut le faire, sans code. Seuls les gestes qui verrouillent une étape demandent le code de l'organisateur.
 
+## Qui voit et peut quoi
+
+Tout marche sur lien privé. Chacun reçoit le sien, personne d'autre n'entre, et ce que l'on peut faire dépend du lien reçu. Le principe est simple : chacun ne voit à l'écran que ce qui le concerne, et les gestes qu'on n'a pas le droit de faire ne s'affichent pas.
+
+Un voyageur explore les lieux, donne son avis, compose des propositions et règle ses envies. C'est le voyage à plusieurs mains, celui où chaque personne du voyage pèse sur la route commune.
+
+Un invité, lui, reçoit un lien de découverte. Il voit le voyage retenu, sa carte et les lieux choisis, mais il ne vote pas et ne compose pas. C'est un lien qui montre sans donner la main, de quoi faire voir le voyage à un proche sans lui ouvrir les réglages.
+
+Un organisateur, en plus de tout ce que fait un voyageur, valide les étapes, administre les voyageurs et régénère leurs liens. Ces gestes-là sont protégés par le code, décrits au chapitre [Côté organisateur](10 - Côté organisateur.md).
+
 Le premier voyage préparé avec Barjøtur est un roadtrip en Norvège, en van, à l'été 2027. Mais l'app n'est pas faite pour ce seul voyage : le même compagnon peut préparer un autre trajet, un autre véhicule, une autre destination. Ce manuel décrit l'app telle qu'elle est aujourd'hui, avec le voyage en Norvège comme exemple.

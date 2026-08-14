@@ -2,6 +2,8 @@
 
 Parmi les voyageurs, l'un tient la barre : l'organisateur. Son rôle n'est pas de décider seul, mais de poser ce que la famille a décidé. Il valide les étapes, garde la main sur ce qui se fige, et veille à ce que le voyage tienne. Ce chapitre s'adresse à lui.
 
+Tout le voyage marche sur lien privé, l'organisateur comme les autres. Ce qu'il peut faire de plus, un voyageur ne le voit pas : les gestes qu'on n'a pas le droit de faire ne s'affichent pas. L'organisateur, lui, dispose en plus de trois pouvoirs, tous protégés par le code. Il valide les étapes, il administre les voyageurs, et il régénère leurs liens quand il le faut. Un invité, à l'autre bout, ne voit que le voyage retenu, sa carte et les lieux choisis, sans jamais voter ni composer. Chacun ne voit donc à l'écran que ce qui le concerne.
+
 ## Le code
 
 Les gestes qui changent l'état d'une étape, la valider ou la rouvrir, demandent le code de l'organisateur. C'est une garde simple. Elle évite qu'une étape se verrouille par accident, ou qu'un enfant, en jouant, rouvre tout le voyage. Le code se saisit au moment du geste et n'est jamais gardé en mémoire.

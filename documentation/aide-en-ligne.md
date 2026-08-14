@@ -16,6 +16,8 @@ L'espace d'accueil et le tableau de bord. On y lit où en est le voyage et on re
 
 **Retrouver son bandeau.** En haut de chaque écran, un bandeau rappelle l'étape en cours. Exemple : après une semaine sans ouvrir l'app, le bandeau indique tout de suite qu'on en est à la préparation.
 
+**Savoir ce qu'on peut faire.** Tout marche sur lien privé : chacun reçoit le sien, personne d'autre n'entre, et l'écran n'offre que les gestes qu'on a le droit de faire. Un voyageur explore, vote, compose ; un invité voit le voyage retenu, sa carte et les lieux, sans voter ni composer ; l'organisateur valide les étapes, administre les voyageurs et régénère leurs liens, sous son code. Exemple : ouvert par un lien d'invité, l'écran montre le voyage mais n'affiche ni le vote ni la validation.
+
 ## Explorer
 
 Le catalogue des lieux. On y découvre, on cherche, on garde les siens, on donne son avis.
