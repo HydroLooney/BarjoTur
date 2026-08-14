@@ -16,7 +16,7 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 ## Le fil du voyage
 
-**Le fil du voyage.** La suite des six moments par lesquels le voyage avance : Idée, Explorer, Voter, Composer, Logistique, Voyage. Un bandeau le rappelle en haut de chaque écran.
+**Le fil du voyage.** La suite des six moments par lesquels le voyage avance : Cadrage, Réservation du van, Exploration, Composition, Logistique, Départ. Un bandeau le rappelle en haut de chaque écran.
 
 **Étape (du fil).** Un des six moments du voyage. À ne pas confondre avec une étape du trajet, qui est une journée sur la route.
 
