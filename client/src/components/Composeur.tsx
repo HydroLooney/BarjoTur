@@ -1,50 +1,98 @@
-import { useEffect, useState } from 'react';
-import type { Geometry, MultiLineString } from 'geojson';
+import { useState } from 'react';
+import type { Geometry } from 'geojson';
+import type { ComposeInput, ComposeReponse } from '@barjotur/shared';
 import { useArchetypes, useComposer } from '@/lib/queries/composeur';
+import { basesCandidatesDemo, composeReponseDemo } from '@/lib/fixtures/compose-demo';
 import { CarteItineraire } from '@/components/CarteItineraire';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
-// Composeur (C-11) : choisir une ambiance (archétype) puis composer un itinéraire, et ANIMER le résultat
-// avec la même brique carte (rendu strict de `ComposeReponse.geom`). Le lancement du calcul (sélection des
-// bases candidates + sidecar OR-Tools) se branche à la bascule ; ici on câble la sélection et l'animation
-// du résultat. Honnêteté R1 : tant que le sidecar n'est pas branché, l'aperçu `?demo` est étiqueté factice.
+// Coquille compose-launch (C-11 / M029), flip-ready. Formulaire `ComposeInput` (bases candidates + ambiance
+// + agenda), appel du composeur derrière un DRAPEAU `live` : à false, on lit la fixture (contrat déjà typé,
+// zéro invention) ; à true, appel réel de POST /compose. On bascule le drapeau à la montée de la stack
+// (VITE_COMPOSE_LIVE=1, ou `?live` en DEV pour tester le branchement sans rebuild). Rendu strict de
+// `ComposeReponse.geom`, comme la carte itinéraire.
+const COMPOSE_LIVE_ENV = import.meta.env.VITE_COMPOSE_LIVE === '1';
+
 export function Composeur() {
+  const forceLive = import.meta.env.DEV && new URLSearchParams(window.location.search).has('live');
+  const live = COMPOSE_LIVE_ENV || forceLive;
+
   const { data: archetypes } = useArchetypes();
   const composer = useComposer();
+
+  const [bases, setBases] = useState<number[]>([]);
   const [archetypeKey, setArchetypeKey] = useState<string | null>(null);
+  const [avecAgenda, setAvecAgenda] = useState(true);
+  const [resultatDemo, setResultatDemo] = useState<ComposeReponse | null>(null);
 
-  // DEV ?demo : anime un tracé factice pour démontrer l'animation du résultat hors sidecar.
-  const [demoGeom, setDemoGeom] = useState<MultiLineString | null>(null);
-  useEffect(() => {
-    const demo = import.meta.env.DEV && new URLSearchParams(window.location.search).has('demo');
-    if (demo) void import('@/lib/fixtures/fige-demo').then((m) => setDemoGeom(m.figeGeomDemo));
-  }, []);
+  const basculerBase = (id: number) =>
+    setBases((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
-  const resultat = composer.data;
-  const geom: Geometry | null = (resultat?.geom as Geometry | undefined) ?? demoGeom ?? null;
+  const lancer = () => {
+    const input: ComposeInput = { bases, archetype_key: archetypeKey, avec_agenda: avecAgenda, persister: false };
+    if (live) composer.mutate(input);
+    else setResultatDemo(composeReponseDemo(input));
+  };
+
+  const peutComposer = bases.length > 0 && !composer.isPending;
+  const resultat: ComposeReponse | null = live ? composer.data ?? null : resultatDemo;
+  const geom: Geometry | null = (resultat?.geom as Geometry | undefined) ?? null;
   const meta = resultat?.compose;
+  const erreurMetier = resultat && resultat.ok === false ? resultat.error ?? 'échec' : null;
 
   return (
-    <div className="space-y-2">
-      <h2 className="text-sm font-medium">Composer un itinéraire</h2>
-      <p className="max-w-prose text-xs text-muted-foreground">
-        Choisissez une ambiance, le moteur assemble un itinéraire. Le calcul (sélection des bases, sidecar) se
-        branche à la bascule ; l'aperçu ci-dessous anime le tracé du résultat.
-      </p>
+    <div className="space-y-3">
+      <div>
+        <h2 className="text-sm font-medium">Composer un itinéraire</h2>
+        <p className="max-w-prose text-xs text-muted-foreground">
+          Choisissez des bases et une ambiance, le moteur assemble un itinéraire et l'anime.
+          {live ? '' : ' Aperçu de préparation (fixture) tant que le moteur n’est pas branché.'}
+        </p>
+      </div>
 
       {archetypes && archetypes.length > 0 ? (
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir une ambiance">
-          {archetypes.map((a, i) => {
-            const cle = a.archetype_key ?? a.key ?? String(i);
-            const actif = archetypeKey === cle;
+        <fieldset className="space-y-1">
+          <legend className="text-xs text-muted-foreground">Ambiance</legend>
+          <div className="flex flex-wrap gap-2">
+            {archetypes.map((a, i) => {
+              const cle = a.archetype_key ?? a.key ?? String(i);
+              const actif = archetypeKey === cle;
+              return (
+                <button
+                  key={cle}
+                  type="button"
+                  aria-pressed={actif}
+                  onClick={() => setArchetypeKey(actif ? null : cle)}
+                  className={cn(
+                    'rounded-md border px-3 py-2 text-sm transition-colors',
+                    actif
+                      ? 'border-primary bg-muted font-medium text-foreground'
+                      : 'border-border text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  {a.label ?? a.nom ?? cle}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+      ) : null}
+
+      <fieldset className="space-y-1">
+        <legend className="text-xs text-muted-foreground">
+          Bases candidates{bases.length > 0 ? ` (${bases.length} choisie${bases.length === 1 ? '' : 's'})` : ''}
+        </legend>
+        <div className="flex flex-wrap gap-2">
+          {basesCandidatesDemo.map((b) => {
+            const actif = bases.includes(b.base_id);
             return (
               <button
-                key={cle}
+                key={b.base_id}
                 type="button"
                 aria-pressed={actif}
-                onClick={() => setArchetypeKey(actif ? null : cle)}
+                onClick={() => basculerBase(b.base_id)}
                 className={cn(
                   'rounded-md border px-3 py-2 text-sm transition-colors',
                   actif
@@ -52,22 +100,27 @@ export function Composeur() {
                     : 'border-border text-muted-foreground hover:text-foreground',
                 )}
               >
-                {a.label ?? a.nom ?? cle}
+                {b.nom}
               </button>
             );
           })}
         </div>
-      ) : null}
+      </fieldset>
 
-      <Bouton
-        type="button"
-        size="sm"
-        disabled
-        title="Le calcul se branche à la bascule (sélection des bases candidates + sidecar OR-Tools)"
-      >
-        Composer (à la bascule)
-      </Bouton>
-      {composer.isError ? <MessageErreur>La composition a échoué (service non branché).</MessageErreur> : null}
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={avecAgenda} onChange={(e) => setAvecAgenda(e.target.checked)} className="h-4 w-4 accent-primary" />
+        Calculer l'agenda jour par jour
+      </label>
+
+      <div className="flex items-center gap-3">
+        <Bouton type="button" size="sm" onClick={lancer} disabled={!peutComposer}>
+          {composer.isPending ? 'Composition en cours' : 'Composer'}
+        </Bouton>
+        {bases.length === 0 ? <span className="text-xs text-muted-foreground">Choisissez au moins une base.</span> : null}
+      </div>
+
+      {composer.isError ? <MessageErreur>La composition a échoué (service non joignable).</MessageErreur> : null}
+      {erreurMetier ? <MessageErreur>Composition impossible : {erreurMetier}.</MessageErreur> : null}
 
       {geom ? (
         <div className="space-y-1">
@@ -75,9 +128,8 @@ export function Composeur() {
           {meta ? (
             <p className="text-xs text-muted-foreground">
               {meta.nuits} nuits · {meta.n_bases} bases · {Math.round(meta.drive_h)} h de route.
+              {live ? '' : ' Tracé de démonstration (fixture).'}
             </p>
-          ) : demoGeom ? (
-            <p className="text-xs text-muted-foreground">Aperçu de démonstration (donnée factice, hors sidecar).</p>
           ) : null}
         </div>
       ) : null}
