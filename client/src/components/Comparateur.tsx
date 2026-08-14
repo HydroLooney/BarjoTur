@@ -32,7 +32,7 @@ function LigneComparee({ p, estRepere }: { p: ProfilCompare; estRepere?: boolean
       </th>
       <td className="px-3 py-2">
         <Badge variant={p.nature === 'consensus' ? 'tierA' : p.nature === 'archetype' ? 'tierB' : 'tierS'}>
-          {p.nature === 'consensus' ? 'consensus' : p.nature === 'archetype' ? 'archétype' : 'membre'}
+          {p.nature === 'consensus' ? 'choix commun' : p.nature === 'archetype' ? 'ambiance' : 'membre'}
         </Badge>
       </td>
       <td className="px-3 py-2 text-right tabular-nums">{b.nuits}</td>
