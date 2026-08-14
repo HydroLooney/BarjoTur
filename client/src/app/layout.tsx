@@ -15,6 +15,7 @@ import { useEnLigne } from '@/hooks/useEnLigne';
 // Libellés depuis le tableau central (miroir du glossaire figé, M067).
 const PRIMAIRES = [
   { to: '/', libelle: ESPACES.voyage, exact: true },
+  { to: '/mon-voyage', libelle: ESPACES.monVoyage, exact: false },
   { to: '/explorer', libelle: ESPACES.explorer, exact: false },
   { to: '/le-trajet', libelle: ESPACES.trajet, exact: false },
   { to: '/carte', libelle: ESPACES.carte, exact: false },

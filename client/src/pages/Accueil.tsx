@@ -1,4 +1,6 @@
 import { PremiersPas } from '@/components/PremiersPas';
+import { BandeauAToiDeJouer } from '@/components/BandeauAToiDeJouer';
+import { FilDepuisDerniereVisite } from '@/components/FilDepuisDerniereVisite';
 import { InstanceVoyage } from '@/components/InstanceVoyage';
 import { FilDuParcours } from '@/components/FilDuParcours';
 import { CransParcours } from '@/components/CransParcours';

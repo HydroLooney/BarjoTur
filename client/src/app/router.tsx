@@ -13,6 +13,7 @@ const FichePoi = lazy(() => import('@/pages/FichePoi'));
 const LeTrajet = lazy(() => import('@/pages/LeTrajet')); // ex-Composer
 const Carte = lazy(() => import('@/pages/Carte'));
 const Preparatifs = lazy(() => import('@/pages/Preparatifs')); // ex-Intendance
+const MonVoyage = lazy(() => import('@/pages/MonVoyage')); // « Mon voyage » (par voyageur, A26)
 const MesLieux = lazy(() => import('@/pages/MesLieux')); // « Mes envies »
 const Coulisses = lazy(() => import('@/pages/Coulisses')); // « Réglages »
 const JourImprimable = lazy(() => import('@/pages/JourImprimable'));
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
       { path: 'le-trajet', element: <LeTrajet /> },
       { path: 'carte', element: <Carte /> },
       { path: 'preparatifs', element: <Preparatifs /> },
+      { path: 'mon-voyage', element: <MonVoyage /> },
       { path: 'mes-envies', element: <MesLieux /> },
       { path: 'reglages', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },

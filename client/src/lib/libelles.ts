@@ -22,6 +22,7 @@ export const CRANS: Record<CranId, string> = {
 /** Les 7 espaces de l'app (A20), titres explicites pour un enfant. */
 export const ESPACES = {
   voyage: 'Le voyage',
+  monVoyage: 'Mon voyage',
   explorer: 'Explorer',
   envies: 'Mes envies',
   trajet: 'Le trajet',

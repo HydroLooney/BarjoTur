@@ -3,8 +3,9 @@ import { CurseurValeur } from '@/ui/primitives/curseur';
 import { Bouton } from '@/ui/primitives/button';
 import { usePeut } from '@/hooks/usePeut';
 import { useBudgetTemps } from '@/stores/budget-temps';
-import { joursDemo, themesDemo, visitesDemo, type JourDemo, type VisiteDemo } from '@/lib/fixtures/budget-temps-demo';
-import { ajusterDuree, ajusterFlanerie, clampAppetit, formatDuree } from '@/lib/budget-temps';
+import { joursDemo, visitesDemo, type JourDemo, type VisiteDemo } from '@/lib/fixtures/budget-temps-demo';
+import { ajusterDuree, ajusterFlanerie, formatDuree } from '@/lib/budget-temps';
+import { AppetitsThematiques } from '@/components/AppetitsThematiques';
 
 // Réglage du budget-temps (M089 / A21) : combien de temps on passe SUR PLACE par visite, la flânerie de chaque
 // jour, et les envies par thème. Régler les attributs d'une composition = composer (M088) → gaté `composer`
@@ -24,9 +25,6 @@ function libellePalier(min: number): string {
   return formatDuree(min);
 }
 
-function capitaliser(mot: string): string {
-  return mot.length === 0 ? mot : mot[0]!.toUpperCase() + mot.slice(1);
-}
 
 function ReglageVisite({ v }: { v: VisiteDemo }) {
   const override = useBudgetTemps((s) => s.dureesParVisite[v.id]);
@@ -105,22 +103,6 @@ function ReglageFlanerieJour({ j }: { j: JourDemo }) {
   );
 }
 
-function ReglageAppetit({ theme }: { theme: string }) {
-  const valeur = useBudgetTemps((s) => s.appetits[theme]) ?? 0;
-  const setAppetit = useBudgetTemps((s) => s.setAppetit);
-  return (
-    <CurseurValeur
-      valeur={Math.round(valeur * 100)}
-      min={0}
-      max={100}
-      step={10}
-      suffixe="%"
-      label={capitaliser(theme)}
-      onChange={(p) => setAppetit(theme, clampAppetit(p / 100))}
-    />
-  );
-}
-
 export function ReglageBudgetTemps() {
   // Régler le temps d'une composition = composer (M088). Un invité ne le voit pas.
   // Deux gates dans le même écran (M092) : régler la durée/flânerie d'une compo = composer ; régler ses envies
@@ -161,17 +143,7 @@ export function ReglageBudgetTemps() {
         </div>
       ) : null}
 
-      {peutVoter ? (
-        <div className="space-y-3">
-          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Vos envies par thème</h3>
-          <p className="max-w-prose text-xs text-muted-foreground">
-            Plus vous poussez un thème, plus le voyage lui donne de temps (nautique, faune, patrimoine…).
-          </p>
-          {themesDemo.map((t) => (
-            <ReglageAppetit key={t} theme={t} />
-          ))}
-        </div>
-      ) : null}
+      {peutVoter ? <AppetitsThematiques /> : null}
     </section>
   );
 }
