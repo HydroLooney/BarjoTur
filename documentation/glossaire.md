@@ -10,6 +10,8 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Organisateur principal.** L'organisateur qui tranche en dernier ressort et détient le code. D'autres organisateurs peuvent être délégués.
 
+**Lien privé.** Le principe d'accès de l'app : on entre par un lien à soi, jamais par un compte public. Le lien personnel d'un voyageur et le lien d'un invité en sont deux formes. Rien n'est ouvert à qui n'a pas de lien.
+
 **Lien personnel.** L'adresse à soi qui ouvre l'app, retrouve son voyage et garde ses avis. Elle vaut d'un appareil à l'autre. L'organisateur peut en fabriquer une nouvelle si l'ancienne se perd.
 
 **Code.** Le code de l'organisateur, demandé pour valider ou rouvrir une étape, ou pour un geste qui touche à l'identité d'un voyageur. Voter et explorer ne demandent jamais de code.
