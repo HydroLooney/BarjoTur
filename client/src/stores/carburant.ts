@@ -10,10 +10,17 @@ interface EtatCarburant {
   surconsoPct: number;
   prixDiesel: number;
   margePct: number;
+  /** Ristourne ferry AutoPASS, en % : le ferry payé = plein × (1 − ristourne%). Défaut 0. */
+  ristourneAutopassPct: number;
   setSurconso: (v: number) => void;
   setPrix: (v: number) => void;
   setMarge: (v: number) => void;
-  remplacer: (etat: Partial<Pick<EtatCarburant, 'surconsoPct' | 'prixDiesel' | 'margePct'>>) => void;
+  setRistourneAutopass: (v: number) => void;
+  remplacer: (
+    etat: Partial<
+      Pick<EtatCarburant, 'surconsoPct' | 'prixDiesel' | 'margePct' | 'ristourneAutopassPct'>
+    >,
+  ) => void;
 }
 
 export const useCarburant = create<EtatCarburant>()(
@@ -22,9 +29,11 @@ export const useCarburant = create<EtatCarburant>()(
       surconsoPct: 0,
       prixDiesel: PRIX_DIESEL_BASE,
       margePct: MARGE_SECURITE_PCT,
+      ristourneAutopassPct: 0,
       setSurconso: (v) => set({ surconsoPct: v }),
       setPrix: (v) => set({ prixDiesel: v }),
       setMarge: (v) => set({ margePct: v }),
+      setRistourneAutopass: (v) => set({ ristourneAutopassPct: v }),
       remplacer: (etat) => set((s) => ({ ...s, ...etat })),
     }),
     { name: 'barjotur-carburant' },

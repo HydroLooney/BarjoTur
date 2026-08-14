@@ -79,7 +79,7 @@ export function Comparateur() {
                 <th scope="col" className="px-3 py-2 text-left font-medium">Nature</th>
                 <th scope="col" className="px-3 py-2 text-right font-medium">Nuits</th>
                 <th scope="col" className="px-3 py-2 text-right font-medium">Km</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Budget prudent</th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">Budget (haute)</th>
               </tr>
             </thead>
             <tbody>

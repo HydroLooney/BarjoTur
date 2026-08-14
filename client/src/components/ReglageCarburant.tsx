@@ -31,7 +31,8 @@ function nombre(n: number, decimales = 1): string {
 
 export function ReglageCarburant() {
   const peutVoirBudget = usePeut('voir_budget_detaille');
-  const { surconsoPct, prixDiesel, margePct, setSurconso, setPrix, setMarge } = useCarburant();
+  const { surconsoPct, prixDiesel, margePct, ristourneAutopassPct, setSurconso, setPrix, setMarge, setRistourneAutopass } =
+    useCarburant();
   if (!peutVoirBudget) return null;
 
   const consoEff = consoEffectiveL100(surconsoPct);
@@ -41,11 +42,11 @@ export function ReglageCarburant() {
   return (
     <section className="space-y-4 rounded-lg border border-border p-3">
       <div>
-        <h2 className="text-sm font-medium">Carburant et marges</h2>
+        <h2 className="text-sm font-medium">Carburant, ferry et marges</h2>
         <p className="max-w-prose text-xs text-muted-foreground">
-          Réglez la surconsommation (montagne, charge), le prix du diesel et la marge de sécurité : le coût se
-          recalcule tout de suite. Sur {nombre(KM_DEMO, 0)} km d'exemple (le kilométrage réel viendra du calcul
-          d'itinéraire).
+          Réglez la surconsommation (montagne, charge), le prix du diesel, la marge de sécurité et la ristourne ferry
+          AutoPASS : le coût se recalcule tout de suite. Sur {nombre(KM_DEMO, 0)} km d'exemple (le kilométrage réel
+          viendra du calcul d'itinéraire).
         </p>
       </div>
 
@@ -80,6 +81,15 @@ export function ReglageCarburant() {
         step={5}
         suffixe="%"
         onChange={setMarge}
+      />
+      <CurseurValeur
+        label="Ristourne ferry AutoPASS"
+        valeur={ristourneAutopassPct}
+        min={0}
+        max={50}
+        step={5}
+        suffixe="%"
+        onChange={setRistourneAutopass}
       />
 
       <dl className="space-y-1 rounded-md bg-muted p-3 text-sm">

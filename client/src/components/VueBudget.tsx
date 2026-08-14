@@ -45,17 +45,20 @@ export function VueBudget() {
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         <span>
-          Total prudent : <span className="font-medium">{euro(b.total_prudent_eur)}</span>
+          Budget :{' '}
+          <span className="font-medium">
+            de {euro(b.total_non_prudent_eur)} à {euro(b.total_prudent_eur)}
+          </span>
         </span>
-        <span className="text-muted-foreground">Non prudent : {euro(b.total_non_prudent_eur)}</span>
+        <span className="text-muted-foreground">estimation basse → haute</span>
       </div>
       <p className="text-xs text-muted-foreground">
-        Par adulte ({b.par_adulte.nb_adultes}) : {euro(b.par_adulte.prudent_eur)} prudent,{' '}
-        {euro(b.par_adulte.non_prudent_eur)} non prudent. {b.par_adulte.note}
+        Par adulte ({b.par_adulte.nb_adultes}) : de {euro(b.par_adulte.non_prudent_eur)} à{' '}
+        {euro(b.par_adulte.prudent_eur)}. {b.par_adulte.note}
       </p>
       {b.alertes.depasse_soft_prudent ? (
-        <p className="text-xs text-rouge">
-          Alerte : le prévisionnel prudent dépasse le plafond souple ({euro(b.alertes.soft_cap_eur)}).
+        <p className="text-xs text-destructive">
+          Attention : l'estimation haute dépasse le plafond souple ({euro(b.alertes.soft_cap_eur)}).
         </p>
       ) : null}
     </div>

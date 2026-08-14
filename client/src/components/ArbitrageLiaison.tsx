@@ -32,6 +32,7 @@ export function ArbitrageLiaison() {
   const peutVoirBudget = usePeut('voir_budget_detaille');
   const surconsoPct = useCarburant((s) => s.surconsoPct);
   const prixDiesel = useCarburant((s) => s.prixDiesel);
+  const ristourneAutopassPct = useCarburant((s) => s.ristourneAutopassPct);
   // Préférence argent↔temps, en €/h : 0 = le moins cher, grand = le plus rapide.
   const [valeurTemps, setValeurTemps] = useState(10);
 
@@ -40,9 +41,14 @@ export function ArbitrageLiaison() {
     () =>
       variantesLiaisonDemo.map((v) => ({
         ...v,
-        cout: { ...v.cout, carburant_eur: coutCarburantEur(v.km, surconsoPct, prixDiesel) },
+        cout: {
+          ...v.cout,
+          carburant_eur: coutCarburantEur(v.km, surconsoPct, prixDiesel),
+          // Ferry payé = plein × (1 − ristourne AutoPASS%) ; péage inchangé.
+          ferry_eur: v.cout.ferry_eur * (1 - ristourneAutopassPct / 100),
+        },
       })),
-    [surconsoPct, prixDiesel],
+    [surconsoPct, prixDiesel, ristourneAutopassPct],
   );
   const pareto = useMemo(() => frontPareto(variantes), [variantes]);
   const choisie = useMemo(() => choisirVariante(variantes, valeurTemps), [variantes, valeurTemps]);
@@ -60,7 +66,7 @@ export function ArbitrageLiaison() {
       </div>
 
       <CurseurValeur
-        label="Ce qui compte : argent ↔ temps"
+        label="Ce qui compte : argent et temps"
         valeur={valeurTemps}
         min={0}
         max={50}

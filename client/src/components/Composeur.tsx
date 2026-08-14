@@ -100,7 +100,7 @@ export function Composeur() {
 
       <fieldset className="space-y-1">
         <legend className="text-xs text-muted-foreground">
-          Bases candidates{bases.length > 0 ? ` (${bases.length} choisie${bases.length === 1 ? '' : 's'})` : ''}
+          Camps de base possibles{bases.length > 0 ? ` (${bases.length} choisi${bases.length === 1 ? '' : 's'})` : ''}
         </legend>
         <div className="flex flex-wrap gap-2">
           {basesCandidatesDemo.map((b) => {
@@ -137,7 +137,7 @@ export function Composeur() {
         {!aLeDroitDeComposer ? (
           <span className="text-xs text-muted-foreground">Votre lien ne permet pas de composer.</span>
         ) : bases.length === 0 ? (
-          <span className="text-xs text-muted-foreground">Choisissez au moins une base.</span>
+          <span className="text-xs text-muted-foreground">Choisissez au moins un camp de base.</span>
         ) : null}
       </div>
 

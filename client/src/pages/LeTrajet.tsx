@@ -11,7 +11,7 @@ export default function LeTrajet() {
     <section className="space-y-4">
       <h1 className="font-serif text-2xl">Le trajet</h1>
       <p className="max-w-prose text-muted-foreground">
-        Composez l'itinéraire du voyage : choisissez une ambiance et des bases, gérez les étapes de transit,
+        Composez l'itinéraire du voyage : choisissez une ambiance et des camps de base, gérez les étapes de transit,
         et comparez les propositions pour trouver ce qui convient à toute la famille.
       </p>
       <GalerieArchetypes />
