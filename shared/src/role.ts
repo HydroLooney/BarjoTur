@@ -36,6 +36,12 @@ export interface Whoami {
   membre_id: number;
   prenom: string;
   role: string;
+  /**
+   * Qualification adulte/enfant du voyageur, renseignée par B depuis `membre.membre`. Permet au client de
+   * masquer le budget détaillé à un enfant côté rendu, cohérent avec l'autorité serveur (`peut`). Optionnel :
+   * absent ou null tant que B ne le porte pas, le masque enfant repose alors sur la seule autorité serveur.
+   */
+  qualification?: Qualification | null;
 }
 
 // --- Administration des voyageurs (T039) ---------------------------------------------------------
