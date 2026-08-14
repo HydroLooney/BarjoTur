@@ -11,8 +11,15 @@ import {
   type VarianteLiaison,
 } from './arbitrage.js';
 
-function v(mode: VarianteLiaison['mode'], temps_min: number, carburant = 0, ferry = 0, peage = 0): VarianteLiaison {
-  return { mode, temps_min, cout: { carburant_eur: carburant, ferry_eur: ferry, peage_eur: peage } };
+function v(
+  mode: VarianteLiaison['mode'],
+  temps_min: number,
+  carburant = 0,
+  ferry = 0,
+  peage = 0,
+  km = 0,
+): VarianteLiaison {
+  return { mode, temps_min, km, cout: { carburant_eur: carburant, ferry_eur: ferry, peage_eur: peage } };
 }
 
 test('coutTotalEur additionne carburant + ferry + péage', () => {

@@ -47,6 +47,7 @@ export const RPC_AUTORISEES = [
   'voyageurs_lire',
   'voyageur_role_changer',
   'voyageur_lien_regenerer',
+  'budget_temps_poi',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
@@ -54,7 +55,7 @@ export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
 /** Un argument lié, avec un cast Postgres optionnel (ex. un objet passé en jsonb). */
 export interface ArgRpc {
   valeur: unknown;
-  cast?: 'text' | 'jsonb' | 'bigint' | 'double precision';
+  cast?: 'text' | 'jsonb' | 'bigint' | 'integer' | 'double precision';
 }
 
 /** Argument texte simple. */
@@ -70,6 +71,11 @@ export function argJsonb(valeur: unknown): ArgRpc {
 /** Argument entier long (bigint). On passe la valeur en chaîne pour éviter toute perte de précision. */
 export function argBigint(valeur: number): ArgRpc {
   return { valeur: String(valeur), cast: 'bigint' };
+}
+
+/** Argument entier (integer), pour les RPC dont la signature est `int` (ex. poi_id). Résolution de fonction exacte. */
+export function argEntier(valeur: number): ArgRpc {
+  return { valeur, cast: 'integer' };
 }
 
 /** Argument flottant (double precision), pour les coordonnées et autres réels. */
