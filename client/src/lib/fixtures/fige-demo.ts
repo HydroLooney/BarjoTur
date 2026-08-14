@@ -1,6 +1,5 @@
 import type { MultiLineString } from 'geojson';
-import type { EtapeFige, FigeDetail, ItineraireFige, ScenarioDefaut } from '@barjotur/shared';
-import type { ResumeJour } from '@/lib/atlas';
+import type { EtapeFige, FigeDetail, ItineraireFige, ResumeJour, ScenarioDefaut } from '@barjotur/shared';
 
 // Fixture de DEV UNIQUEMENT (chargee dynamiquement sous import.meta.env.DEV, jamais en prod), pour la
 // verif visuelle du rendu de la carte animee sans le BFF : un trace cotier ouest-norvegien plausible en

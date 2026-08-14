@@ -1,32 +1,13 @@
-import type { EtapeFige } from '@barjotur/shared';
+import type { EtapeFige, ResumeJour } from '@barjotur/shared';
 
 // Atlas (M103) : le voyage sur papier, une page par jour. Le contenu riche d'un jour (camp de base, lieux + temps
-// sur place, trajet, ferry, budget du jour) vit dans `fige.etape.resume_jour`, un jsonb libre côté contrat. On en
-// donne ici une INTERPRÉTATION front, à confirmer au flip (B fournit le jsonb réel). Hors live, la fixture le
-// remplit ; le rendu ne montre que ce qui est présent (dégradé propre, R1). Km/ferry/budget viennent aussi de la
-// compo/budget-jour de B au flip ; d'ici là ce sont des valeurs illustratives.
+// sur place, trajet, ferry, budget du jour) vit dans `fige.etape.resume_jour`, désormais typé `ResumeJour | null`
+// au contrat partagé (M105). Hors live, la fixture le remplit ; au flip, B le produit à cette forme. Le rendu ne
+// montre que ce qui est présent (dégradé propre, R1).
 
-/** Un lieu visité dans la journée, avec le temps qu'on y passe. */
-export interface LieuJour {
-  nom: string;
-  temps_min: number;
-}
-
-/** Forme SUPPOSÉE du jsonb `resume_jour` (à confirmer au flip). Tout est optionnel : on rend ce qui existe. */
-export interface ResumeJour {
-  camp_base?: string;
-  km?: number;
-  ferry_min?: number;
-  ferry_eur?: number;
-  traversees?: number;
-  budget_eur?: number;
-  lieux?: LieuJour[];
-}
-
-/** Lit le résumé d'un jour depuis l'étape (jsonb non typé au contrat), avec un repli vide sûr. */
+/** Lit le résumé d'un jour depuis l'étape, avec un repli vide sûr (aucun champ requis). */
 export function resumeDe(etape: EtapeFige): ResumeJour {
-  const r = etape.resume_jour;
-  return r && typeof r === 'object' ? (r as ResumeJour) : {};
+  return etape.resume_jour ?? {};
 }
 
 /** Nom du camp de base du jour : le résumé s'il le porte, sinon un repli lisible depuis l'identifiant. */
