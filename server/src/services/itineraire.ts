@@ -5,9 +5,9 @@
 import { Erreurs } from '../http/erreurs.js';
 import { validerComposeInput, composer } from './composeur.js';
 import { arretsImposes } from './transit.js';
-import type { ComposeInput, ComposeReponse } from '../domain/composeur.js';
-import type { EtapeTransit, PointVoyage } from '../domain/voyage.js';
-import type { EtapeItineraire, EtapeRoutee, ItineraireOrchestre } from '../domain/itineraire.js';
+import type { ArretImpose, ComposeInput, ComposeReponse, EtapeRoutee } from '../domain/composeur.js';
+import type { ArretTransit, EtapeTransit, PointVoyage } from '../domain/voyage.js';
+import type { EtapeItineraire, ItineraireOrchestre } from '../domain/itineraire.js';
 
 function estPoint(v: unknown): v is PointVoyage {
   if (typeof v !== 'object' || v === null) return false;
@@ -65,16 +65,18 @@ export function validerEtapesItineraire(corps: unknown): EtapeItineraire[] {
   });
 }
 
-/** Prépare une étape de transit : fige les arrêts imposés (réservés + épinglés) comme contrainte dure, statut en
- *  attente du corridor (l'optim transit se câble à la livraison d'A). Pure. */
-export function preparerTransit(etape: EtapeTransit): EtapeRoutee['transit'] {
-  return { etape, arrets_imposes: arretsImposes(etape.faisceau), statut: 'en_attente_corridor' };
+/** Traduit les arrêts imposés du faisceau (réservés + épinglés) en contrainte dure `ArretImpose[]` pour le composeur
+ *  (M062 : `ComposeInput.arretsImposes`). Sert au routage transit quand le corridor d'A arrive. Pure. */
+export function arretsImposesPourCompose(faisceau: ArretTransit[]): ArretImpose[] {
+  return arretsImposes(faisceau).map((a) => ({ lat: a.lat, lon: a.lon }));
 }
 
 /**
- * Orchestre l'itinéraire mixte : route chaque étape avec SON mode. Expérience → composeur (orienteering). Transit →
- * préparé + en attente du corridor. Le routeur d'expérience est injecté (défaut = `composer`) pour le rendre testable.
- * L'ordre de la séquence est préservé ; `transit_en_attente` compte les transits non encore routés.
+ * Orchestre l'itinéraire mixte : route chaque étape avec SON mode et rend une suite `EtapeRoutee[]` (forme partagée
+ * M062, identique à `ComposeReponse.etapes`). Expérience → composeur (orienteering), geom+meta, statut `route`.
+ * Transit → étape non encore routée (statut `en_attente_corridor`) ; ses arrêts imposés (contrainte dure) sont
+ * calculés pour le sidecar au corridor. Le routeur d'expérience est injecté (défaut `composer`) pour le rendre testable.
+ * L'ordre est préservé ; `transit_en_attente` compte les transits en attente du corridor.
  */
 export async function orchestrerItineraire(
   etapes: EtapeItineraire[],
@@ -85,10 +87,11 @@ export async function orchestrerItineraire(
   for (let ordre = 0; ordre < etapes.length; ordre++) {
     const e = etapes[ordre]!;
     if (e.nature === 'experience') {
-      routees.push({ ordre, nature: 'experience', experience: await routeurExperience(e.experience) });
+      const r = await routeurExperience(e.experience);
+      routees.push({ nature: 'experience', ordre, geom: r.geom ?? null, meta: r.compose, statut: 'route' });
     } else {
       enAttente++;
-      routees.push({ ordre, nature: 'transit', transit: preparerTransit(e.transit) });
+      routees.push({ nature: 'transit', ordre, statut: 'en_attente_corridor' });
     }
   }
   return { ok: true, etapes: routees, transit_en_attente: enAttente };

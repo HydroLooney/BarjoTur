@@ -2,35 +2,23 @@
 // (orienteering, on maximise le beau) et transit (repositionnement, on minimise + faisceau, A19). L'orchestration
 // (séquencer, dispatcher par mode, poser les arrêts imposés) est non-routable ; l'optim transit attend le corridor d'A.
 //
-// Types locaux au BFF (DTO d'orchestration) : la structure des étapes vit dans @barjotur/shared (voyage.ts), on
-// compose au-dessus. À canoniser dans shared si le front en a besoin (signalé à M).
+// `EtapeRoutee` est CANONIQUE dans @barjotur/shared (composeur.ts, M062) : on la réexporte, pour que l'orchestration
+// et `ComposeReponse.etapes` partagent exactement la même forme. `EtapeItineraire` (entrée d'orchestration) reste local.
 
-import type { ComposeInput, ComposeReponse } from './composeur.js';
-import type { ArretTransit, EtapeTransit, NatureEtape } from './voyage.js';
+import type { ComposeInput } from './composeur.js';
+import type { EtapeTransit } from './voyage.js';
 
-/** Une étape de l'itinéraire mixte : soit une expérience (entrée composeur), soit un transit (faisceau + jalon). */
+export type { EtapeRoutee } from '@barjotur/shared';
+
+/** Une étape de l'itinéraire mixte à orchestrer : soit une expérience (entrée composeur), soit un transit (faisceau). */
 export type EtapeItineraire =
   | { nature: 'experience'; experience: ComposeInput }
   | { nature: 'transit'; transit: EtapeTransit };
 
-/** Résultat d'une étape routée. L'expérience porte la réponse composeur ; le transit porte ses arrêts imposés et son
- *  statut (routé plus tard, au corridor). */
-export interface EtapeRoutee {
-  ordre: number;
-  nature: NatureEtape;
-  /** Réponse du composeur pour une étape expérience (orienteering). */
-  experience?: ComposeReponse;
-  /** Étape transit préparée : arrêts imposés (contrainte dure) + statut de routage. */
-  transit?: {
-    etape: EtapeTransit;
-    arrets_imposes: ArretTransit[];
-    statut: 'en_attente_corridor';
-  };
-}
-
-/** L'itinéraire mixte orchestré : les étapes routées, dans l'ordre, + le compte des transits en attente du corridor. */
+/** L'itinéraire mixte orchestré : les étapes routées (forme partagée), dans l'ordre, + le compte des transits en
+ *  attente du corridor. `etapes` est du type partagé `EtapeRoutee[]`, identique à `ComposeReponse.etapes`. */
 export interface ItineraireOrchestre {
   ok: boolean;
-  etapes: EtapeRoutee[];
+  etapes: import('@barjotur/shared').EtapeRoutee[];
   transit_en_attente: number;
 }

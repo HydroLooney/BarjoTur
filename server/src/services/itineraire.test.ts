@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {
   validerEtapesItineraire,
   validerEtapeTransit,
-  preparerTransit,
+  arretsImposesPourCompose,
   orchestrerItineraire,
 } from './itineraire.js';
 import type { EtapeItineraire } from '../domain/itineraire.js';
@@ -46,14 +46,15 @@ test('validerEtapeTransit exige des points depuis/vers valides', () => {
   assert.equal(ok.jalon_date, '2027-08-04T18:40:00Z');
 });
 
-test('preparerTransit fige les arrêts imposés et marque en attente du corridor', () => {
-  const prep = preparerTransit(etapeTransit({ faisceau: [arret('a', { reserve: true }), arret('b')] }));
-  assert.equal(prep!.statut, 'en_attente_corridor');
-  assert.deepEqual(prep!.arrets_imposes.map((x) => x.id), ['a']); // seul le réservé est imposé
+test('arretsImposesPourCompose traduit les arrêts imposés en contrainte {lat,lon}', () => {
+  const out = arretsImposesPourCompose([arret('a', { reserve: true }), arret('b')]);
+  assert.deepEqual(out, [{ lat: 60, lon: 8 }]); // seul le réservé est imposé
 });
 
-test('orchestrerItineraire route l’expérience via le routeur injecté et prépare le transit', async () => {
-  const faux: ComposeReponse = { ok: true } as ComposeReponse;
+test('orchestrerItineraire rend une suite EtapeRoutee typée (expérience routée, transit en attente)', async () => {
+  const geom = { type: 'LineString', coordinates: [[8, 60], [9, 61]] } as ComposeReponse['geom'];
+  const meta = { n_bases: 2, nuits: 3, value: 10, drive_h: 4 } as ComposeReponse['compose'];
+  const faux: ComposeReponse = { ok: true, geom, compose: meta } as ComposeReponse;
   const appels: ComposeInput[] = [];
   const routeur = async (input: ComposeInput): Promise<ComposeReponse> => {
     appels.push(input);
@@ -69,7 +70,11 @@ test('orchestrerItineraire route l’expérience via le routeur injecté et pré
   assert.equal(res.etapes.length, 3);
   assert.equal(res.transit_en_attente, 1);
   assert.equal(appels.length, 2); // deux étapes expérience routées
-  assert.equal(res.etapes[0]!.experience, faux);
-  assert.equal(res.etapes[1]!.transit!.statut, 'en_attente_corridor');
+  assert.equal(res.etapes[0]!.nature, 'experience');
+  assert.equal(res.etapes[0]!.statut, 'route');
+  assert.equal(res.etapes[0]!.geom, geom);
+  assert.equal(res.etapes[0]!.meta, meta);
+  assert.equal(res.etapes[1]!.nature, 'transit');
+  assert.equal(res.etapes[1]!.statut, 'en_attente_corridor');
   assert.deepEqual(res.etapes.map((e) => e.ordre), [0, 1, 2]); // ordre préservé
 });
