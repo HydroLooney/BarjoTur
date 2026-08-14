@@ -124,27 +124,54 @@ def _allouer_dp(lieux: list[CourbeLieu], total: int) -> dict[int, int]:
     return dp[best][1]
 
 
+INF = float("inf")
+
+
 def ordonner_route(
     selection: list[int], couts: dict[tuple[int, int], float], depart: int, arrivee: int
-) -> tuple[list[int], float]:
-    """Ordonne les lieux retenus en un chemin OUVERT depart→…→arrivee minimisant le trajet (heuristique plus-proche-
-    voisin, amorce ; le circuit exact = CP-SAT au flip). Coût manquant = 0 (matrice synthétique incomplète, R1). Pure."""
+) -> tuple[list[int], float, bool]:
+    """Ordonne les lieux retenus en un chemin OUVERT depart→…→arrivee de coût MINIMAL — Held-Karp EXACT (trivial à
+    notre échelle, ≤ ~12 bases ; M120 F1, remplace le plus-proche-voisin). Coût d'arête MANQUANT = +∞ (M120 : PAS 0) :
+    si aucun chemin complet n'existe, `faisable=False`. Rend (ordre, cout, faisable). Pure."""
 
     def c(a: int, b: int) -> float:
-        return couts.get((a, b), couts.get((b, a), 0.0))
+        return couts.get((a, b), couts.get((b, a), INF))
 
-    restants = list(selection)
+    n = len(selection)
+    if n == 0:
+        cout = c(depart, arrivee)
+        return [], cout, cout < INF
+    dp: list[list[tuple[float, int]]] = [[(INF, -1)] * n for _ in range(1 << n)]
+    for j, lieu in enumerate(selection):
+        dp[1 << j][j] = (c(depart, lieu), -1)
+    for mask in range(1 << n):
+        for j in range(n):
+            base = dp[mask][j][0]
+            if base == INF or not (mask >> j) & 1:
+                continue
+            for k in range(n):
+                if (mask >> k) & 1:
+                    continue
+                cand = base + c(selection[j], selection[k])
+                if cand < dp[mask | (1 << k)][k][0]:
+                    dp[mask | (1 << k)][k] = (cand, j)
+    full = (1 << n) - 1
+    best_cout, best_j = INF, -1
+    for j in range(n):
+        tot = dp[full][j][0] + c(selection[j], arrivee)
+        if tot < best_cout:
+            best_cout, best_j = tot, j
+    if best_cout == INF:
+        return list(selection), INF, False
     ordre: list[int] = []
-    courant = depart
-    total = 0.0
-    while restants:
-        prochain = min(restants, key=lambda x: c(courant, x))
-        total += c(courant, prochain)
-        ordre.append(prochain)
-        restants.remove(prochain)
-        courant = prochain
-    total += c(courant, arrivee)
-    return ordre, total
+    mask, j = full, best_j
+    while j != -1:
+        ordre.append(selection[j])
+        pj = dp[mask][j][1]
+        mask ^= 1 << j
+        j = pj
+    ordre.reverse()
+    return ordre, best_cout, True
 
 
 def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
@@ -159,7 +186,9 @@ def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
 
     selection = sorted(nuits.keys())
     valeur = sum(valeur_captee(lieux_par_id[lid].marginaux, n) for lid, n in nuits.items())
-    ordre, cout = ordonner_route(selection, entree.couts_trajet, entree.cadre.depart, entree.cadre.arrivee)
+    ordre, cout, faisable_route = ordonner_route(
+        selection, entree.couts_trajet, entree.cadre.depart, entree.cadre.arrivee
+    )
 
     gardes = []
     for lid in selection:
@@ -180,8 +209,56 @@ def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
     ]
     return Resultat(
         selection, nuits, ordre, valeur, cout, gardes, laisses,
-        faisable=bool(nuits) or entree.cadre.total_nuits == 0,
+        faisable=faisable_route and (bool(nuits) or entree.cadre.total_nuits == 0),
     )
+
+
+def ideal_voyageur(
+    membre_id: int,
+    lieux: list[CourbeLieu],
+    couts_trajet: dict[tuple[int, int], float],
+    cadre: Cadre,
+    mode: str = "full_auto",
+) -> dict:
+    """Idéal d'UN voyageur (M120) = allocation à SES seuls poids (leximin dégénéré à une personne), mémorisé comme
+    référence pour mesurer l'écart au voyage commun. Rend le contrat partagé `IdealVoyageur` {membre_id, resultat}. Pure."""
+    r = resoudre_allocation(EntreeAllocation(lieux=lieux, couts_trajet=couts_trajet, cadre=cadre, mode=mode))
+    return {"membre_id": membre_id, "resultat": resultat_vers_json(r)}
+
+
+def ecart_ideal(
+    membre_id: int,
+    nuits_collectif: dict[int, int],
+    nuits_ideal: dict[int, int],
+    total_nuits: int,
+    noms: Optional[dict[int, str]] = None,
+) -> dict:
+    """Écart d'un voyageur entre le voyage COMMUN et son IDÉAL (M120/EcartIdeal) : `gagne` (lieux où le commun donne
+    plus que l'idéal), `cede` (où il donne moins), `ecart` normalisé [0..1] = Σ|Δnuits| / (2·total). Un voyageur NEUTRE
+    (idéal = commun) a un écart nul. Rend le contrat partagé `EcartIdeal`. Pure."""
+    lieux = set(nuits_collectif) | set(nuits_ideal)
+
+    def lbl(l: int) -> str:
+        return str(noms[l]) if noms and l in noms else str(l)
+
+    gagne = sorted(lbl(l) for l in lieux if nuits_collectif.get(l, 0) > nuits_ideal.get(l, 0))
+    cede = sorted(lbl(l) for l in lieux if nuits_collectif.get(l, 0) < nuits_ideal.get(l, 0))
+    diff = sum(abs(nuits_collectif.get(l, 0) - nuits_ideal.get(l, 0)) for l in lieux)
+    ecart = diff / (2 * total_nuits) if total_nuits > 0 else 0.0
+    return {"membre_id": membre_id, "ecart": ecart, "gagne": gagne, "cede": cede}
+
+
+def leximin_cle(valeurs: list[float]) -> tuple:
+    """Clé LEXIMIN d'un vecteur de satisfactions : trié CROISSANT (on regarde d'abord le moins bien servi, M120). Pure."""
+    return tuple(sorted(valeurs))
+
+
+def leximin_compare(a: list[float], b: list[float]) -> int:
+    """Compare deux vecteurs de satisfaction au sens LEXIMIN (max-min puis cascade, M120) : trie croissant puis compare
+    lexicographiquement. Rend 1 si `a` est leximin-MEILLEUR, -1 si pire, 0 si égal. Pure. (Le CP-SAT de déploiement
+    OPTIMISE ce critère ; ici on fournit la primitive de comparaison, exploitable par une recherche.)"""
+    ka, kb = leximin_cle(a), leximin_cle(b)
+    return (ka > kb) - (ka < kb)
 
 
 # --- mapping sur le contrat partagé shared/allocation.ts (M117) --------------------------------------
@@ -209,8 +286,9 @@ def entree_depuis_json(payload: dict) -> EntreeAllocation:
 
 
 def resultat_vers_json(r: Resultat) -> dict:
-    """Sérialise un Resultat au format EXACT du contrat partagé ResultatAllocation (M117) : selection / nuits / ordre /
-    valeur_captee / cout_trajet / gardes / laisses (le champ interne `faisable` n'est pas exposé). Pure."""
+    """Sérialise un Resultat au format du contrat partagé ResultatAllocation (M117) : selection / nuits / ordre /
+    valeur_captee / cout_trajet / gardes / laisses. `faisable` (flag infaisable M120, coût manquant = +∞) est ajouté en
+    ADDITIF — à poser dans le contrat shared si M le veut (B057). Pure."""
     return {
         "selection": r.selection,
         "nuits": r.nuits,  # dict int→int ; JSON stringifie les clés (Record<number,number>)
@@ -219,6 +297,7 @@ def resultat_vers_json(r: Resultat) -> dict:
         "cout_trajet": r.cout_trajet,
         "gardes": r.gardes,
         "laisses": r.laisses,
+        "faisable": r.faisable,
     }
 
 
@@ -272,5 +351,7 @@ def resoudre_allocation_cpsat(entree: EntreeAllocation) -> Resultat:
     nuits = {lid: n for lid, n in nuits.items() if n > 0}
     selection = sorted(nuits.keys())
     valeur = sum(valeur_captee(lieux_par_id[lid].marginaux, n) for lid, n in nuits.items())
-    ordre, cout = ordonner_route(selection, entree.couts_trajet, entree.cadre.depart, entree.cadre.arrivee)
-    return Resultat(selection, nuits, ordre, valeur, cout, gardes=[], laisses=[], faisable=bool(nuits))
+    ordre, cout, faisable_route = ordonner_route(
+        selection, entree.couts_trajet, entree.cadre.depart, entree.cadre.arrivee
+    )
+    return Resultat(selection, nuits, ordre, valeur, cout, gardes=[], laisses=[], faisable=bool(nuits) and faisable_route)

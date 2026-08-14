@@ -105,6 +105,50 @@ def test_mapping_json_contrat_partage_round_trip():
     entree = entree_depuis_json(payload)
     assert entree.couts_trajet[(0, 1)] == 5  # liste -> dict interne
     out = resultat_vers_json(resoudre_allocation(entree))
-    assert set(out.keys()) == {"selection", "nuits", "ordre", "valeur_captee", "cout_trajet", "gardes", "laisses"}
+    assert set(out.keys()) == {"selection", "nuits", "ordre", "valeur_captee", "cout_trajet", "gardes", "laisses", "faisable"}
     assert out["selection"] == [1]  # domination -> drop
-    assert out["cout_trajet"] == 5 + 7  # route 0->1->9
+    assert out["cout_trajet"] == 5 + 7  # route 0->1->9 (Held-Karp)
+
+
+def test_ordonner_route_held_karp_est_exact_la_ou_le_glouton_echoue():
+    # Cas piège : le plus-proche-voisin depuis 0 prend 1 (coût 11) ; l'optimal est 0-2-3-1-9 (coût 4).
+    from allocation import ordonner_route
+    couts = {
+        (0, 1): 1, (0, 2): 1, (0, 3): 8,
+        (1, 2): 8, (1, 3): 1, (2, 3): 1,
+        (1, 9): 1, (2, 9): 8, (3, 9): 1,
+    }
+    ordre, cout, faisable = ordonner_route([1, 2, 3], couts, depart=0, arrivee=9)
+    assert faisable is True
+    assert cout == 4
+    assert ordre == [2, 3, 1]
+
+
+def test_ordonner_route_cout_manquant_est_infini_et_flag_infaisable():
+    from allocation import ordonner_route
+    ordre, cout, faisable = ordonner_route([1, 2], {(0, 1): 1}, depart=0, arrivee=9)  # aucun chemin complet
+    assert faisable is False
+    assert cout == float("inf")
+
+
+def test_ideal_voyageur_alloue_a_ses_seuls_poids():
+    from allocation import ideal_voyageur, CourbeLieu, Cadre
+    ideal = ideal_voyageur(7, [CourbeLieu(1, [10, 9]), CourbeLieu(2, [3])], {}, Cadre(2, 0, 9))
+    assert ideal["membre_id"] == 7
+    assert ideal["resultat"]["nuits"] == {1: 2}  # à ses poids, il concentre sur le lieu 1
+
+
+def test_ecart_ideal_dit_ce_qui_est_gagne_et_cede():
+    from allocation import ecart_ideal
+    e = ecart_ideal(7, nuits_collectif={1: 1, 2: 1}, nuits_ideal={1: 2}, total_nuits=2)
+    assert e["membre_id"] == 7
+    assert e["gagne"] == ["2"] and e["cede"] == ["1"]
+    assert e["ecart"] == 0.5  # (|1-2| + |1-0|) / (2*2)
+
+
+def test_leximin_cle_et_comparaison_soignent_le_moins_bien_servi():
+    from allocation import leximin_cle, leximin_compare
+    assert leximin_cle([5, 3, 8]) == (3, 5, 8)  # trié croissant
+    assert leximin_compare([3, 5], [2, 9]) == 1  # min 3 > 2 : meilleur leximin
+    assert leximin_compare([3, 5], [3, 4]) == 1  # égalité au 1er, 5 > 4
+    assert leximin_compare([3, 5], [3, 5]) == 0
