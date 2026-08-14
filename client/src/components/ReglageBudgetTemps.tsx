@@ -123,7 +123,11 @@ function ReglageAppetit({ theme }: { theme: string }) {
 
 export function ReglageBudgetTemps() {
   // Régler le temps d'une composition = composer (M088). Un invité ne le voit pas.
-  if (!usePeut('composer')) return null;
+  // Deux gates dans le même écran (M092) : régler la durée/flânerie d'une compo = composer ; régler ses envies
+  // par thème = une préférence personnelle, proche du vote = voter. Un invité (ni l'un ni l'autre) ne voit rien.
+  const peutComposer = usePeut('composer');
+  const peutVoter = usePeut('voter');
+  if (!peutComposer && !peutVoter) return null;
 
   return (
     <section className="space-y-4 rounded-lg border border-border p-3">
@@ -136,32 +140,38 @@ export function ReglageBudgetTemps() {
         </p>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Durée par visite</h3>
-        {visitesDemo.map((v) => (
-          <ReglageVisite key={v.id} v={v} />
-        ))}
-      </div>
+      {peutComposer ? (
+        <div className="space-y-3">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Durée par visite</h3>
+          {visitesDemo.map((v) => (
+            <ReglageVisite key={v.id} v={v} />
+          ))}
+        </div>
+      ) : null}
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Flânerie par jour</h3>
-        <p className="max-w-prose text-xs text-muted-foreground">
-          Un bloc de temps libre, en plus des visites (jamais compté deux fois) : balade, marché, port, pauses.
-        </p>
-        {joursDemo.map((j) => (
-          <ReglageFlanerieJour key={j.id} j={j} />
-        ))}
-      </div>
+      {peutComposer ? (
+        <div className="space-y-3">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Flânerie par jour</h3>
+          <p className="max-w-prose text-xs text-muted-foreground">
+            Un bloc de temps libre, en plus des visites (jamais compté deux fois) : balade, marché, port, pauses.
+          </p>
+          {joursDemo.map((j) => (
+            <ReglageFlanerieJour key={j.id} j={j} />
+          ))}
+        </div>
+      ) : null}
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Vos envies par thème</h3>
-        <p className="max-w-prose text-xs text-muted-foreground">
-          Plus vous poussez un thème, plus le voyage lui donne de temps (nautique, faune, patrimoine…).
-        </p>
-        {themesDemo.map((t) => (
-          <ReglageAppetit key={t} theme={t} />
-        ))}
-      </div>
+      {peutVoter ? (
+        <div className="space-y-3">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Vos envies par thème</h3>
+          <p className="max-w-prose text-xs text-muted-foreground">
+            Plus vous poussez un thème, plus le voyage lui donne de temps (nautique, faune, patrimoine…).
+          </p>
+          {themesDemo.map((t) => (
+            <ReglageAppetit key={t} theme={t} />
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }

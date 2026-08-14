@@ -5,6 +5,7 @@ import { Bouton } from '@/ui/primitives/button';
 import { useOnboarding } from '@/stores/onboarding';
 import { AdminVoyageurs } from '@/components/AdminVoyageurs';
 import { ProfilsDeplacement } from '@/components/ProfilsDeplacement';
+import { ReglageCarburant } from '@/components/ReglageCarburant';
 
 // Coulisses (C09 / A08) : le registre single-source des paramètres (valeur active + recommandée +
 // justification en clair), groupé par domaine. Anti-cadrage : la méthode et les chiffres vivent ICI,
@@ -43,6 +44,8 @@ export default function Coulisses() {
       <AdminVoyageurs />
 
       <ProfilsDeplacement />
+
+      <ReglageCarburant />
 
       {isLoading && vide ? <Chargement libelle="Chargement des paramètres." /> : null}
       {isError && vide ? (
