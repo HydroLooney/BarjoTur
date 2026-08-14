@@ -1,9 +1,9 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useMemo } from 'react';
-import { Map, Source, Layer, Marker, useMap } from '@vis.gl/react-maplibre';
+import { Source, Layer, Marker, useMap } from '@vis.gl/react-maplibre';
 import type { FeatureCollection, Geometry, Position } from 'geojson';
 import { charte } from '@/ui/theme';
-import { FOND_CARTE } from '@/lib/carte-config';
+import { CadreCarte } from '@/components/CadreCarte';
 import { useUi } from '@/stores/ui';
 
 // Mini-carte STATIQUE du tracé d'un circuit rando (A11 : voir le circuit avant de voter). Un seul
@@ -72,13 +72,13 @@ export function MiniCarteRando({ geom, hauteur = '220px' }: { geom: Geometry; ha
   const fc: FeatureCollection = { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: geom }] };
 
   return (
-    <div className="overflow-hidden rounded-md border border-border" style={{ height: hauteur }}>
-      <Map
-        initialViewState={{ longitude: lon0 ?? 8, latitude: lat0 ?? 61, zoom: 8 }}
-        mapStyle={FOND_CARTE}
-        style={{ width: '100%', height: '100%' }}
-        interactive={false}
-      >
+    <CadreCarte
+      hauteur={hauteur}
+      arrondi="md"
+      relatif={false}
+      initialViewState={{ longitude: lon0 ?? 8, latitude: lat0 ?? 61, zoom: 8 }}
+      interactive={false}
+    >
         <Cadrage b={b} />
         {estLigne ? (
           <Source id="rando" type="geojson" data={fc}>
@@ -104,7 +104,6 @@ export function MiniCarteRando({ geom, hauteur = '220px' }: { geom: Geometry; ha
             />
           </Marker>
         ) : null}
-      </Map>
-    </div>
+    </CadreCarte>
   );
 }

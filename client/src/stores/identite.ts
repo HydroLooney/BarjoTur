@@ -29,10 +29,17 @@ export const useIdentite = create<EtatIdentite>((set) => ({
   prenom: null,
   role: null,
   qualification: null,
-  // whoami ne porte pas encore la qualification (adulte/enfant) : on la met à null en attendant que B
-  // l'ajoute (gap remonté à M). D'ici là, le masque enfant du budget détaillé reste assuré par B (autorité).
+  // whoami porte la qualification (adulte/enfant), dérivée par B de `membre.membre` (M082/B042). On la lit
+  // telle quelle (repli null si absente) : elle active le masque enfant du budget détaillé côté rendu, en
+  // cohérence avec l'autorité serveur (`peut`).
   depuisWhoami: (code, w) =>
-    set({ code, membreId: w.membre_id, prenom: w.prenom, role: normaliserRole(w.role), qualification: null }),
+    set({
+      code,
+      membreId: w.membre_id,
+      prenom: w.prenom,
+      role: normaliserRole(w.role),
+      qualification: w.qualification ?? null,
+    }),
   deconnecter: () =>
     set({ code: null, membreId: null, prenom: null, role: null, qualification: null }),
 }));

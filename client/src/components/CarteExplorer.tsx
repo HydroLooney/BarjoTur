@@ -1,12 +1,12 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMemo, useState } from 'react';
-import { Map, Source, Layer } from '@vis.gl/react-maplibre';
+import { Source, Layer } from '@vis.gl/react-maplibre';
 import type { FeatureCollection } from 'geojson';
 import type { VoteTier } from '@barjotur/shared';
 import { useBboxPois, type BBox } from '@/lib/queries/poi-bbox';
 import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
 import { charte } from '@/ui/theme';
-import { FOND_CARTE } from '@/lib/carte-config';
+import { CadreCarte } from '@/components/CadreCarte';
 import { useUi } from '@/stores/ui';
 import { useIdentite } from '@/stores/identite';
 import { usePeut } from '@/hooks/usePeut';
@@ -64,13 +64,47 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
 
   const monTier: VoteTier | null = clique ? (mesVotes?.tiers[`p:${clique.osmId}`] ?? null) : null;
 
+  const surimpression = clique ? (
+    <div className="absolute inset-x-2 bottom-2 rounded-lg border border-border bg-card p-3 shadow-charte">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="font-serif text-base">{clique.nom}</p>
+          {clique.categorie ? <p className="text-xs text-muted-foreground">{clique.categorie}</p> : null}
+        </div>
+        <button
+          type="button"
+          className="min-h-tactile px-2 text-lg text-muted-foreground hover:text-foreground"
+          onClick={() => setClique(null)}
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+      </div>
+      <div className="mt-2">
+        {clique.votable ? (
+          <SelecteurTier
+            monTier={monTier}
+            tierDefaut={clique.tierDefaut}
+            disabled={!peutVoter}
+            onChoisir={(tier) => voter.mutate({ ref: `p:${clique.osmId}`, tier: tier ?? undefined })}
+          />
+        ) : (
+          <span className="text-xs text-muted-foreground">Repère non votable.</span>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="pointer-events-none absolute inset-x-0 top-0 bg-card/80 px-3 py-1.5 text-xs text-muted-foreground">
+      {donnees.features.length} lieux dans la vue. Touchez un point pour voter.
+    </div>
+  );
+
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border" style={{ height: hauteur }}>
-      <Map
-        initialViewState={VUE_INITIALE}
-        mapStyle={FOND_CARTE}
-        style={{ width: '100%', height: '100%' }}
-        interactiveLayerIds={[LAYER_VOTABLE, LAYER_REPERE]}
+    <CadreCarte
+      hauteur={hauteur}
+      surimpression={surimpression}
+      initialViewState={VUE_INITIALE}
+      interactiveLayerIds={[LAYER_VOTABLE, LAYER_REPERE]}
         onLoad={(e) => majBounds(e.target)}
         onMoveEnd={(e) => majBounds(e.target)}
         onClick={(e) => {
@@ -108,42 +142,6 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
             }}
           />
         </Source>
-      </Map>
-
-      {clique ? (
-        <div className="absolute inset-x-2 bottom-2 rounded-lg border border-border bg-card p-3 shadow-charte">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="font-serif text-base">{clique.nom}</p>
-              {clique.categorie ? <p className="text-xs text-muted-foreground">{clique.categorie}</p> : null}
-            </div>
-            <button
-              type="button"
-              className="min-h-tactile px-2 text-lg text-muted-foreground hover:text-foreground"
-              onClick={() => setClique(null)}
-              aria-label="Fermer"
-            >
-              ×
-            </button>
-          </div>
-          <div className="mt-2">
-            {clique.votable ? (
-              <SelecteurTier
-                monTier={monTier}
-                tierDefaut={clique.tierDefaut}
-                disabled={!peutVoter}
-                onChoisir={(tier) => voter.mutate({ ref: `p:${clique.osmId}`, tier: tier ?? undefined })}
-              />
-            ) : (
-              <span className="text-xs text-muted-foreground">Repère non votable.</span>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="pointer-events-none absolute inset-x-0 top-0 bg-card/80 px-3 py-1.5 text-xs text-muted-foreground">
-          {donnees.features.length} lieux dans la vue. Touchez un point pour voter.
-        </div>
-      )}
-    </div>
+    </CadreCarte>
   );
 }
