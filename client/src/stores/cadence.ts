@@ -5,7 +5,8 @@ import { persist } from 'zustand/middleware';
 // porte d'entrée simple (rusher ↔ flâner) qui pilotera tous les budgets temps au flip. Les incontournables sont
 // les lieux où je veux vraiment du temps (épinglés). Au flip, ces réglages nourrissent le moteur (gaté DSN).
 interface EtatCadence {
-  /** 0 = rusher (on enchaîne), 100 = flâner (on prend son temps). */
+  /** Densité des journées (nom technique interne « cadence », M118) : 0 = journées légères (on prend le temps),
+   * 100 = journées denses (on enchaîne). C'est une moyenne ; le composeur alternera les rythmes au flip. */
   cadence: number;
   /** osm_id des lieux où « je veux vraiment du temps ». */
   incontournables: string[];

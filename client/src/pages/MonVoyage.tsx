@@ -24,13 +24,20 @@ export default function MonVoyage() {
 
       <section className="space-y-2 rounded-lg border border-border p-3">
         <div>
-          <h2 className="text-sm font-medium">Ma cadence</h2>
+          <h2 className="text-sm font-medium">La densité de mes journées</h2>
           <p className="max-w-prose text-xs text-muted-foreground">
-            Plutôt filer d'un lieu à l'autre, ou prendre le temps de flâner ? Ce seul réglage guide tous vos budgets de
-            temps. Un réglage plus fin viendra ici quand vous en aurez envie.
+            Des journées légères, où l'on prend le temps, aux journées denses, où l'on enchaîne. Ce seul réglage guide
+            tous vos budgets de temps. C'est une moyenne : le voyage alternera les rythmes.
           </p>
         </div>
-        <CurseurValeur label="Rusher ↔ flâner" valeur={cadence} min={0} max={100} step={5} onChange={setCadence} />
+        <CurseurValeur
+          label="Densité des journées : légères ↔ denses"
+          valeur={cadence}
+          min={0}
+          max={100}
+          step={5}
+          onChange={setCadence}
+        />
       </section>
 
       <MesIncontournables />
