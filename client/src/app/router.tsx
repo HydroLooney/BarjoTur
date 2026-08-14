@@ -5,12 +5,16 @@ import { useWhoami } from '@/lib/queries/whoami';
 import { useIdentite } from '@/stores/identite';
 
 // Vues lourdes en lazy : chaque route tire son propre chunk (les cartes restent hors du chemin critique).
-const Accueil = lazy(() => import('@/pages/Accueil'));
+// Socle d'app A20 : 7 espaces à titres explicites pour un enfant (« Le voyage », « Le trajet », « Mes
+// envies », « Préparatifs », « Réglages »…). Les anciens chemins redirigent (compat strangler).
+const Accueil = lazy(() => import('@/pages/Accueil')); // « Le voyage »
 const Explorer = lazy(() => import('@/pages/Explorer'));
 const FichePoi = lazy(() => import('@/pages/FichePoi'));
-const Voyager = lazy(() => import('@/pages/Voyager'));
-const MesLieux = lazy(() => import('@/pages/MesLieux'));
-const Coulisses = lazy(() => import('@/pages/Coulisses'));
+const LeTrajet = lazy(() => import('@/pages/LeTrajet')); // ex-Composer
+const Carte = lazy(() => import('@/pages/Carte'));
+const Preparatifs = lazy(() => import('@/pages/Preparatifs')); // ex-Intendance
+const MesLieux = lazy(() => import('@/pages/MesLieux')); // « Mes envies »
+const Coulisses = lazy(() => import('@/pages/Coulisses')); // « Réglages »
 const JourImprimable = lazy(() => import('@/pages/JourImprimable'));
 const Atlas = lazy(() => import('@/pages/Atlas'));
 
@@ -77,11 +81,17 @@ export const router = createBrowserRouter([
       { index: true, loader: redirigerDepuisV2, element: <Accueil /> },
       { path: 'explorer', element: <Explorer /> },
       { path: 'explorer/:osm', element: <FichePoi /> },
-      { path: 'voyager', element: <Voyager /> },
-      { path: 'mes-lieux', element: <MesLieux /> },
-      { path: 'coulisses', element: <Coulisses /> },
+      { path: 'le-trajet', element: <LeTrajet /> },
+      { path: 'carte', element: <Carte /> },
+      { path: 'preparatifs', element: <Preparatifs /> },
+      { path: 'mes-envies', element: <MesLieux /> },
+      { path: 'reglages', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },
       { path: 'atlas', element: <Atlas /> },
+      // Compat des anciens chemins (strangler) : redirection vers les espaces A20.
+      { path: 'voyager', loader: () => redirect('/carte') },
+      { path: 'mes-lieux', loader: () => redirect('/mes-envies') },
+      { path: 'coulisses', loader: () => redirect('/reglages') },
       // Bootstrap identite : /app/<code>/<Prenom> (non gate PIN, A03).
       { path: 'app/:code/:prenom', element: <BootstrapIdentite /> },
     ],
