@@ -16,6 +16,7 @@ import { routesEsprit } from './routes/esprit.js';
 import { routesMemoire } from './routes/memoire.js';
 import { routesParcours } from './routes/parcours.js';
 import { routesVoyage } from './routes/voyage.js';
+import { routesItineraire } from './routes/itineraire.js';
 import { routesComposeur } from './routes/composeur.js';
 import { entetesCache } from './middleware/cache.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
@@ -58,6 +59,7 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesMemoire);
   app.use('/api', routesParcours);
   app.use('/api', routesVoyage);
+  app.use('/api', routesItineraire);
   app.use('/api', routesComposeur);
 
   app.use(middlewareIntrouvable);
