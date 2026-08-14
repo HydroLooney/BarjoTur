@@ -78,3 +78,23 @@
 
 - Détail colonne par colonne des relations canoniques : sortie de `catalogue.sql` section 3 (à intégrer ici table par table au fil du recalcul, avec provenance et confiance).
 - `DB2-inventaire.md` : à co-construire avec B (surface `api.*`, `budget.parametre`, `decision.*`, `membre.*`).
+
+## Livrables Worker A, recalcul canonique + moteur GIS-MCDA (14/08/2026)
+
+Nouvelles tables CANONIQUES `mcda2` (une version par calcul, script rejouable, COMMENT en base, JOURNAL-repro). Toutes recalculées depuis les sources (doctrine plan #11), sources read-only.
+
+| Table canonique | Contenu | Script | Vérif |
+|---|---|---|---|
+| `matrice_base_base` | Matrice A\* base-à-base (11025, 0 asym), fin du KNN | `30_matrices.sql` + `30b_matrices_km.sql` | gate C16, empreinte a40a9922 |
+| `qualite_poi` | Champ qualité OWA (785 POI), WOWA(CRITIC, orness 0,65) | `gis_mcda/f_owa.py` | top-5 cohérent |
+| `defaut_poi` | Tier prior (V) + confiance φ (1987) ; tier ⊥ Q | `70_defaut_poi.sql` | 669 neutre B |
+| `reward_inputs` | Facteurs reward de nœud (778) ; V_poi non figé (pin M) | `80_reward_inputs.sql` | Bryggen prouvé |
+| `poi_decoupage` | Appartenance POI→zone/région rejouable (1987) | `55_poi_decoupage.sql` | 1828 zonés |
+| `base_rayonnement` | Qualité réseau atteignable par base (105), anti-MAUP | `50_krigeage_rayonnement.sql` | 16 zéros vérifiés |
+| `bases_ideales` | Bases idéales par couverture (60, greedy MCLP + réseau) | `60_bases_ideales.sql` + `60b_*.sql` | corr euclid/réseau 0,887 |
+| `ways_van_cout_override` | Recoûtage ferry ≤35km (A-19), COALESCE au rebuild | `32_recout_ferry.sql` | 694 recoûtés |
+| `ways_van_exclusions` | Arêtes exclues (45 : 44 artefacts >35km + 1 bateau-passagers) | A-04/A-19 | connectivité 1 composante |
+
+Nouvelles tables de TRAVAIL `_*` (underscore, trashables au ménage A-13 après gel) : `_q_poi_van_node` (snap Q-POI→noeud giant), `_cand_couverture_euclid`, `_cand_poi_w` (relation candidat×POI pour le MCLP).
+
+Dettes résolues depuis le 13/08 : #2 matrice ouest (A\* + gate C16), #3 tier_defaut NULL (→ `defaut_poi`), #4 Varhaug ×3 (dédup soft-merge). Restent M-bound : formule V_poi (A020), gel schéma (A-13), scope bases (A022).
