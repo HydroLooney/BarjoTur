@@ -9,10 +9,10 @@ export interface BudgetPostes {
   repas_courses: number;
   ferry_interieur: number;
   ferry_international: number;
-  /** Péages (NVDB bomstasjon, van chargé). Nouvelle dimension € du routage van (A035/A037). */
-  peages: number;
-  /** Étapes de transit (A/R et transits insérés) : carburant + péages + ferry + nuits, autonomie par défaut (A19 §8.4). Ligne à part, tous transit. */
-  transit: number;
+  /** Péages (NVDB bomstasjon, van chargé). Nouvelle dimension € du routage van (A035/A037). Additif : présent dès que projeté (006). */
+  peages?: number;
+  /** Étapes de transit (A/R et transits insérés) : carburant + péages + ferry + nuits, autonomie par défaut (A19 §8.4). Additif : présent dès que projeté (006). */
+  transit?: number;
 }
 
 export interface BudgetParAdulte {
