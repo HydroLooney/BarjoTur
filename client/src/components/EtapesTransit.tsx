@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { EtapeTransit } from '@barjotur/shared';
-import { useIdentite } from '@/stores/identite';
-import { estOrganisateur } from '@/lib/parcours';
+import { usePeut } from '@/hooks/usePeut';
 import { transitDemo } from '@/lib/fixtures/voyage-demo';
 import { basculerAutonomie, libelleArret, nouvelleEtapeTransit } from '@/lib/transit';
 import { Badge } from '@/ui/primitives/badge';
@@ -24,8 +23,8 @@ function variantEtat(label: string): VariantBadge {
 }
 
 export function EtapesTransit() {
-  const role = useIdentite((s) => s.role);
-  const orga = estOrganisateur(role);
+  // Régler les attributs d'un arrêt (payant/autonomie) et insérer une étape = composer une proposition (M088).
+  const peutComposer = usePeut('composer');
   const [etapes, setEtapes] = useState<EtapeTransit[]>(transitDemo);
 
   const ordonnees = [...etapes].sort((a, b) => a.ordre - b.ordre);
@@ -73,7 +72,7 @@ export function EtapesTransit() {
                     <li key={a.id} className="flex flex-wrap items-center gap-2 text-sm">
                       <span>{a.label}</span>
                       <Badge variant={variantEtat(lab)}>{lab}</Badge>
-                      {orga && !a.reserve ? (
+                      {peutComposer && !a.reserve ? (
                         <button
                           type="button"
                           onClick={() => toggle(e.id, a.id)}
@@ -93,7 +92,7 @@ export function EtapesTransit() {
         ))}
       </ol>
 
-      {orga ? (
+      {peutComposer ? (
         <Bouton size="sm" variant="outline" onClick={inserer}>
           Insérer une étape de transit
         </Bouton>

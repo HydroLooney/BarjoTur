@@ -16,7 +16,7 @@ export function BandeauParcours() {
       aria-label="Aller au fil du parcours"
       className="block border-b border-border bg-card hover:bg-muted"
     >
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-2 overflow-x-auto px-4 py-1.5 text-xs">
+      <div className="mx-auto flex min-h-tactile w-full max-w-6xl items-center gap-2 overflow-x-auto px-4 py-1.5 text-xs">
         <span className="shrink-0 text-muted-foreground">Parcours</span>
         {crans.map((c) => (
           <span

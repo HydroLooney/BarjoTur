@@ -55,6 +55,9 @@
     border-radius: var(--rayon-s);
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
+    min-height: var(--cible-tactile); /* cible tactile au clavier/pouce (A06) */
+    display: inline-flex;
+    align-items: center;
   }
   .lien-evitement:focus {
     transform: translateY(0);

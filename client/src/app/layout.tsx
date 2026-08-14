@@ -46,7 +46,7 @@ export function Coquille() {
               end={l.exact}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-3 py-2 text-sm transition-colors',
+                  'inline-flex min-h-tactile items-center rounded-md px-3 py-2 text-sm transition-colors',
                   isActive ? 'bg-muted font-medium text-foreground' : 'text-muted-foreground hover:bg-muted',
                 )
               }
@@ -63,7 +63,7 @@ export function Coquille() {
               end={l.exact}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-3 py-2 text-sm transition-colors',
+                  'inline-flex min-h-tactile items-center rounded-md px-3 py-2 text-sm transition-colors',
                   isActive ? 'bg-muted font-medium text-foreground' : 'text-muted-foreground hover:bg-muted',
                 )
               }
