@@ -23,8 +23,9 @@ function refus(raison: string): TransitionResult {
 /** Le cran courant = premier cran en brouillon (par ordre), sinon le dernier cran. */
 function cranCourant(crans: Cran[]): CranId {
   const tries = [...crans].sort((a, b) => a.ordre - b.ordre);
+  if (tries.length === 0) throw Erreurs.requeteInvalide('État de parcours invalide : aucun cran.');
   const premierBrouillon = tries.find((c) => c.etat === 'brouillon');
-  return premierBrouillon?.id ?? tries[tries.length - 1]?.id ?? crans[0]!.id;
+  return premierBrouillon?.id ?? tries[tries.length - 1]!.id;
 }
 
 /**
@@ -58,9 +59,9 @@ export function appliquerTransition(
   } else if (action === 'verrouiller') {
     if (cible.etat === 'brouillon') return refus('On ne verrouille qu’un cran déjà validé.');
     if (cible.etat === 'valide_verrouille') return refus('Ce cran est déjà verrouillé.');
+    // Verrouiller n'écrase PAS valide_at/valide_par : l'audit de validation d'origine (qui, quand) est conservé ;
+    // le verrouillage est un changement d'état, pas une revalidation.
     cible.etat = 'valide_verrouille';
-    cible.valide_at = ctx.maintenant;
-    cible.valide_par = ctx.par;
   } else {
     // rouvrir
     if (cible.etat === 'brouillon') return refus('Ce cran n’est pas validé : rien à rouvrir.');

@@ -71,6 +71,16 @@ test('verrouiller exige un cran déjà validé, puis fige', () => {
   assert.equal(appliquerTransition(r.etat!, 'verrouiller', 'cadrage', ORG).ok, false);
 });
 
+test('verrouiller conserve l’audit de validation d’origine (qui/quand), n’écrase pas', () => {
+  const e1 = appliquerTransition(parcoursNeuf(1), 'valider', 'cadrage', ORG).etat!; // par 7, à 10:00
+  const r = appliquerTransition(e1, 'verrouiller', 'cadrage', { role: 'organisateur', par: 9, maintenant: '2026-08-14T18:00:00Z' });
+  assert.ok(r.ok);
+  const cadrage = r.etat!.crans.find((c) => c.id === 'cadrage')!;
+  assert.equal(cadrage.etat, 'valide_verrouille');
+  assert.equal(cadrage.valide_par, 7); // l'auteur de la VALIDATION, pas du verrouillage
+  assert.equal(cadrage.valide_at, '2026-08-14T10:00:00Z');
+});
+
 test('rouvrir un cran modifiable invalide l’aval modifiable et pose le courant', () => {
   const e = enchaine(parcoursNeuf(1), [
     ['valider', 'cadrage'],
