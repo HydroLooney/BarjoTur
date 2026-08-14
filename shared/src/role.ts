@@ -176,3 +176,17 @@ export interface DemandeRevoquerLien {
   code: string;
   pin: string;
 }
+
+/**
+ * Réponse de génération d'un lien de partage : le voyageur (dont `codeLien`) plus la portée effective,
+ * pour que le front affiche « ce lien = Suggestion, votes non comptés, voit Explorer + Notre Voyage ».
+ * Reconstruit côté BFF depuis la demande validée et `PORTEE_DEFAUT` (aucune écriture DB).
+ */
+export interface LienGenere {
+  voyageur: Voyageur;
+  portee: PorteeLien;
+  /** true pour `membre`, false pour `suggestion`/`vitrine` (aligné sur `PORTEE_DEFAUT[portee].votesComptent`). */
+  votesComptent: boolean;
+  /** Espaces effectivement visibles ; absent = selon le rôle (un membre voit tout). */
+  espacesVisibles?: readonly EspaceId[];
+}
