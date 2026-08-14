@@ -30,6 +30,16 @@ export interface CoutTrajet {
 /** Mode de composition (A25) : nuits fixées à la main, proposées, ou allouées librement. */
 export type ModeAllocation = 'manuel' | 'assiste' | 'full_auto';
 
+/**
+ * Courbes de valeur PAR VOYAGEUR pour un lieu (A25 leximin). `par_voyageur[voyageur_id]` = la courbe marginale
+ * décroissante de CE voyageur pour CE lieu (même sémantique que `CourbeLieu.marginaux`, un voyageur servi 0 nuit
+ * compte dans le min). Fournies par le composeur, qui les a déjà pour l'agrégation égalitariste.
+ */
+export interface CourbesVoyageurLieu {
+  lieu_id: number;
+  par_voyageur: Record<number, number[]>;
+}
+
 /** Entrée de l'allocation. `lieux` porte les courbes de consensus (déjà fusionnées entre voyageurs, égalitariste). */
 export interface EntreeAllocation {
   lieux: CourbeLieu[];
@@ -38,6 +48,13 @@ export interface EntreeAllocation {
   mode: ModeAllocation;
   /** En mode `manuel` : nuits imposées par lieu (contrainte). */
   nuits_imposees?: Record<number, number>;
+  /**
+   * Optionnel (A25 max-min leximin, B084) : courbes de valeur PAR VOYAGEUR par lieu, alignées sur `lieux` (mêmes
+   * `lieu_id`, mêmes bornes min/max). Présentes → le sidecar peut viser le max-min ÉGALITARISTE par voyageur
+   * (`max m, m ≤ V_t = Σ marginaux_t·x ∀t`) plutôt que l'utilitaire sur consensus, validé par l'oracle `leximin_ref`.
+   * Absentes → allocation utilitaire sur `lieux` (statu quo). Additif, non-cassant.
+   */
+  courbes_par_voyageur?: CourbesVoyageurLieu[];
 }
 
 /** Un lieu GARDÉ : combien de nuits, et le marginal de la nuit suivante (ce qu'un jour de plus vaudrait) / dernière. */
