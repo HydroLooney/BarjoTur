@@ -9,6 +9,7 @@ export * from './trajet.js';
 export * from './mcda.js';
 export * from './composeur.js';
 export * from './activite.js';
+export * from './circuit.js';
 export * from './arbitrage.js';
 export * from './carburant.js';
 export * from './budget.js';
