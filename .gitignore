@@ -46,8 +46,8 @@ data/
 # artefacts de synchronisation DB1→DB2 (dumps dérivées + manifestes d'empreintes, transitoires par run)
 db/sync/dumps/
 
-# scaffolding interne (jamais dans un repo qui deviendra public : zero tell d'IA)
-# vit en local pour le dev + dans le vault de conception ; docs publics cures au gate C14
+# outillage et espaces de travail internes (hors dépôt) : configuration locale,
+# échanges de coordination et notes de conception vivent en local, la doc publique est dans documentation/
 .claude/
 00_Echange/
 docs/

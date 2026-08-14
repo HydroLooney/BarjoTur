@@ -3,7 +3,7 @@
 -- Aucun rename physique des tables decision.vote_* ou membre.membre (décision M012 §Rulings C02).
 -- Le BFF ne dépend que de api.* ; cette recette vérifie la FORME et non les tables physiques.
 --
---   Usage : docker exec norvege-db psql -U norvege -d norvege_v2 -f votes-contrat-q11.sql
+--   Usage : docker exec app-db psql -U norvege -d norvege_v2 -f votes-contrat-q11.sql
 --   Attendu : TOUS les booléens à "t" (vrai).
 
 \pset pager off

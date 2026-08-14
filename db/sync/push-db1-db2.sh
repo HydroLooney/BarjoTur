@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
 # =====================================================================
 # push-db1-db2.sh — sync des tables DÉRIVÉES canoniques DB1 -> DB2 (A-05).
-# DB1 = norvege_routing:5433 (ce Mac, source de vérité géo/calcul).
-# DB2 = norvege_v2 (Bomp4rd, container norvege-db) : sert l'app, autonome au runtime.
+# DB1 = norvege_routing:5433 (poste de calcul local, source de vérité géo/calcul).
+# DB2 = norvege_v2 (serveur de déploiement, conteneur Docker de service) : sert l'app, autonome au runtime.
 #
 # On ne pousse QUE des tables DÉRIVÉES (aucun état owner : ni votes, ni fige, ni membre) :
 # elles sont rechargeables depuis DB1, donc --clean --if-exists est owner-safe par construction.
 # Les tables d'ÉTAT DB2 (membre.membre, decision.*, fige.*) ne sont JAMAIS touchées ici.
 #
-# Discipline : snapshot DB2 AVANT (backup horodaté), idempotent, réversible. R1 : si l'accès SSH
-# bomp4rd n'est pas ouvert, le script échoue proprement (il ne simule rien). Le Maître le joue à la
-# bascule quand Guillaume ouvre l'accès (M016). NON TESTÉ tant que DB2 est injoignable depuis PERSO.
+# Discipline : snapshot DB2 AVANT (backup horodaté), idempotent, réversible. Si l'accès SSH
+# au serveur de déploiement n'est pas ouvert, le script échoue proprement (il ne simule rien) et
+# se joue à la bascule quand l'accès est ouvert. Non testé tant que DB2 est injoignable.
 #
+# Config (hors repo) : BJT_DEPLOY_SSH (host SSH), BJT_DB2_CONTAINER (conteneur Docker DB2).
 # Usage : bash db/sync/push-db1-db2.sh [table ...]   (défaut = livraison A-05)
 # =====================================================================
 set -euo pipefail
-SSH_HOST="bomp4rd"
+SSH_HOST="${BJT_DEPLOY_SSH:-deploy-host}"
+CONTAINER="${BJT_DB2_CONTAINER:-app-db}"
 DUMP="/tmp/barjotur_push_$$.dump"
 
 # Tables dérivées de la livraison A-05 (matrice + facteurs + exclusions + coûts ferry + registre calc).
@@ -36,16 +38,16 @@ ls -lh "$DUMP"
 echo "== 2/4 Snapshot DB2 AVANT (réversibilité) =="
 BK="$HOME/.local/share/barjotur/pg_backups/norvege_v2_pre-push_$(date +%Y%m%d-%H%M%S).dump"
 mkdir -p "$(dirname "$BK")"
-ssh "$SSH_HOST" 'docker exec norvege-db pg_dump -U norvege -Fc norvege_v2' > "$BK"
+ssh "$SSH_HOST" "docker exec $CONTAINER pg_dump -U norvege -Fc norvege_v2" > "$BK"
 ls -lh "$BK"
 
 echo "== 3/4 Restore vers DB2 (dérivées seulement, --clean --if-exists) =="
-ssh "$SSH_HOST" 'docker exec -i norvege-db psql -v ON_ERROR_STOP=1 -U norvege -d norvege_v2 -c "CREATE SCHEMA IF NOT EXISTS mcda2;"'
+ssh "$SSH_HOST" "docker exec -i $CONTAINER psql -v ON_ERROR_STOP=1 -U norvege -d norvege_v2 -c 'CREATE SCHEMA IF NOT EXISTS mcda2;'"
 scp "$DUMP" "$SSH_HOST:/tmp/barjotur_push.dump" >/dev/null
-ssh "$SSH_HOST" 'docker exec -i norvege-db bash -c "pg_restore --clean --if-exists --no-owner -U norvege -d norvege_v2 < /tmp/barjotur_push.dump"' 2>&1 | tail -6 || true
+ssh "$SSH_HOST" "docker exec -i $CONTAINER bash -c 'pg_restore --clean --if-exists --no-owner -U norvege -d norvege_v2 < /tmp/barjotur_push.dump'" 2>&1 | tail -6 || true
 
 echo "== 4/4 Vérif comptes DB2 + empreinte (convergence de l'écart) =="
-ssh "$SSH_HOST" 'docker exec norvege-db psql -U norvege -d norvege_v2 \
+ssh "$SSH_HOST" 'docker exec '"$CONTAINER"' psql -U norvege -d norvege_v2 \
   -c "SELECT count(*) AS matrice FROM mcda2.matrice_base_base;" \
   -c "SELECT count(*) AS facteurs FROM mcda2.poi_f_v2;" \
   -c "SELECT count(*) AS exclusions FROM mcda2.ways_van_exclusions;"'

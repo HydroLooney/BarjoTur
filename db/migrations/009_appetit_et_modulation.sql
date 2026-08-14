@@ -3,7 +3,7 @@
 --   1. table PRÉCIEUSE `decision.appetit_thematique` (état vif du voyageur : envie par thème) + RPC lire/écrire.
 --   2. CREATE OR REPLACE `api.budget_temps_poi` = 008b : modulation réelle (008 posait la v1 neutre).
 --
--- SURFACE : DB2 (norvege_v2, Bomp4rd).
+-- SURFACE : DB2 (norvege_v2, serveur de déploiement).
 -- `decision.appetit_thematique` est PRÉCIEUSE (préférence vivante, comme votes/decision) : DÉJÀ couverte par la denylist
 --   de sync B-15 (`decision.*` est précieux, regex 003 + backup) — rien à ajouter, le dump DB1→DB2 ne la touche jamais.
 -- Modulation (M097) : facteur avis PAR CODE via `lib.facteur_avis(tier)` (T1,30 S1,18 A1,08 B1,00 C0,90 D0,80, posé par A

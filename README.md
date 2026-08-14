@@ -85,7 +85,7 @@ contenu des aides de l'application : `documentation/aide-en-ligne.md`. La mise e
 
 Le projet est en construction. La v3 se bâtit à partir d'un prototype qui fonctionne, module par module, et remplace
 la version précédente au fur et à mesure, sans jamais couper le service ni perdre les votes déjà posés. Le cap et les
-arbitrages figés sont dans `docs/00 - Plan v3 (arbitrages verrouillés).md`.
+arbitrages qui le structurent sont stables : ils guident chaque module à mesure qu'il prend la place de l'ancien.
 
 ## Licence
 

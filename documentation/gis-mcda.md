@@ -3,7 +3,7 @@
 Ce document explique le moteur d'aide à la décision de Barjøtur, pour un lecteur qui découvre le projet et pour
 l'équipe qui le construit. Il tient au niveau de la méthode, qui est figée. Le détail d'implémentation (noms de
 tables, formules exactes) vit dans le code et le dictionnaire de données, et se documente au fil du recalcul. La
-réflexion complète, avec ses sources, est dans `docs/gis-mcda/`.
+réflexion complète qui la fonde, avec ses sources, nourrit chaque choix exposé ici.
 
 ## Le problème, en deux volets couplés
 
@@ -92,13 +92,11 @@ que le budget planifié le permet, il ne reçoit pas de score dans le champ de q
 
 Cette méthode suppose un socle précalculé : des réseaux routables propres, des isochrones, une matrice de temps
 entre bases, les critères de qualité standardisés et interpolés, les valeurs par défaut des lieux, et les entrées de
-la récompense du composeur. Le catalogue complet de ces calculs est dans `docs/gis-mcda/18 - Catalogue de ce qu'il
-faut calculer.md`. Chaque calcul est canonique : une seule version fait foi, rejouable par un script versionné,
-tracée jusqu'à sa source.
+la récompense du composeur. Ces calculs forment un catalogue précis. Chaque calcul est canonique : une seule version
+fait foi, rejouable par un script versionné, tracée jusqu'à sa source.
 
 ## Sources
 
 La méthode s'appuie sur des familles établies : moyenne pondérée ordonnée, standardisation floue, interpolation
-spatiale, orienteering sous contraintes, consensus par distance aux idéaux, surclassement de groupe. Les références
-précises sont réunies dans `docs/gis-mcda/21 - Bibliographie.md`. Aucune valeur ni citation n'est avancée ici sans
-figurer dans cette réflexion.
+spatiale, orienteering sous contraintes, consensus par distance aux idéaux, surclassement de groupe. Chacune est
+citée à sa source primaire. Aucune valeur ni citation n'est avancée ici sans être vérifiée.

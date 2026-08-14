@@ -1,7 +1,7 @@
 -- 007_voyageurs.sql (T039, M074 — pré-écrit ; NON exécuté ; à rejouer en DB2 au flip, règle DB2 owner-safe).
 -- Pose l'ADMIN DES VOYAGEURS (A03/C05) : 1 lecture + 2 mutations sur `membre.membre` (identité/rôles/liens).
 --
--- SURFACE : DB2 (norvege_v2, Bomp4rd). `membre.membre` est PRÉCIEUSE (identité vivante, comme decision/parcours/fige) :
+-- SURFACE : DB2 (norvege_v2, serveur de déploiement). `membre.membre` est PRÉCIEUSE (identité vivante, comme decision/parcours/fige) :
 -- elle N'ENTRE JAMAIS dans la sync B-15. Ces RPC ne créent aucune table, elles frontent la table existante.
 -- Colonnes relevées (B, 2026-08-14) : membre_id, prenom, role, code_lien, pin_hash, actif, cree_at. PAS de voyage_id
 -- ni de qualification physiques → le param p_voyage_id est porté pour la rejouabilité multi-voyage (A18 §7.3) mais ne

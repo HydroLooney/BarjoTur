@@ -4,11 +4,11 @@
 # et api.* ; jamais de données brutes exposées directement (POI brut, ways_van, etc.).
 #
 # Lancement en dev : martin --config tiles/config.toml
-# DB2 réseau Docker (prod Bomp4rd) : la connexion passe par DATABASE_URL (env, secrets.env, jamais en dur).
+# DB2 réseau Docker (prod serveur de déploiement) : la connexion passe par DATABASE_URL (env, secrets.env, jamais en dur).
 
 [postgres]
 # DSN DB2. En prod : injecté par l'orchestrateur Docker (MARTIN_DB_URL ou alias DATABASE_URL).
-# En dev local : variable d'environnement MARTIN_DB_URL (ou tunnel SSH sur Bomp4rd).
+# En dev local : variable d'environnement MARTIN_DB_URL (ou tunnel SSH sur serveur de déploiement).
 connection_string = "${MARTIN_DB_URL}"
 
 # Paramètres de pool : DB2 sert un cercle familial, les connexions Martin sont légères.
@@ -151,7 +151,7 @@ properties = ["decoupage_id", "type_decoupage", "label", "code"]
 # Service HTTP Martin
 # ---------------------------------------------------------------------------
 [srv]
-# Port Martin en dev (8003 = port de recette local, cf tunnel SSH Bomp4rd).
+# Port Martin en dev (8003 = port de recette local, cf tunnel SSH serveur de déploiement).
 # En prod Docker, Martin écoute sur le port du service dans le réseau web.
 listen_addresses = "0.0.0.0:8003"
 keep_alive = 75
@@ -169,7 +169,7 @@ size = 200
 #    les vues ne sont pas déployées.
 # 2. Le champ cluster_count dans v_web_poi est calculé par SQL (GROUP BY ST_SnapToGrid) côté vue ;
 #    Martin sert les tuiles avec ce champ pré-agrégé (clustering SQL, B06).
-# 3. MARTIN_DB_URL doit pointer sur DB2 (norvege_v2@norvege-db:5432). En dev local :
+# 3. MARTIN_DB_URL doit pointer sur DB2 (norvege_v2@app-db:5432). En dev local :
 #    export MARTIN_DB_URL="postgresql://norvege:<mot_de_passe>@localhost:15432/norvege_v2"
-#    (tunnel SSH : ssh -L 15432:localhost:5432 bomp4rd)
+#    (tunnel SSH : ssh -L 15432:localhost:5432 deploy-host)
 # 4. Pour régénérer les tuiles après un recalcul (C04), relancer Martin suffit (pas de cache fichier).

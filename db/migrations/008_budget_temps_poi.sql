@@ -2,7 +2,7 @@
 -- Pose le budget-temps POI côté DB2 : fonctions partagées `lib.*` (via le fichier canonique d'A) + table dérivée
 -- `activite.poi` (peuplée par la sync B-15 depuis DB1 `diffusion.v_web_poi_activite`) + RPC `api.budget_temps_poi`.
 --
--- SURFACE : DB2 (norvege_v2, Bomp4rd).
+-- SURFACE : DB2 (norvege_v2, serveur de déploiement).
 -- `lib.*` = fonctions PURES canoniques, SOURCE UNIQUE `db/lib/duree_proposee.sql` (B047 option 1) : A l'applique en DB1
 --   (script 61_), moi en DB2 ici (même fichier, jamais deux copies). Schéma neutre `lib`, sans dépendance de données.
 -- `activite.poi` = table DÉRIVÉE (inputs statiques par POI typés A21) : elle est un TARGET de sync (NON précieuse, PAS à

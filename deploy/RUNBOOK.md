@@ -1,6 +1,6 @@
 # Runbook de déploiement BarjoTur v3 (bascule strangler)
 
-> Cible : `voyage.barjot.net` (auto-hébergé Bomp4rd). Principe : la v2 reste live tant que chaque module v3 n'est
+> Cible : `voyage.barjot.net` (auto-hébergé serveur de déploiement). Principe : la v2 reste live tant que chaque module v3 n'est
 > pas poussé à sa place avec **parité vérifiée + votes préservés + rollback prêt**. Aucun geste destructif. Guillaume
 > lance ; le Maître prépare et vérifie. Secrets hors repo (`~/.config/…`), jamais commités.
 
@@ -8,7 +8,7 @@
 
 | Composant | Rôle | Port interne | Source |
 |---|---|---|---|
-| PostgreSQL/PostGIS/pgRouting (`norvege-db`) | DB2 `norvege_v2`, sert + compose | 5432 | Docker Bomp4rd (existant) |
+| PostgreSQL/PostGIS/pgRouting (`app-db`) | DB2 `norvege_v2`, sert + compose | 5432 | Docker serveur de déploiement (existant) |
 | Sidecar Python (OR-Tools) | composition orienteering | 8090 | `sidecar/` |
 | Martin | tuiles MVT `diffusion.v_web_*` | 3000 | `tiles/` |
 | BFF Node (Express) | API `api.*` frontée, écritures | 3040 | `server/` |

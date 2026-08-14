@@ -1,7 +1,7 @@
 -- 004_parcours.sql (B-20, pré-écrit sur feu M050 — NON exécuté ; à rejouer en DB2 au flip, règle DB2 owner-safe).
 -- Pose la persistance de la MACHINE À CRANS (A18) : table `parcours.etat` (état vivant par voyage) + 2 RPC.
 --
--- SURFACE : DB2 (norvege_v2, Bomp4rd). `parcours.etat` est PRÉCIEUSE (état utilisateur vivant, comme
+-- SURFACE : DB2 (norvege_v2, serveur de déploiement). `parcours.etat` est PRÉCIEUSE (état utilisateur vivant, comme
 -- decision.*/membre.*/fige.*/votes) : ELLE N'ENTRE JAMAIS DANS LA SYNC B-15 (parcours.* est à la denylist de
 -- sync-db1-db2.sh + 003). Le dump DB1→DB2 ne doit jamais la toucher.
 --

@@ -11,12 +11,13 @@
 # Usage :
 #   server/recette/empreinte-db2.sh [rel ...]
 # Sans argument : le jeu de tables de calcul suivi par défaut.
-# Secrets : aucun ici. L'accès DB2 passe par SSH bomp4rd + docker exec (le DSN reste géré par Guillaume).
+# Secrets : aucun ici. L'accès DB2 passe par SSH + docker exec (le DSN reste hors repo, côté serveur).
+# Config (hors repo) : BJT_DB2_SSH (host SSH), BJT_DB2_CONTENEUR (conteneur Docker DB2).
 
 set -euo pipefail
 
-SSH_HOST="${BJT_DB2_SSH:-bomp4rd}"
-CONTENEUR="${BJT_DB2_CONTENEUR:-norvege-db}"
+SSH_HOST="${BJT_DB2_SSH:-deploy-host}"
+CONTENEUR="${BJT_DB2_CONTENEUR:-app-db}"
 DBUSER="${BJT_DB2_USER:-norvege}"
 DBNAME="${BJT_DB2_NAME:-norvege_v2}"
 
