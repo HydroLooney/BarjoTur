@@ -5,6 +5,7 @@ import { filtrerCatalogue } from '@/lib/filtrer-catalogue';
 import { useExplorer } from '@/stores/explorer';
 import { useIdentite } from '@/stores/identite';
 import { useMemoireExploration } from '@/stores/memoire-exploration';
+import { useOnboarding } from '@/stores/onboarding';
 import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
@@ -43,6 +44,13 @@ export default function Explorer() {
   const explores = useMemoireExploration((s) => s.explores);
   const nbExplores = liste.filter((p) => explores.includes(p.id)).length;
 
+  // Astuce vote contextuelle (mini-tour T042) : montrée une fois à un voyageur identifié qui n'a pas encore
+  // voté, pour rendre le geste évident. Un visiteur sans lien perso ne la voit pas (il ne peut pas voter).
+  const astuceVoteVue = useOnboarding((s) => s.astuceVoteVue);
+  const masquerAstuceVote = useOnboarding((s) => s.masquerAstuceVote);
+  const aVote = mesVotes ? Object.keys(mesVotes.tiers).length > 0 : false;
+  const montrerAstuce = code !== null && !astuceVoteVue && !aVote;
+
   const monTierPour = (osmId: string): VoteTier | null => {
     const v = mesVotes?.tiers[`p:${osmId}`];
     return v ?? null;
@@ -57,6 +65,22 @@ export default function Explorer() {
           {nbExplores > 0 ? ` · ${nbExplores} déjà vu${nbExplores === 1 ? '' : 's'}` : ''}
         </span>
       </div>
+
+      {montrerAstuce ? (
+        <div className="flex items-start justify-between gap-2 rounded-lg border border-primary bg-card p-3 text-sm">
+          <p className="max-w-prose text-muted-foreground">
+            Astuce : sur chaque lieu, un bouton dit ce que vous aimez (coup de cœur, vraiment envie, bien, pourquoi
+            pas). C'est votre vote, et vous pouvez le changer quand vous voulez.
+          </p>
+          <button
+            type="button"
+            onClick={masquerAstuceVote}
+            className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Compris
+          </button>
+        </div>
+      ) : null}
 
       <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
 

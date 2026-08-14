@@ -4,6 +4,7 @@ import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { Bouton } from '@/ui/primitives/button';
 import { useOnboarding } from '@/stores/onboarding';
 import { AdminVoyageurs } from '@/components/AdminVoyageurs';
+import { ProfilsDeplacement } from '@/components/ProfilsDeplacement';
 
 // Coulisses (C09 / A08) : le registre single-source des paramètres (valeur active + recommandée +
 // justification en clair), groupé par domaine. Anti-cadrage : la méthode et les chiffres vivent ICI,
@@ -40,6 +41,8 @@ export default function Coulisses() {
       </div>
 
       <AdminVoyageurs />
+
+      <ProfilsDeplacement />
 
       {isLoading && vide ? <Chargement libelle="Chargement des paramètres." /> : null}
       {isError && vide ? (

@@ -74,3 +74,13 @@ export const ROLES_LABEL: Record<Role, string> = {
   demo: 'Démo',
   invite: 'Invité',
 };
+
+/** Libellés des modes de déplacement (profils de routage van/piéton/rando/TC), affichés dans Réglages (T038). */
+export const PROFILS_MODE = {
+  van: 'En van',
+  pieton: 'À pied',
+  rando: 'En rando',
+  tc: 'En transports',
+} as const;
+
+export type ModeDeplacement = keyof typeof PROFILS_MODE;
