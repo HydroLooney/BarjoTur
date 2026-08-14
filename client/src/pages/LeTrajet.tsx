@@ -1,3 +1,4 @@
+import { BibliothequeCircuits } from '@/components/BibliothequeCircuits';
 import { GalerieArchetypes } from '@/components/GalerieArchetypes';
 import { ComposeurItineraire } from '@/components/ComposeurItineraire';
 import { ReglageBudgetTemps } from '@/components/ReglageBudgetTemps';
@@ -14,6 +15,7 @@ export default function LeTrajet() {
         Composez l'itinéraire du voyage : choisissez une ambiance et des camps de base, gérez les étapes de transit,
         et comparez les propositions pour trouver ce qui convient à toute la famille.
       </p>
+      <BibliothequeCircuits />
       <GalerieArchetypes />
       <ComposeurItineraire />
       <ReglageBudgetTemps />

@@ -12,6 +12,7 @@ import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
 import { CarteExplorer } from '@/components/CarteExplorer';
 import { Recommandations } from '@/components/Recommandations';
+import { ActiviteIdealeZone } from '@/components/ActiviteIdealeZone';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
@@ -88,6 +89,8 @@ export default function Explorer() {
       ) : null}
 
       <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
+
+      <ActiviteIdealeZone />
 
       <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
         {ONGLETS.map((o, i) => (
