@@ -11,9 +11,11 @@
 # Autorisation DB2 : règle permanente owner-safe (Guillaume, M034). B est seule main sur DB2.
 #
 # Usage :
-#   ./sync-db1-db2.sh --dump <chemin.dump> --empreintes <chemin.tsv> [--apply]
+#   ./sync-db1-db2.sh --dump <chemin.dump> --empreintes <chemin.tsv> [--db1-dsn <dsn>] [--apply]
 #     --dump         dump pg_restore des tables dérivées, produit par A (M036).
 #     --empreintes   TSV "relation<TAB>lignes<TAB>md5" attendu par A (comme A011 au C16) pour vérif à l'octet.
+#     --db1-dsn      DSN Postgres de DB1 (norvege_routing) pour matérialiser les VUES de diffusion en DB2 (M102 §1).
+#                    Secret de Guillaume (localhost:5433 côté PERSO). Sans lui, la matérialisation des vues est ignorée.
 #     --apply        exécute réellement le swap (sinon dry-run : contrôles + empreinte AVANT seulement).
 set -euo pipefail
 
@@ -24,11 +26,12 @@ DBUSER="norvege"
 BACKUP_DIR="~/barjotur-backups"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
-DUMP=""; EMPREINTES=""; APPLY=0
+DUMP=""; EMPREINTES=""; APPLY=0; DB1_DSN="${DB1_DSN:-}"
 while [ $# -gt 0 ]; do
   case "$1" in
     --dump) DUMP="$2"; shift 2;;
     --empreintes) EMPREINTES="$2"; shift 2;;
+    --db1-dsn) DB1_DSN="$2"; shift 2;;
     --apply) APPLY=1; shift;;
     *) echo "Argument inconnu : $1" >&2; exit 2;;
   esac
@@ -40,9 +43,42 @@ done
 psql_c() { ssh "$SSH_HOST" "docker exec $CONTAINER psql -U $DBUSER -d $DB -v ON_ERROR_STOP=1 -At -F '|' -c \"$1\""; }
 psql_i() { ssh "$SSH_HOST" "docker exec -i $CONTAINER psql -U $DBUSER -d $DB -v ON_ERROR_STOP=1"; }
 
-# Liste des tables PRÉCIEUSES (denylist du contrôle d'entrée) et des DÉRIVÉES (payload attendu).
+# Liste des tables PRÉCIEUSES (denylist du contrôle d'entrée ET des cibles de matérialisation).
 # parcours.* (M050) et voyage.* (M055) ajoutés : état vivant (machine à crans, instance voyage), précieux, jamais dans le dump.
+# decision.appetit_thematique (M097/M102) : couverte par `decision\.` — jamais écrasée par la sync.
 PRECIEUSES_RE='(^|\.)(decision|membre|fige|parcours|voyage)\.|vote|_hist'
+
+# Vues de diffusion DB1 (norvege_routing) → tables cibles DB2 (NON précieuses). Idempotent : stage puis swap
+# transactionnel. La liste grandit à mesure qu'A livre les vues (T048/C04/variantes/matrice promue). Chaque paire =
+# "schema.vue_source_DB1:schema.table_cible_DB2".
+VUES_DIFFUSION=(
+  "diffusion.v_web_poi_activite:activite.poi"       # M089/A054 (confirmé) : budget-temps par POI → activite.poi (008)
+  # "diffusion.v_web_sentiers:sentiers.web"          # T048, dès qu'A la livre + table cible créée
+  # "diffusion.v_web_isochrones:isochrone.web"       # C04
+  # "mcda2.variante_liaison:mcda2.variante_liaison"  # bi-critère temps↔argent (arbitrage B040), quand promue
+)
+
+# Matérialise UNE vue DB1 vers sa table DB2 (stage jetable puis swap transactionnel). Refuse toute cible précieuse.
+materialiser_vue() {  # $1 = vue source DB1 (schema.vue), $2 = table cible DB2 (schema.table)
+  local src="$1" dst="$2" stg="stage_${2//./_}"
+  if echo "$dst" | grep -Eiq "$PRECIEUSES_RE"; then
+    echo "  REFUS : cible précieuse $dst (jamais écrasée par la sync)." >&2; return 1
+  fi
+  echo "  materialise $src -> $dst (via stage.$stg)"
+  # 1. stage jetable calqué sur la cible (la cible existe : créée par sa migration, ex. activite.poi = 008).
+  psql_c "DROP TABLE IF EXISTS stage.$stg; CREATE SCHEMA IF NOT EXISTS stage; CREATE TABLE stage.$stg (LIKE $dst INCLUDING DEFAULTS)"
+  # 2. COPY DB1(vue) -> DB2(stage) : pipe cross-DB, aucune écriture des tables précieuses.
+  psql "$DB1_DSN" -c "\copy (SELECT * FROM $src) TO STDOUT" \
+    | ssh "$SSH_HOST" "docker exec -i $CONTAINER psql -U $DBUSER -d $DB -v ON_ERROR_STOP=1 -c \"\\copy stage.$stg FROM STDIN\""
+  # 3. swap transactionnel : TRUNCATE cible (non précieuse) + INSERT depuis stage.
+  psql_i <<SQL
+BEGIN;
+TRUNCATE $dst;
+INSERT INTO $dst SELECT * FROM stage.$stg;
+DROP TABLE stage.$stg;
+COMMIT;
+SQL
+}
 
 echo "== 0. Contrôle d'entrée : le dump doit être dérivées-seules =="
 TOC="$(pg_restore -l "$DUMP" 2>/dev/null | grep -E 'TABLE DATA|TABLE ' || true)"
@@ -69,6 +105,10 @@ VOTES_AVANT="$(psql_c "select 'V'||coalesce(sum(case when 1=1 then 1 else 0 end)
 psql_c "select relname, n_live_tup from pg_stat_user_tables where relname ~ 'vote' order by relname" || true
 EMPREINTE_AVANT="$(bash "$(dirname "$0")/empreinte-db2.sh" 2>/dev/null || echo 'empreinte-db2.sh indisponible')"
 echo "$EMPREINTE_AVANT" | head
+
+echo "== 2b. VUES DE DIFFUSION à matérialiser (DB1 -> DB2) =="
+for pair in "${VUES_DIFFUSION[@]}"; do echo "  $pair"; done
+[ -n "$DB1_DSN" ] || echo "  (pas de --db1-dsn : matérialisation des vues ignorée à l'--apply)"
 
 if [ "$APPLY" != 1 ]; then
   echo "== DRY-RUN terminé : contrôles OK, aucune écriture. Relancer avec --apply pour exécuter le swap. =="
@@ -103,6 +143,15 @@ BEGIN;
 SELECT poi.merge_from_stage();
 COMMIT;
 SQL
+
+echo "== 4b. MATÉRIALISATION DES VUES DE DIFFUSION (DB1 -> DB2) =="
+if [ -z "$DB1_DSN" ]; then
+  echo "(pas de --db1-dsn : matérialisation ignorée ; requise pour activite.poi = budget-temps, T048, C04...)"
+else
+  for pair in "${VUES_DIFFUSION[@]}"; do
+    materialiser_vue "${pair%%:*}" "${pair##*:}"
+  done
+fi
 
 echo "== 5. EMPREINTE APRÈS + ASSERTION ZÉRO PERTE VOTES =="
 EMPREINTE_APRES="$(bash "$(dirname "$0")/empreinte-db2.sh" 2>/dev/null || true)"
