@@ -184,6 +184,44 @@ def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
     )
 
 
+# --- mapping sur le contrat partagé shared/allocation.ts (M117) --------------------------------------
+
+def entree_depuis_json(payload: dict) -> EntreeAllocation:
+    """Construit une EntreeAllocation depuis le JSON du contrat partagé (M117). `couts_trajet` y est une LISTE de
+    {de, vers, cout} (CoutTrajet[]) ; on la ramène au dict interne {(de, vers): cout}. Pure."""
+    lieux = [
+        CourbeLieu(
+            lieu_id=int(l["lieu_id"]),
+            marginaux=[float(v) for v in l["marginaux"]],
+            min_nuits=int(l.get("min_nuits", 1)),
+            max_nuits=(int(l["max_nuits"]) if l.get("max_nuits") is not None else None),
+        )
+        for l in payload["lieux"]
+    ]
+    couts = {(int(c["de"]), int(c["vers"])): float(c["cout"]) for c in payload.get("couts_trajet", [])}
+    cad = payload["cadre"]
+    cadre = Cadre(total_nuits=int(cad["total_nuits"]), depart=int(cad["depart"]), arrivee=int(cad["arrivee"]))
+    nuits_imposees = {int(k): int(v) for k, v in (payload.get("nuits_imposees") or {}).items()}
+    return EntreeAllocation(
+        lieux=lieux, couts_trajet=couts, cadre=cadre,
+        mode=payload.get("mode", "full_auto"), nuits_imposees=nuits_imposees,
+    )
+
+
+def resultat_vers_json(r: Resultat) -> dict:
+    """Sérialise un Resultat au format EXACT du contrat partagé ResultatAllocation (M117) : selection / nuits / ordre /
+    valeur_captee / cout_trajet / gardes / laisses (le champ interne `faisable` n'est pas exposé). Pure."""
+    return {
+        "selection": r.selection,
+        "nuits": r.nuits,  # dict int→int ; JSON stringifie les clés (Record<number,number>)
+        "ordre": r.ordre,
+        "valeur_captee": r.valeur_captee,
+        "cout_trajet": r.cout_trajet,
+        "gardes": r.gardes,
+        "laisses": r.laisses,
+    }
+
+
 # --- solveur OR-Tools CP-SAT (référence flip ; requiert ortools, non exécuté ici) --------------------
 
 def resoudre_allocation_cpsat(entree: EntreeAllocation) -> Resultat:

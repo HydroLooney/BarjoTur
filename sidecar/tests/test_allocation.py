@@ -16,6 +16,8 @@ from allocation import (  # noqa: E402
     agreger_egalitariste,
     satisfaction_par_voyageur,
     resoudre_allocation,
+    entree_depuis_json,
+    resultat_vers_json,
 )
 
 
@@ -87,3 +89,22 @@ def test_equite_par_voyageur_expose_le_moins_bien_servi():
     assert sat["A"] == 11 and sat["B"] == 11  # ici équilibré
     sat2 = satisfaction_par_voyageur({1: 1}, courbes)
     assert min(sat2.values()) == 1  # B est le moins bien servi
+
+
+def test_mapping_json_contrat_partage_round_trip():
+    # Entrée au format shared/allocation.ts : couts_trajet est une LISTE de {de,vers,cout}.
+    payload = {
+        "lieux": [
+            {"lieu_id": 1, "marginaux": [10, 9, 8], "min_nuits": 1, "max_nuits": 3},
+            {"lieu_id": 2, "marginaux": [2], "min_nuits": 1, "max_nuits": 1},
+        ],
+        "couts_trajet": [{"de": 0, "vers": 1, "cout": 5}, {"de": 1, "vers": 9, "cout": 7}],
+        "cadre": {"total_nuits": 3, "depart": 0, "arrivee": 9},
+        "mode": "full_auto",
+    }
+    entree = entree_depuis_json(payload)
+    assert entree.couts_trajet[(0, 1)] == 5  # liste -> dict interne
+    out = resultat_vers_json(resoudre_allocation(entree))
+    assert set(out.keys()) == {"selection", "nuits", "ordre", "valeur_captee", "cout_trajet", "gardes", "laisses"}
+    assert out["selection"] == [1]  # domination -> drop
+    assert out["cout_trajet"] == 5 + 7  # route 0->1->9
