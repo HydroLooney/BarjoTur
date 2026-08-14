@@ -110,3 +110,69 @@ export function peut(role: Role, capacite: Capacite, qualification?: Qualificati
   if (capacite === 'voir_budget_detaille' && qualification === 'enfant') return false;
   return true;
 }
+
+// --- Portée d'un lien de partage (A34) -----------------------------------------------------------
+// La PORTÉE est l'intention de partage du lien, distincte du rôle (l'identité). Un organisateur génère
+// des liens de trois portées ; chaque portée fixe si les votes comptent et ce qui est visible.
+
+/** Les huit espaces de l'app (source unique des identifiants d'espace visibles par un lien). */
+export type EspaceId =
+  | 'le_voyage'
+  | 'explorer'
+  | 'mes_envies'
+  | 'mon_voyage'
+  | 'notre_voyage'
+  | 'carte'
+  | 'preparatifs'
+  | 'reglages';
+
+/**
+ * Ce qu'un lien d'invitation ouvre (A34, tranché Guillaume) :
+ * - membre : participation pleine, votes COMPTENT (rôle voyageur/organisateur).
+ * - suggestion : explore + vote NON compté (l'organisateur le voit) + voit Notre Voyage (rôle demo).
+ * - vitrine : lecture seule, carte animée LIVE du voyage courant (rôle invite).
+ */
+export type PorteeLien = 'membre' | 'suggestion' | 'vitrine';
+
+/** Réglage d'un lien : sa portée, si ses votes comptent, et les espaces qu'il ouvre. */
+export interface ReglagePortee {
+  portee: PorteeLien;
+  /** Les votes de ce lien entrent-ils dans le consensus commun ? (suggestion/vitrine = false). */
+  votesComptent: boolean;
+  /** Espaces visibles ; `undefined` = selon le rôle (membre voit tout ce que son rôle autorise). */
+  espacesVisibles?: readonly EspaceId[];
+}
+
+/** Défauts de portée (l'organisateur peut affiner les espaces visibles à la génération). */
+export const PORTEE_DEFAUT: Record<PorteeLien, ReglagePortee> = {
+  membre: { portee: 'membre', votesComptent: true },
+  suggestion: {
+    portee: 'suggestion',
+    votesComptent: false,
+    espacesVisibles: ['explorer', 'notre_voyage'],
+  },
+  vitrine: { portee: 'vitrine', votesComptent: false, espacesVisibles: ['carte'] },
+};
+
+/** Rôle porté par défaut selon la portée du lien généré. */
+export const ROLE_PAR_PORTEE: Record<PorteeLien, Role> = {
+  membre: 'voyageur',
+  suggestion: 'demo',
+  vitrine: 'invite',
+};
+
+/** POST /api/voyageurs/:voyage_id/lien — générer un lien de partage (organisateur + PIN). */
+export interface DemandeGenererLien {
+  portee: PorteeLien;
+  /** Libellé du lien (prénom pour un membre ; facultatif pour suggestion/vitrine). */
+  prenom?: string;
+  /** Espaces visibles imposés (sinon `PORTEE_DEFAUT[portee]`). */
+  espacesVisibles?: readonly EspaceId[];
+  pin: string;
+}
+
+/** POST /api/voyageurs/:voyage_id/:code/revoquer — révoquer un lien (organisateur + PIN). Le code meurt. */
+export interface DemandeRevoquerLien {
+  code: string;
+  pin: string;
+}
