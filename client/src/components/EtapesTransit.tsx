@@ -44,7 +44,7 @@ export function EtapesTransit() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-sm font-medium">Transit</h2>
+        <h3 className="text-sm font-medium">Les transits</h3>
         <p className="max-w-prose text-xs text-muted-foreground">
           Les étapes de <strong>transit</strong> repositionnent le van (on minimise le temps) ; les étapes
           d'<strong>expérience</strong> maximisent le beau (la boucle, sur la carte et l'atlas). Un arrêt de

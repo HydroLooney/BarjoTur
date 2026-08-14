@@ -45,7 +45,7 @@ export function Composeur() {
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-sm font-medium">Composer un itinéraire</h2>
+        <h3 className="text-sm font-medium">L'expérience (la boucle)</h3>
         <p className="max-w-prose text-xs text-muted-foreground">
           Choisissez des bases et une ambiance, le moteur assemble un itinéraire et l'anime.
           {live ? '' : ' Aperçu de préparation (fixture) tant que le moteur n’est pas branché.'}
