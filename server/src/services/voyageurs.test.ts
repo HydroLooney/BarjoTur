@@ -16,17 +16,19 @@ const brut = (o: Partial<MembreBrut> = {}): MembreBrut => ({
   ...o,
 });
 
-test('versVoyageur mappe le membre brut et NORMALISE le rôle physique (M052)', () => {
+test('versVoyageur mappe le membre brut, NORMALISE le rôle physique et DÉRIVE la qualification (M052/M082)', () => {
   assert.deepEqual(versVoyageur(brut({ role: 'owner', prenom: 'Guillaume' })), {
     id: 7,
     prenom: 'Guillaume',
     role: 'organisateur_principal',
-    qualification: null,
+    qualification: 'adulte',
     codeLien: 'aZ9_kQ2xLmp',
     actif: true,
   });
   assert.equal(versVoyageur(brut({ role: 'mamie' })).role, 'voyageur');
+  assert.equal(versVoyageur(brut({ role: 'mamie' })).qualification, 'adulte');
   assert.equal(versVoyageur(brut({ role: 'enfant' })).role, 'voyageur');
+  assert.equal(versVoyageur(brut({ role: 'enfant' })).qualification, 'enfant');
 });
 
 test('estRoleAttribuable autorise organisateur/voyageur/demo/invite, PAS organisateur_principal (unique) ni inconnu', () => {

@@ -7,7 +7,7 @@ export type { Role, Voyageur, Qualification, Capacite, DemandeRole, DemandeRegen
 export { peut, CAPACITES_PAR_ROLE } from '@barjotur/shared';
 
 import type { Role, Voyageur } from '@barjotur/shared';
-import { normaliserRole } from './identite.js';
+import { normaliserRole, qualifierDepuisRole } from './identite.js';
 
 /** Ligne brute renvoyée par la RPC de lecture (colonnes physiques de membre.membre ; jamais pin_hash). */
 export interface MembreBrut {
@@ -27,14 +27,14 @@ export function estRoleAttribuable(role: string): role is Role {
   return (ROLES_ATTRIBUABLES as readonly string[]).includes(role);
 }
 
-/** Mappe une ligne membre brute vers le contrat Voyageur et NORMALISE le rôle physique (M052, point unique). La
- *  qualification (adulte/enfant) n'est pas encore portée physiquement → null. Pure. */
+/** Mappe une ligne membre brute vers le contrat Voyageur : NORMALISE le rôle physique et DÉRIVE la qualification du même
+ *  rôle physique (M052/M082, point unique — pas de colonne qualification dédiée). Pure. */
 export function versVoyageur(m: MembreBrut): Voyageur {
   return {
     id: m.membre_id,
     prenom: m.prenom,
     role: normaliserRole(m.role),
-    qualification: null,
+    qualification: qualifierDepuisRole(m.role),
     codeLien: m.code_lien,
     actif: m.actif,
   };

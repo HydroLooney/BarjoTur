@@ -3,7 +3,7 @@
 
 import { appelerRpc, argTexte } from '../db/rpc.js';
 import { Erreurs, exigerPresent } from '../http/erreurs.js';
-import { normaliserRole } from '../domain/identite.js';
+import { normaliserRole, qualifierDepuisRole } from '../domain/identite.js';
 import type { Whoami } from '../domain/identite.js';
 
 /** Résout l'identité et NORMALISE le rôle physique DB2 vers le vocabulaire d'accès du contrat (M052) : whoami est la
@@ -11,5 +11,6 @@ import type { Whoami } from '../domain/identite.js';
 export async function lireWhoami(code: string): Promise<Whoami> {
   const res = await appelerRpc<Whoami | null>('whoami', [argTexte(code)]);
   const who = exigerPresent(res, Erreurs.codeInconnu);
-  return { ...who, role: normaliserRole(who.role) };
+  // La qualification se DÉRIVE du rôle PHYSIQUE (who.role brut, avant normalisation) : pas de colonne dédiée (M082).
+  return { ...who, qualification: qualifierDepuisRole(who.role), role: normaliserRole(who.role) };
 }
