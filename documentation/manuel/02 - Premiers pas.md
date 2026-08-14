@@ -14,7 +14,7 @@ Une fois l'app ouverte, on tombe sur l'espace Le voyage. C'est le point d'accuei
 
 En haut de chaque écran, un bandeau rappelle en permanence l'étape en cours. C'est le fil qui empêche de se perdre : même après plusieurs jours sans ouvrir l'app, on retrouve tout de suite le point où en est le voyage.
 
-Le voyage se lit comme une frise à six moments : Idée, Explorer, Voter, Composer, Logistique, Voyage. Chaque moment porte un état visible, du plus ouvert au plus verrouillé, avec un petit cadenas quand il est validé. Le chapitre [Le fil du voyage](03 - Le fil du voyage.md) explique en détail comment ce fil avance.
+Le voyage se lit comme une frise à six moments : L'idée, Le van, Explorer, Composer, Préparer, Le départ. Chaque moment porte un état visible, du plus ouvert au plus verrouillé, avec un petit cadenas quand il est validé. Le chapitre [Le fil du voyage](03 - Le fil du voyage.md) explique en détail comment ce fil avance.
 
 ## Se déplacer dans l'app
 

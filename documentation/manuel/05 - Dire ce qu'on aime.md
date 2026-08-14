@@ -14,6 +14,12 @@ Certaines choses ne se notent pas, elles se comptent. Le nombre de restaurants s
 
 Une envie n'est pas une commande ferme. Elle se confronte à ce que le voyage peut réellement offrir dans le temps disponible. Vous voulez huit restaurants sur douze jours ? L'app les placera au bon moment, quand l'occasion se présente et que l'emploi du temps le permet, sans forcer.
 
+## Les envies par thème
+
+À côté des envies qu'on compte, on dit aussi ce qu'on aime en grand. La mer, la faune, le patrimoine : pour chacun de ces thèmes, on règle à quel point on y tient. Plus on aime un thème, plus le voyage donne de temps aux lieux de ce genre.
+
+C'est là toute la différence avec l'envie plafonnée, qui compte des lieux. L'envie par thème ne compte rien : elle pèse sur le temps qu'on passe. Dire qu'on aime beaucoup la faune ne réclame pas un nombre d'animaux à voir, cela fait durer un peu plus les haltes où l'on observe, quand elles tombent sur la route.
+
 ## Voter sur les lieux
 
 La manière la plus directe de peser sur le voyage, c'est de donner son avis sur les lieux, un par un. L'avis se donne en quatre crans, du plus fort au plus léger.

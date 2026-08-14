@@ -8,13 +8,13 @@ L'app a sept espaces : Le voyage, Explorer, Mes envies, Le trajet, Carte, Prépa
 
 L'espace d'accueil et le tableau de bord. On y lit où en est le voyage et on rejoint tout le reste.
 
-**Lire le fil.** Le voyage se lit comme une frise à six moments : Idée, Explorer, Voter, Composer, Logistique, Voyage. Chaque moment porte son état. Exemple : au début du voyage en Norvège, les moments Idée et Explorer sont ouverts, les autres attendent leur tour.
+**Lire le fil.** Le voyage se lit comme une frise à six moments : L'idée, Le van, Explorer, Composer, Préparer, Le départ. Chaque moment porte son état. Exemple : au début du voyage en Norvège, les moments L'idée et Explorer sont ouverts, les autres attendent leur tour.
 
-**Comprendre les cadenas.** Chaque moment est en brouillon, en cadenas ouvert, ou en cadenas fermé. Brouillon, c'est en travail. Cadenas ouvert, c'est validé mais encore modifiable. Cadenas fermé, c'est figé pour de bon. Exemple : une fois la traversée en bateau réservée, le moment Idée passe en cadenas fermé, ses dates ne bougent plus.
+**Comprendre les cadenas.** Chaque moment est en brouillon, en cadenas ouvert, ou en cadenas fermé. Brouillon, c'est en travail. Cadenas ouvert, c'est validé mais encore modifiable. Cadenas fermé, c'est figé pour de bon. Exemple : une fois la traversée en bateau réservée, le moment L'idée passe en cadenas fermé, ses dates ne bougent plus.
 
 **Sauter à une étape.** Depuis le fil, on rejoint le moment sur lequel on veut travailler. Exemple : toucher Composer pour aller assembler le trajet, si ce moment est ouvert.
 
-**Retrouver son bandeau.** En haut de chaque écran, un bandeau rappelle l'étape en cours. Exemple : après une semaine sans ouvrir l'app, le bandeau indique tout de suite qu'on en est à la logistique.
+**Retrouver son bandeau.** En haut de chaque écran, un bandeau rappelle l'étape en cours. Exemple : après une semaine sans ouvrir l'app, le bandeau indique tout de suite qu'on en est à la préparation.
 
 ## Explorer
 
@@ -44,7 +44,9 @@ Là où l'on dit le genre de voyage qu'on veut, en gros et en chiffres.
 
 **Fixer une envie chiffrée.** Certaines choses se comptent au lieu de se noter, comme le nombre de restaurants. On fixe la quantité voulue, avec un plafond. Exemple : demander six restaurants sur le voyage ; l'app les placera au bon moment.
 
-**Comprendre l'effet.** L'esprit oriente le moteur sans noter les lieux, l'envie se confronte à ce que le voyage peut offrir. Exemple : une envie de huit randonnées se réduira si le temps disponible ne les permet pas toutes.
+**Régler une envie par thème.** Pour un thème, la mer, la faune, le patrimoine, on dit à quel point on l'aime. Plus on l'aime, plus le voyage donne de temps aux lieux de ce genre. À la différence de l'envie chiffrée, elle ne compte pas des lieux, elle pèse sur le temps. Exemple : aimer beaucoup la faune fait durer un peu plus les haltes d'observation.
+
+**Comprendre l'effet.** L'esprit oriente le moteur sans noter les lieux, l'envie chiffrée se confronte à ce que le voyage peut offrir, l'envie par thème pèse sur le temps qu'on passe. Exemple : une envie de huit randonnées se réduira si le temps disponible ne les permet pas toutes.
 
 ## Le trajet
 
@@ -52,7 +54,17 @@ Là où l'app assemble l'itinéraire et propose des variantes.
 
 **Lancer une composition.** L'app choisit les haltes sous le temps disponible, calcule les vrais chemins, tient compte des bateaux et des nuitées. Exemple : sur douze jours, elle assemble une boucle qui passe par les grands repères sans détour inutile.
 
+**Comprendre les camps de base.** Le trajet enchaîne des camps de base, les endroits où l'on pose le van pour rayonner quelques jours, et ce qu'on visite autour. Exemple : trois nuits dans les Lofoten, à partir desquelles on part chaque jour explorer les alentours.
+
+**Ajuster le temps sur place.** Chaque lieu a son temps sur place, celui qu'on y passe en plus du trajet, ajustable avec un minimum sensé. Exemple : porter une baignade d'une heure à deux, si on veut y traîner.
+
+**Régler une activité en bloc.** Certaines sorties se prennent en demi-journée, autour de quatre heures, ou en journée, autour de huit, pas en petits bouts. Exemple : réserver une demi-journée pour un kayak.
+
+**Garder du temps libre.** La flânerie est un temps sans programme dans la journée, compté à part des visites. Exemple : réserver une matinée de flânerie pour un marché, sans la remplir de lieux.
+
 **Lire une variante.** Plusieurs itinéraires sont proposés, chacun comparé au voyage retenu : combien de nuits, de kilomètres, d'euros en plus ou en moins. Exemple : une variante montre « une nuit de plus, cent kilomètres de plus, quarante euros de plus ».
+
+**Arbitrer argent et temps.** Pour une liaison, un curseur choisit entre le ferry, payant mais rapide, et la route, gratuite mais longue. Exemple : pousser le curseur vers le temps pour prendre le bateau et gagner l'après-midi.
 
 **Comprendre le consensus.** Le voyage retenu n'est pas une moyenne : il soigne d'abord la personne la moins bien servie. Chacun voit ce qu'il gagne et ce qu'il cède. Exemple : le tableau montre qu'un voyageur perd une randonnée mais gagne deux villages qu'il voulait.
 
@@ -66,6 +78,8 @@ Là où l'itinéraire retenu se donne à voir, jour après jour.
 
 **Repérer les traversées.** Les passages en bateau se distinguent du reste du tracé. Exemple : voir d'un coup d'œil les trois ferries à prendre, pour préparer les horaires.
 
+**Lire les sentiers.** En zoomant, les sentiers de randonnée apparaissent, coloriés par difficulté, de Non gradé à Expert. Exemple : voir qu'un chemin vers un point de vue est en Difficile, et le garder pour les bons marcheurs.
+
 **Se repérer.** On zoome, on se déplace, on touche une étape pour en savoir plus. C'est la même carte et la même légende que dans Explorer. Exemple : en route, situer l'étape du jour sur la carte.
 
 ## Préparatifs
@@ -74,7 +88,13 @@ Là où l'on prépare le concret : budget, intendance, réservations.
 
 **Lire le budget.** Le budget se ventile par poste : Van, Carburant, Hébergement, Repas et courses, Ferries intérieurs, Ferry international, Activités, Transit. Exemple : voir que le carburant pèse autant que l'hébergement.
 
-**Lire les deux estimations.** Le budget se donne en prévision prudente et en prévision plus serrée, et se rapporte à chaque adulte. Exemple : « tant par adulte en prudent, tant en serré ». Si la prévision prudente dépasse le plafond fixé, l'app prévient.
+**Lire la fourchette.** Le budget se donne en fourchette, de l'estimation basse, sans coussin, à l'estimation haute, avec la marge de sécurité, et se rapporte à chaque adulte. Exemple : « tant par adulte en estimation basse, tant en estimation haute ».
+
+**Régler la marge de sécurité.** Un curseur en pourcentage ajoute un coussin au budget ; c'est lui qui sépare l'estimation basse de l'estimation haute. Exemple : relever la marge à quinze pour cent ouvre la fourchette d'autant vers le haut.
+
+**Ajuster le carburant.** Trois curseurs pèsent sur le poste carburant : la consommation de base, propre au van et fixe, la surconsommation en pourcentage pour le van chargé ou la montagne, et le prix du diesel. Exemple : relever la surconsommation avant un itinéraire de cols.
+
+**Compter la ristourne AutoPASS.** Un curseur en pourcentage applique la réduction d'une carte de prépaiement norvégienne sur les ferries. Laissé à zéro, l'app compte le plein tarif. Exemple : régler la ristourne selon la carte prise, et voir baisser le poste des ferries.
 
 **Tenir l'intendance.** Trois listes privées, sur son appareil : recettes, menus, matériel à cocher. Exemple : cocher le réchaud et les gourdes à mesure qu'on les emballe.
 

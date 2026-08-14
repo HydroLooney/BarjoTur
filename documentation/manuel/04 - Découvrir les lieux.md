@@ -6,6 +6,8 @@ L'espace Explorer est le grand catalogue du voyage. On y trouve les lieux qui vi
 
 Deux manières de parcourir, au choix. La liste aligne les lieux les uns sous les autres, chacun sur une petite fiche : une photo, un nom, ce qu'on y fait. On fait défiler, on ouvre ce qui attire l'œil. La carte, elle, montre les mêmes lieux à leur place réelle : on promène la carte, on touche un point, la fiche s'ouvre. La liste sert quand on cherche par thème, la carte quand on veut savoir ce qu'il y a autour d'un endroit.
 
+En zoomant sur la carte, les sentiers de randonnée apparaissent, coloriés selon leur difficulté, de Non gradé à Expert. C'est un premier repère pour savoir, dès la découverte, si la marche qui mène à un lieu est à la portée de tous. Le détail de cette échelle est au chapitre [La carte du voyage](07 - La carte du voyage.md).
+
 ## Chercher et filtrer
 
 Une barre de recherche retrouve un lieu par son nom. Des filtres resserrent la liste : par exemple ne montrer que les lieux qu'on peut noter, ou ne garder qu'un type de lieu, ou un niveau de réputation. On combine les filtres pour tomber juste. Cherchez « cascade », filtrez sur les lieux notables, et il ne reste que les grandes chutes d'eau du secteur.

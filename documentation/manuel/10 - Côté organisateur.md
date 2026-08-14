@@ -12,7 +12,7 @@ Cette garde est là pour la commodité, pas pour la sécurité lourde : elle emp
 
 Valider une étape, c'est dire « ce point est acté, on passe à la suite ». Selon l'étape, la validation la laisse encore modifiable, cadenas ouvert, ou la ferme pour de bon, cadenas fermé. Ce qui est fermé repose sur un fait du monde réel, une réservation, une date, une traversée en bateau, et ne se rouvre plus.
 
-Valider libère la suite. Tant que l'idée de départ n'est pas posée, l'app ne compose pas le trajet ; tant que le trajet n'est pas retenu, la logistique attend. C'est le fil qui tient tout.
+Valider libère la suite. Tant que l'idée de départ n'est pas posée, l'app ne compose pas le trajet ; tant que le trajet n'est pas retenu, la préparation attend. C'est le fil qui tient tout.
 
 ## Rouvrir, et ce que ça entraîne
 

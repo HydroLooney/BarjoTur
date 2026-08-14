@@ -6,14 +6,14 @@ Un voyage à plusieurs ne se décide pas d'un bloc. Il mûrit : on a une idée, 
 
 Le fil du voyage a six moments, dans l'ordre.
 
-- **Idée.** Le cadrage de départ : d'où l'on part, où l'on va, pour combien de temps. Pour le voyage en Norvège, c'est le domicile en Alsace, l'aller et le retour bouclés, les dates de traversée en bateau.
-- **Explorer.** On découvre les lieux, on se fait une idée de ce qu'il y a à voir.
-- **Voter.** Chacun dit ce qu'il aime, sur les lieux et sur le genre de voyage.
+- **L'idée.** Le cadrage de départ : d'où l'on part, où l'on va, pour combien de temps. Pour le voyage en Norvège, c'est le domicile en Alsace, l'aller et le retour bouclés, les dates de traversée en bateau.
+- **Le van.** Le véhicule qu'on loue. Une fois réservé, il devient un fait : sa consommation, sa taille et sa manière de rouler entrent dans tous les calculs qui suivent.
+- **Explorer.** On découvre les lieux, on se fait une idée de ce qu'il y a à voir, et chacun dit ce qu'il aime.
 - **Composer.** L'app assemble un itinéraire à partir de tout ça.
-- **Logistique.** On règle le concret : budget, repas, matériel, réservations.
-- **Voyage.** Le voyage est prêt, on prend la route.
+- **Préparer.** On règle le concret : budget, repas, matériel, réservations.
+- **Le départ.** Le voyage est prêt, on prend la route.
 
-Ces six étapes se lisent comme une frise, en haut de l'app et dans l'espace Le voyage. Au départ, les deux premières, Idée et Explorer, sont ouvertes : on peut y travailler tout de suite. Les suivantes s'ouvrent à mesure qu'on avance.
+Ces six étapes se lisent comme une frise, en haut de l'app et dans l'espace Le voyage. Au départ, les premières sont ouvertes : on peut y travailler tout de suite. Les suivantes s'ouvrent à mesure qu'on avance.
 
 ## Ce qui se décide, ce qui se verrouille
 
