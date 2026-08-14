@@ -1,100 +1,101 @@
 # Glossaire
 
-Le vocabulaire de Barjøtur, en un seul endroit. Un mot par concept, cohérent partout, côté code comme côté
-interface. Deux registres coexistent : un mot concret pour la famille, un terme exact pour les coulisses et le code.
-Cette page est la référence partagée de l'équipe pendant la construction, et sert aussi de glossaire au lecteur
-extérieur.
+Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même partout, tel qu'il apparaît à l'écran. C'est la référence : le manuel et l'aide en ligne emploient ces mots et pas d'autres. Les définitions sont courtes, dans les mots de l'app, sans jargon.
 
-## Côté famille et côté coulisses
+## Les personnes
 
-L'interface famille bannit le jargon et ne montre jamais de score brut, pour ne pas cadrer les votes. Les coulisses
-montrent tout, mais expliquent tout.
+**Voyageur.** Une personne du voyage, adulte ou enfant. Un voyageur explore, donne son avis, ajoute des lieux. Chaque voyageur a son lien personnel.
 
-| Terme exact (code, coulisses) | Mot famille (interface) |
-|---|---|
-| Qualité d'un lieu | l'intérêt du lieu |
-| Tier par défaut | la réputation, ce qu'en disent les guides |
-| Vote TSAB | mon avis (Trésor, Super, Sympa, Bof) |
-| Philosophie, curseurs | l'esprit du voyage |
-| Envie, cible plafonnée | nos envies, par exemple combien de restos |
-| Récompense de nœud | jamais montrée |
-| Orienteering, composeur | on assemble le voyage |
-| Consensus égalitariste | le voyage qui va à tout le monde |
-| Archétype | une idée de voyage, une ambiance |
-| Satiété | varier les plaisirs |
-| Glanage de corridor | ce qu'on voit en chemin |
+**Organisateur.** Le voyageur qui tient la barre. Il valide les étapes et garde la main sur ce qui se fige. Ses gestes qui verrouillent demandent le code.
 
-## Les termes, définis
+**Organisateur principal.** L'organisateur qui tranche en dernier ressort et détient le code. D'autres organisateurs peuvent être délégués.
 
-**Voyageur.** Le rôle de base d'une personne du voyage, qualifiée adulte ou enfant. Un voyageur vote, explore,
-ajoute des lieux. Le terme de domaine est voyageur ; la table qui le stocke garde son nom d'origine, pour ne pas
-perturber les votes et les liens déjà posés.
+**Lien personnel.** L'adresse à soi qui ouvre l'app, retrouve son voyage et garde ses avis. Elle vaut d'un appareil à l'autre. L'organisateur peut en fabriquer une nouvelle si l'ancienne se perd.
 
-**Organisateur, organisateur principal.** Un voyageur peut être organisateur. L'organisateur principal, unique,
-détient le code maître et arbitre les droits. Les gestes sensibles, comme régénérer un lien ou changer un rôle, sont
-protégés par un code.
+**Code.** Le code de l'organisateur, demandé pour valider ou rouvrir une étape, ou pour un geste qui touche à l'identité d'un voyageur. Voter et explorer ne demandent jamais de code.
 
-**Tier TSAB.** L'échelle d'avis en quatre crans, du meilleur au plus ordinaire : Trésor, Super, Sympa, Bof. Un vote
-range un lieu, un circuit ou une variante dans un de ces crans, sous un budget de votes rééquilibrable.
+## Le fil du voyage
 
-**Tier par défaut.** La réputation d'un lieu avant tout vote, dérivée de l'analyse des guides et des retours de la
-communauté. C'est une valeur calculée, tracée jusqu'à sa source, distincte du tier qu'un voyageur pose.
+**Le fil du voyage.** La suite des six moments par lesquels le voyage avance : Idée, Explorer, Voter, Composer, Logistique, Voyage. Un bandeau le rappelle en haut de chaque écran.
 
-**Philosophie du voyage.** Un genre de voyage décrit par des tensions réglées au curseur, comme calme contre intense
-ou nature contre culture. Elle oriente le moteur sans noter les lieux.
+**Étape (du fil).** Un des six moments du voyage. À ne pas confondre avec une étape du trajet, qui est une journée sur la route.
 
-**Envie.** Une cible chiffrée et plafonnée, propre à un voyageur, par exemple un nombre de randonnées ou de
-restaurants. Une envie se confronte à ce que le voyage peut réellement offrir, elle ne devient pas un score de lieu.
+**Brouillon.** L'état d'une étape en travail, rien n'est encore décidé.
 
-**Qualité.** La mesure objective de l'intérêt d'un lieu, agrégée à partir de critères indépendants par une moyenne
-pondérée ordonnée. Elle est cardinale et stable, pour alimenter l'optimisation.
+**Cadenas ouvert.** L'état d'une étape validée mais encore modifiable. On peut la rouvrir, ce qui vient après sera alors à refaire.
 
-**Moyenne pondérée ordonnée.** La méthode d'agrégation retenue pour la qualité. Elle généralise la somme pondérée et
-règle le degré de compensation entre critères, d'un ET prudent à un OU optimiste.
+**Cadenas fermé.** L'état d'une étape verrouillée, qui repose sur un fait réel, une réservation, une date, un bateau. Elle ne se rouvre plus.
 
-**Standardisation floue.** La mise à l'échelle de chaque critère par une fonction d'appartenance adaptée à son sens,
-avant agrégation, pour comparer des grandeurs de natures différentes.
+## Les lieux et la mémoire
 
-**Krigeage réseau.** L'interpolation de la qualité le long des routes et sentiers empruntables, par arête densifiée,
-plutôt qu'à vol d'oiseau, pour éviter que le résultat dépende du maillage d'affichage.
+**Lieu.** Un endroit du voyage : une cascade, un village, un point de vue. Les lieux viennent des guides et de la communauté, ou de ce que la famille ajoute.
 
-**Archétype.** Un voyage complet donné en exemple, une ambiance. Classer des archétypes aide à caler l'échelle de
-valeur d'un voyageur, sans lui imposer d'étiquette en entrée.
+**Réputation.** Ce que disent les guides et la communauté d'un lieu, avant tout avis. C'est un repère de départ, distinct de votre avis, tracé jusqu'à sa source.
 
-**Consensus égalitariste.** Le voyage faisable qui soigne d'abord la personne la moins bien lotie, puis la suivante.
-Il ne moyenne pas les envies. Il s'affiche honnêtement, avec ce que chacun gagne et ce qu'il cède.
+**Intérêt du lieu.** La valeur d'un lieu telle que l'app la calcule, à partir de critères qui ne se recopient pas. Elle sert à assembler le trajet et reste à l'écart pendant le vote.
 
-**Orienteering, composeur.** Le problème de choisir les haltes sous un budget de temps, résolu par un solveur dédié
-et un routage réel. Le composeur en est la mise en œuvre.
+**Recommandations.** Les sélections triées en tête d'Explorer, qui disent toujours pourquoi un lieu s'y trouve : Les incontournables, Pour chacun, La famille adore, Pépites.
 
-**Récompense.** La valeur qu'une halte apporte au voyage, combinant qualité, votes, envies, prix et progression.
-Elle pilote l'optimisation et n'est jamais montrée pendant le vote.
+**Pépite.** Une trouvaille hors des sentiers battus, signalée comme telle.
 
-**Glanage de corridor.** Le fait de saisir le beau qui se trouve sur le trajet, sans détour coûteux.
+**Mes lieux.** La mémoire personnelle de chacun : les lieux déjà vus, les collections, les propositions. Elle est à soi, sans code, et suit d'un appareil à l'autre.
 
-**Satiété.** La règle qui pousse à varier les plaisirs plutôt qu'à empiler des lieux du même genre.
+**Déjà vu.** La marque posée sur un lieu dont on a ouvert la fiche, pour ne pas y repasser.
 
-**Enveloppe d'activité.** La marge de temps réellement disponible pour les activités, selon le rythme du voyage, qui
-détermine ce qu'une envie peut recevoir.
+**Collection.** Un groupe de lieux qu'on réunit soi-même, par thème ou par envie.
 
-**Base.** Un point d'ancrage d'où rayonne une portion du voyage, souvent un lieu de nuitée. La matrice de temps
-entre bases est un calcul central.
+**Proposition.** Un lieu qu'on a ajouté soi-même au voyage.
 
-**Fige.** L'itinéraire retenu, enregistré avec sa géométrie continue et son agenda jour par jour. La carte animée
-rejoue le fige.
+## Dire ce qu'on aime
 
-**Écart DB1 et DB2.** Le contrôle qui compare la base maître, qui calcule, et la base de service, qui sert, par
-empreinte. Il casse à la moindre divergence et garantit que le service reflète bien le dernier calcul.
+**L'esprit du voyage.** Le genre de voyage qu'on veut, réglé au curseur entre deux envies, comme calme ou intense, nature ou culture. Il oriente le moteur sans noter les lieux.
 
-**Calcul canonique.** Un calcul dont une seule version fait foi, nommé, documenté, rejouable par un script
-versionné, sans valeur en dur, tracé jusqu'à sa source. C'est ce qui rend le projet fiable et rejouable.
+**Envie.** Une quantité souhaitée et plafonnée, propre à un voyageur, comme un nombre de restaurants ou de randonnées. Elle se confronte à ce que le voyage peut offrir, elle ne note pas les lieux.
 
-**Bascule strangler.** La méthode de mise en ligne, où la nouvelle version remplace l'ancienne module par module,
-avec parité vérifiée et retour arrière prêt, sans jamais couper le service.
+**Avis.** Ce qu'un voyageur pense d'un lieu, donné en quatre crans, du plus fort au plus léger : Coup de coeur, Vraiment envie, Bien, Pourquoi pas. Recliquer sur son cran l'annule.
 
-**Base maître et base de service.** La base maître porte tout et calcule le lourd, par intermittence. La base de
-service, toujours en ligne et autonome, sert l'application et compose en direct, sans dépendre de la base maître.
+**Budget d'avis.** La réserve d'avis de chacun, qui empêche de tout mettre au sommet et se rééquilibre à mesure qu'on vote.
 
-**Sidecar.** Le service Python qui résout la composition d'itinéraire, appelé par le backend.
+## Assembler le voyage
 
-**Martin.** Le serveur de tuiles vectorielles qui alimente la carte.
+**Le trajet.** L'itinéraire assemblé par l'app : les haltes choisies sous le temps disponible, les vrais chemins, les bateaux, les nuitées.
+
+**Étape (du trajet).** Une journée du voyage sur la route. Elle est de découverte, où les lieux comptent, ou de route, où l'on rejoint un point à un autre au meilleur coût.
+
+**Étape de route.** Une étape où l'on se déplace en van d'un point à un autre en minimisant temps et coût. Le trajet aller et retour en est une ; l'organisateur peut en insérer une pour élargir la boucle.
+
+**Variante.** Un autre itinéraire proposé, comparé au voyage retenu par des chiffres réels : nuits, kilomètres, euros en plus ou en moins.
+
+**Le voyage qui va à tout le monde.** L'itinéraire retenu. Il ne moyenne pas les envies : il soigne d'abord la personne la moins bien servie, puis la suivante. Chacun voit ce qu'il gagne et ce qu'il cède.
+
+**Ce qu'on voit en chemin.** Le beau que l'app attrape sur la route, sans détour coûteux.
+
+**Varier les plaisirs.** La règle qui évite d'empiler dix lieux du même genre.
+
+## La carte
+
+**Carte.** L'espace où l'itinéraire retenu se déroule, jour après jour, un repère avançant au rythme des journées. Les traversées en bateau s'y distinguent du reste.
+
+## Préparer le concret
+
+**Budget.** La prévision de dépense du voyage, ventilée par poste : Van, Carburant, Hébergement, Repas et courses, Ferries intérieurs, Ferry international, Activités, Transit. Donnée en estimation prudente et en estimation plus serrée, et par adulte.
+
+**Intendance.** Les trois listes privées du voyage : recettes, menus, matériel. Elles restent sur l'appareil.
+
+**Nuit en autonomie.** Une nuit passée hors camping payant, préférée par défaut sur les tronçons de route, moins chère et dans l'esprit du van. Chaque nuit se bascule entre autonomie et payant.
+
+**Réservation.** Une dépense payée d'avance qui devient un point fixe, posé à une date, que le reste du voyage respecte et que l'app ne déplace plus.
+
+## Régler l'app
+
+**Profil de déplacement.** La façon dont on se déplace, en van, à pied, en randonnée, dont l'app tient compte pour tracer les trajets. Le profil du van se fige à la réservation du véhicule.
+
+**Réglage.** Un paramètre du moteur, affiché avec sa valeur, la valeur recommandée et la raison en clair. Les réglages restent à l'écart pendant le vote.
+
+**Thème.** L'affichage clair ou sombre de l'app, au choix.
+
+## Hors réseau
+
+**Atlas.** Le voyage mis sur papier, une page par jour, à imprimer ou à enregistrer en PDF. De quoi garder le voyage en main sans réseau.
+
+**Hors réseau.** L'app installée sur le téléphone fonctionne sans connexion : la carte des zones déjà consultées et la dernière version du voyage restent disponibles.
