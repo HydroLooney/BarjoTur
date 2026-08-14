@@ -84,7 +84,7 @@ export function Composeur() {
                   aria-pressed={actif}
                   onClick={() => setArchetypeKey(actif ? null : cle)}
                   className={cn(
-                    'rounded-md border px-3 py-2 text-sm transition-colors',
+                    'inline-flex min-h-tactile items-center rounded-md border px-3 py-2 text-sm transition-colors',
                     actif
                       ? 'border-primary bg-muted font-medium text-foreground'
                       : 'border-border text-muted-foreground hover:text-foreground',
@@ -112,7 +112,7 @@ export function Composeur() {
                 aria-pressed={actif}
                 onClick={() => basculerBase(b.base_id)}
                 className={cn(
-                  'rounded-md border px-3 py-2 text-sm transition-colors',
+                  'inline-flex min-h-tactile items-center rounded-md border px-3 py-2 text-sm transition-colors',
                   actif
                     ? 'border-primary bg-muted font-medium text-foreground'
                     : 'border-border text-muted-foreground hover:text-foreground',

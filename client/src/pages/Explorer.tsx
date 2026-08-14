@@ -69,7 +69,10 @@ export default function Explorer() {
       </div>
 
       {montrerAstuce ? (
-        <div className="flex items-start justify-between gap-2 rounded-lg border border-primary bg-card p-3 text-sm">
+        <div
+          role="status"
+          className="flex items-start justify-between gap-2 rounded-lg border border-primary bg-card p-3 text-sm"
+        >
           <p className="max-w-prose text-muted-foreground">
             Astuce : sur chaque lieu, un bouton dit ce que vous aimez (coup de cœur, vraiment envie, bien, pourquoi
             pas). C'est votre vote, et vous pouvez le changer quand vous voulez.
@@ -77,7 +80,7 @@ export default function Explorer() {
           <button
             type="button"
             onClick={masquerAstuceVote}
-            className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
+            className="flex min-h-tactile shrink-0 items-center px-2 text-xs text-muted-foreground hover:text-foreground"
           >
             Compris
           </button>
@@ -108,7 +111,7 @@ export default function Explorer() {
             }}
             onClick={() => setOnglet(o.cle)}
             className={cn(
-              'px-3 py-2 text-sm transition-colors',
+              'inline-flex min-h-tactile items-center px-3 py-2 text-sm transition-colors',
               onglet === o.cle
                 ? 'border-b-2 border-primary font-medium text-foreground'
                 : 'text-muted-foreground hover:text-foreground',

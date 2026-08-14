@@ -18,7 +18,8 @@ const boutonVariants = cva(
       },
       size: {
         default: 'h-11 px-4 py-2',
-        sm: 'h-9 px-3',
+        // sm : padding resserré mais hauteur tactile garantie (>= 44px, A06/A20 « utilisable au pouce »).
+        sm: 'min-h-tactile px-3 py-1.5',
         lg: 'h-12 px-6 text-base',
         icon: 'h-11 w-11',
       },

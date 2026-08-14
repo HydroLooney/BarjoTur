@@ -56,7 +56,7 @@ function Materiel() {
               <button
                 type="button"
                 onClick={() => supprimer(m.id)}
-                className="ml-auto text-xs text-muted-foreground hover:text-foreground"
+                className="ml-auto flex min-h-tactile items-center px-2 text-xs text-muted-foreground hover:text-foreground"
                 aria-label={`Retirer ${m.libelle}`}
               >
                 Retirer
@@ -111,7 +111,7 @@ function Recettes() {
                 <button
                   type="button"
                   onClick={() => supprimer(r.id)}
-                  className="ml-auto text-xs text-muted-foreground hover:text-foreground"
+                  className="ml-auto flex min-h-tactile items-center px-2 text-xs text-muted-foreground hover:text-foreground"
                   aria-label={`Retirer ${r.titre}`}
                 >
                   Retirer
@@ -164,7 +164,7 @@ function Menus() {
               <button
                 type="button"
                 onClick={() => supprimer(m.id)}
-                className="ml-auto text-xs text-muted-foreground hover:text-foreground"
+                className="ml-auto flex min-h-tactile items-center px-2 text-xs text-muted-foreground hover:text-foreground"
                 aria-label={`Retirer ${m.plat}`}
               >
                 Retirer

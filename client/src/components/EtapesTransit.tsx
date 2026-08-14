@@ -77,7 +77,7 @@ export function EtapesTransit() {
                         <button
                           type="button"
                           onClick={() => toggle(e.id, a.id)}
-                          className="text-xs text-muted-foreground hover:text-foreground"
+                          className="flex min-h-tactile items-center text-xs text-muted-foreground hover:text-foreground"
                         >
                           {a.autonomie ? 'passer en payant' : 'passer en autonomie'}
                         </button>

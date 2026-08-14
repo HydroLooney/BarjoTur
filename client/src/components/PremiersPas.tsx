@@ -35,7 +35,7 @@ export function PremiersPas() {
           <button
             type="button"
             onClick={marquerVu}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="flex min-h-tactile items-center px-2 text-xs text-muted-foreground hover:text-foreground"
           >
             Masquer
           </button>
@@ -58,7 +58,7 @@ export function PremiersPas() {
         <button
           type="button"
           onClick={marquerVu}
-          className="text-xs text-muted-foreground hover:text-foreground"
+          className="flex min-h-tactile items-center px-2 text-xs text-muted-foreground hover:text-foreground"
         >
           Masquer
         </button>

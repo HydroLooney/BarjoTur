@@ -38,10 +38,11 @@ export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, classN
               type="button"
               disabled={disabled}
               aria-pressed={actif}
+              aria-label={AVIS[t as keyof typeof AVIS] ?? t}
               title={AVIS[t as keyof typeof AVIS] ?? t}
               onClick={() => onChoisir(actif ? null : t)}
               className={cn(
-                'flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50',
+                'flex h-11 w-11 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50',
                 actif
                   ? cn(CLASSE_TIER[t], 'border-transparent text-primary-foreground')
                   : 'border-border text-muted-foreground hover:bg-muted',
