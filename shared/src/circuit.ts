@@ -60,4 +60,6 @@ export interface ZoneActiviteIdeale {
   theme: Theme;
   source: SourceGuide;
   note?: string;
+  /** Nombre de lieux de ce thème rattachés à la zone (fourni par A). 0 → « aucun lieu encore rattaché », pas de lien mort. */
+  nb_lieux_rattaches?: number;
 }
