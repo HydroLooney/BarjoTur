@@ -47,7 +47,9 @@ export function appliquerTransition(
 
   if (t.action === 'valider') {
     if (cible.etat !== 'brouillon') return { ok: false, raison: 'Ce cran est déjà validé.' };
-    cible.etat = 'valide_modifiable';
+    // Fidèle à l'engine autoritatif (B033) : un cran irréversible se fige DIRECTEMENT en verrouillé
+    // à la validation (réservation/ferry/dates/A-R) ; un cran modifiable devient rouvrable.
+    cible.etat = cible.reouvrable ? 'valide_modifiable' : 'valide_verrouille';
     return { ok: true, etat: { ...etat, crans, cran_courant: premierNonValide(crans, etat.cran_courant) } };
   }
 

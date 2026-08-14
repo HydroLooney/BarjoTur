@@ -11,6 +11,7 @@ const LIB_POSTE: Record<string, string> = {
   repas_courses: 'Repas et courses',
   ferry_interieur: 'Ferries intérieurs',
   ferry_international: 'Ferry international',
+  transit: 'Transit (repositionnement)',
 };
 
 function euro(n: number): string {

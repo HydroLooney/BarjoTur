@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { CarteItineraire } from '@/components/CarteItineraire';
 import { GalerieArchetypes } from '@/components/GalerieArchetypes';
 import { Composeur } from '@/components/Composeur';
+import { EtapesTransit } from '@/components/EtapesTransit';
 import { Comparateur } from '@/components/Comparateur';
 import { VueBudget } from '@/components/VueBudget';
 import { Intendance } from '@/components/Intendance';
@@ -46,6 +47,7 @@ export default function Voyager() {
       <CarteItineraire geom={geom} etapes={etapes} />
       <GalerieArchetypes />
       <Composeur />
+      <EtapesTransit />
       <Comparateur />
       <VueBudget />
       <Intendance />

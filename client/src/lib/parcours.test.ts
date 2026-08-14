@@ -57,6 +57,13 @@ describe('appliquerTransition', () => {
     expect(r.etat?.cran_courant).toBe('exploration');
   });
 
+  it('fige directement en verrouillé un cran irréversible validé (fidèle à l’engine B)', () => {
+    const e = etat([cran('reservation_van', 2, 'brouillon', false)]);
+    const r = appliquerTransition(e, { voyage_id: 1, cran: 'reservation_van', action: 'valider' }, 'organisateur');
+    expect(r.ok).toBe(true);
+    expect(r.etat?.crans.find((c) => c.id === 'reservation_van')?.etat).toBe('valide_verrouille');
+  });
+
   it('refuse de valider un cran déjà validé', () => {
     const r = appliquerTransition(base(), { voyage_id: 1, cran: 'cadrage', action: 'valider' }, 'organisateur');
     expect(r.ok).toBe(false);

@@ -58,7 +58,7 @@ export default function Explorer() {
       </div>
 
       <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
-        {ONGLETS.map((o) => (
+        {ONGLETS.map((o, i) => (
           <button
             key={o.cle}
             type="button"
@@ -66,6 +66,17 @@ export default function Explorer() {
             id={`onglet-${o.cle}`}
             aria-selected={onglet === o.cle}
             aria-controls={`panneau-${o.cle}`}
+            // Pattern ARIA tabs : roving tabindex (seul l'onglet actif est tabbable) + flèches gauche/droite.
+            tabIndex={onglet === o.cle ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+              e.preventDefault();
+              const dir = e.key === 'ArrowRight' ? 1 : -1;
+              const cible = ONGLETS[(i + dir + ONGLETS.length) % ONGLETS.length];
+              if (!cible) return;
+              setOnglet(cible.cle);
+              document.getElementById(`onglet-${cible.cle}`)?.focus();
+            }}
             onClick={() => setOnglet(o.cle)}
             className={cn(
               'px-3 py-2 text-sm transition-colors',
