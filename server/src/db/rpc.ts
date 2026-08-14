@@ -48,6 +48,8 @@ export const RPC_AUTORISEES = [
   'voyageur_role_changer',
   'voyageur_lien_regenerer',
   'budget_temps_poi',
+  'appetit_lire',
+  'appetit_ecrire',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

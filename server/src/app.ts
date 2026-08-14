@@ -20,6 +20,7 @@ import { routesVoyageurs } from './routes/voyageurs.js';
 import { routesItineraire } from './routes/itineraire.js';
 import { routesComposeur } from './routes/composeur.js';
 import { routesActivite } from './routes/activite.js';
+import { routesAppetit } from './routes/appetit.js';
 import { entetesCache } from './middleware/cache.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
@@ -65,6 +66,7 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesItineraire);
   app.use('/api', routesComposeur);
   app.use('/api', routesActivite);
+  app.use('/api', routesAppetit);
 
   app.use(middlewareIntrouvable);
   app.use(middlewareErreurs);

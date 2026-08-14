@@ -6,11 +6,12 @@
 
 CREATE SCHEMA IF NOT EXISTS lib;
 
--- Avis agrégé → facteur durée (borné 0,85-1,30).
+-- Vote (tier) → facteur durée/reward. Taxonomie canonique Guillaume (M097) : T>S>A>B>C>D (T=Top, rare).
+-- Facteur PAR CODE réel (une seule vérité, fidèle à la donnée vote_lieu.tier / poi.tier_defaut).
 CREATE OR REPLACE FUNCTION lib.facteur_avis(avis text) RETURNS numeric LANGUAGE sql IMMUTABLE AS $$
-  SELECT CASE avis
-    WHEN 'Coup de cœur' THEN 1.30 WHEN 'Vraiment envie' THEN 1.15
-    WHEN 'Bien' THEN 1.00 WHEN 'Pourquoi pas' THEN 0.85 ELSE 1.00 END;
+  SELECT CASE upper(avis)
+    WHEN 'T' THEN 1.30 WHEN 'S' THEN 1.18 WHEN 'A' THEN 1.08
+    WHEN 'B' THEN 1.00 WHEN 'C' THEN 0.90 WHEN 'D' THEN 0.80 ELSE 1.00 END;
 $$;
 
 -- Appétit thématique groupe [0..1] → facteur durée [1,0..1,5].
