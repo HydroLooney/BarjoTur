@@ -98,9 +98,9 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 ## Mon voyage et le voyage commun
 
-**Mon voyage.** L'espace à soi de chaque voyageur, où l'on façonne son voyage idéal : sa cadence, ses lieux tenus pour incontournables, ses envies. L'app en tire l'itinéraire qu'on ferait seul, gardé comme repère pour mesurer plus tard l'écart au voyage commun.
+**Mon voyage.** L'espace à soi de chaque voyageur, où l'on façonne son voyage idéal : la densité de ses journées, ses lieux tenus pour incontournables, ses envies. L'app en tire l'itinéraire qu'on ferait seul, gardé comme repère pour mesurer plus tard l'écart au voyage commun.
 
-**Cadence.** Le curseur entre rusher et flâner, propre à chaque voyageur. Poussé vers rusher, les visites raccourcissent, la flânerie se réduit, les journées se remplissent, on voit plus de lieux ; poussé vers flâner, l'inverse. Il règle d'un geste tous les temps du voyage, dans des bornes communes qui protègent chacun, les enfants d'abord : pas de journée épuisante, pas de route tard le soir.
+**Densité des journées.** Le curseur entre journées légères et journées denses, propre à chaque voyageur. Vers les journées denses, les visites se resserrent, la flânerie se réduit, on voit plus de lieux ; vers les journées légères, l'inverse. Il donne une densité moyenne, pas la même chaque jour : le voyage alterne des journées denses et des journées plus douces, surtout après une grosse journée et sur les jours communs. Il règle d'un geste tous les temps du voyage, dans des bornes communes qui protègent chacun, les enfants d'abord : pas de journée épuisante, pas de route tard le soir.
 
 **Écart à l'idéal.** De combien le voyage commun s'éloigne de l'idéal calculé pour un voyageur donné. Chacun garde le sien sous les yeux ; quand l'itinéraire bouge, on voit tout de suite qui il avantage et qui il lèse, et de combien.
 
