@@ -41,6 +41,8 @@ export const RPC_AUTORISEES = [
   'exploration_marquer',
   'collection_lire',
   'collection_ecrire',
+  'parcours_lire',
+  'parcours_enregistrer',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
