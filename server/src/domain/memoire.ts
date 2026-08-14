@@ -2,11 +2,12 @@
 // (un blob jsonb versionné par clé ; l'intendance est la collection cle='intendance', C-17). Identité = code_lien
 // seul (jamais le PIN : mémoire perso non destructive, A03/M026). Le backend sert de sync/backup du MVP client-local.
 //
-// Types locaux au BFF (DTO d'entrée HTTP + passe-plat de sortie). Les RPC (api.exploration_*, api.collection_*)
-// sont posées par la migration 002 (A018) et frontées ici sans logique métier.
+// Les DTO de SORTIE (StatutExploration, ExplorationLue, CollectionLue, EcritureMemoireResult) sont canoniques dans
+// @barjotur/shared (M033) : on les réexporte. Restent locaux les DTO d'ENTRÉE HTTP (corps de requête), propres au BFF.
 
-/** Statuts d'exploration acceptés (miroir du CHECK SQL statut IN ('vu','explore')). */
-export type StatutExploration = 'vu' | 'explore';
+import type { StatutExploration } from '@barjotur/shared';
+
+export type { StatutExploration } from '@barjotur/shared';
 
 /** Corps validé de POST exploration (api.exploration_marquer). */
 export interface MarqueInput {

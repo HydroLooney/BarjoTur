@@ -6,6 +6,7 @@
 import { appelerRpc, argTexte, argJsonb } from '../db/rpc.js';
 import { Erreurs } from '../http/erreurs.js';
 import type { MarqueInput, ContenuCollection, StatutExploration } from '../domain/memoire.js';
+import type { ExplorationLue, CollectionLue, EcritureMemoireResult } from '@barjotur/shared';
 
 const STATUTS: readonly StatutExploration[] = ['vu', 'explore'];
 
@@ -38,21 +39,21 @@ export function validerContenu(corps: unknown): ContenuCollection {
 }
 
 /** Mes marques d'exploration (vu/exploré). 404 non pertinent : passe-plat, ok:false = code inconnu. */
-export async function lireExploration(code: string): Promise<unknown> {
-  return appelerRpc<unknown>('exploration_lire', [argTexte(code)]);
+export async function lireExploration(code: string): Promise<ExplorationLue> {
+  return appelerRpc<ExplorationLue>('exploration_lire', [argTexte(code)]);
 }
 
 /** Marque un POI vu/exploré (upsert idempotent côté RPC). */
-export async function marquerExploration(code: string, m: MarqueInput): Promise<unknown> {
-  return appelerRpc<unknown>('exploration_marquer', [argTexte(code), argTexte(m.osm_id), argTexte(m.statut)]);
+export async function marquerExploration(code: string, m: MarqueInput): Promise<EcritureMemoireResult> {
+  return appelerRpc<EcritureMemoireResult>('exploration_marquer', [argTexte(code), argTexte(m.osm_id), argTexte(m.statut)]);
 }
 
 /** Lit une collection perso par clé (contenu null si absente, pas d'erreur). */
-export async function lireCollection(code: string, cle: string): Promise<unknown> {
-  return appelerRpc<unknown>('collection_lire', [argTexte(code), argTexte(cle)]);
+export async function lireCollection(code: string, cle: string): Promise<CollectionLue> {
+  return appelerRpc<CollectionLue>('collection_lire', [argTexte(code), argTexte(cle)]);
 }
 
 /** Écrit une collection perso par clé (upsert idempotent, blob versionné). */
-export async function ecrireCollection(code: string, cle: string, contenu: ContenuCollection): Promise<unknown> {
-  return appelerRpc<unknown>('collection_ecrire', [argTexte(code), argTexte(cle), argJsonb(contenu)]);
+export async function ecrireCollection(code: string, cle: string, contenu: ContenuCollection): Promise<EcritureMemoireResult> {
+  return appelerRpc<EcritureMemoireResult>('collection_ecrire', [argTexte(code), argTexte(cle), argJsonb(contenu)]);
 }
