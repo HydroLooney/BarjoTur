@@ -11,6 +11,7 @@ export * from './composeur.js';
 export * from './activite.js';
 export * from './circuit.js';
 export * from './arbitrage.js';
+export * from './allocation.js';
 export * from './carburant.js';
 export * from './budget.js';
 export * from './memoire.js';
