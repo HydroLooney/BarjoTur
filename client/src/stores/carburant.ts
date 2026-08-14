@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { PRIX_DIESEL_BASE } from '@/lib/carburant';
+import { MARGE_SECURITE_PCT, PRIX_DIESEL_BASE } from '@barjotur/shared';
 
 // Réglages carburant + marges (M090/M092, T045), client-local persistés par appareil. La conso de BASE
 // (9,5 L/100 km) est une caractéristique fixe du van, pas stockée ici (non éditable). On ne garde que les
@@ -21,7 +21,7 @@ export const useCarburant = create<EtatCarburant>()(
     (set) => ({
       surconsoPct: 0,
       prixDiesel: PRIX_DIESEL_BASE,
-      margePct: 20,
+      margePct: MARGE_SECURITE_PCT,
       setSurconso: (v) => set({ surconsoPct: v }),
       setPrix: (v) => set({ prixDiesel: v }),
       setMarge: (v) => set({ margePct: v }),

@@ -1,22 +1,24 @@
-import { CurseurValeur } from '@/ui/primitives/curseur';
-import { usePeut } from '@/hooks/usePeut';
-import { useCarburant } from '@/stores/carburant';
 import {
   CONSO_BASE_L_100,
   PRIX_DIESEL_MAX,
   PRIX_DIESEL_MIN,
-  SURCONSO_PCT_MAX,
-  avecMarge,
+  appliquerMarge,
   consoEffectiveL100,
   coutCarburantEur,
-} from '@/lib/carburant';
+} from '@barjotur/shared';
+import { CurseurValeur } from '@/ui/primitives/curseur';
+import { usePeut } from '@/hooks/usePeut';
+import { useCarburant } from '@/stores/carburant';
+
+// Borne indicative du curseur surconsommation, en % (réglage d'écran, pas dans le modèle carburant partagé).
+const SURCONSO_PCT_MAX = 50;
 
 // Réglages carburant + marges (M090/M092, T045). Le van consomme 9,5 L/100 km FIXE ; l'utilisateur règle la
 // surconsommation (%), le prix du diesel (€/L) et la marge de sécurité (%), tout au curseur + saisie liée. Le
 // coût € se recompose à la volée (km × conso effective × prix, puis marge). C'est du budget détaillé : gaté
 // `voir_budget_detaille` (adulte/organisateur ; masqué à l'enfant et à l'invité). Le km RÉEL vient du calcul
-// d'itinéraire d'A (gaté DSN) ; ici un km d'exemple. Formule = miroir temporaire de B (`lib/carburant`, B044),
-// à remplacer par `@barjotur/shared` dès que M hisse le module (single-source).
+// d'itinéraire d'A (gaté DSN) ; ici un km d'exemple. Formule et marge = SOURCE UNIQUE `@barjotur/shared`
+// (M093/M095) ; B et C consomment les mêmes, comme `peut()` (plus de miroir local).
 const KM_DEMO = 4200;
 
 function euro(n: number): string {
@@ -34,7 +36,7 @@ export function ReglageCarburant() {
 
   const consoEff = consoEffectiveL100(surconsoPct);
   const coutBrut = coutCarburantEur(KM_DEMO, surconsoPct, prixDiesel);
-  const coutPrudent = avecMarge(coutBrut, margePct);
+  const coutPrudent = appliquerMarge(coutBrut, margePct);
 
   return (
     <section className="space-y-4 rounded-lg border border-border p-3">
