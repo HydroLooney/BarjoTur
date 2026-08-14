@@ -15,6 +15,17 @@ export interface BudgetPostes {
   transit?: number;
 }
 
+/** Marge de sécurité par défaut, en % (Guillaume : prudent, réglable). Le budget prudent applique une marge. */
+export const MARGE_SECURITE_PCT = 20;
+
+/**
+ * Applique une marge de sécurité en % à un montant. Source unique : B (autorité budget) et C (curseur) l'appellent
+ * pour la lecture prudente, comme `coutCarburantEur`. Pur.
+ */
+export function appliquerMarge(montant: number, marge_pct: number): number {
+  return montant * (1 + marge_pct / 100);
+}
+
 export interface BudgetParAdulte {
   note: string;
   nb_adultes: number;
