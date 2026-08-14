@@ -55,6 +55,27 @@ export interface ItineraireFige {
   membre_id: number | null;
 }
 
+/** Un lieu visité dans la journée, avec le temps qu'on y passe (Atlas, page du jour). */
+export interface LieuJour {
+  nom: string;
+  temps_min: number;
+}
+
+/**
+ * Résumé riche d'une journée, tel que l'Atlas et la fiche jour l'affichent (une page par jour) : camp de base, lieux
+ * visités avec leur temps sur place, kilomètres, traversées ferry, budget du jour. Produit par B (compo + budget-jour)
+ * dans `EtapeFige.resume_jour` ; consommé par C. Tout est optionnel : on n'affiche que ce qui est présent (R1).
+ */
+export interface ResumeJour {
+  camp_base?: string;
+  km?: number;
+  ferry_min?: number;
+  ferry_eur?: number;
+  traversees?: number;
+  budget_eur?: number;
+  lieux?: LieuJour[];
+}
+
 /** Étape jour d'un itinéraire figé (fige.etape, ordonné par jour). */
 export interface EtapeFige {
   fige_id: number;
@@ -78,8 +99,8 @@ export interface EtapeFige {
   coucher: string | null;
   /** jsonb (circuit rando du jour). */
   circuit: unknown;
-  /** jsonb (résumé du jour). */
-  resume_jour: unknown;
+  /** Résumé riche du jour (Atlas / fiche jour), produit par B. Null tant qu'il n'est pas calculé. */
+  resume_jour: ResumeJour | null;
 }
 
 /** Waypoint imposé d'un itinéraire figé (fige.waypoint_impose, ordonné par `ordre`). Colonnes relevées par B (B009). */
