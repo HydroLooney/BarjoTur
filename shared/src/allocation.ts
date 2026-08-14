@@ -66,4 +66,8 @@ export interface ResultatAllocation {
   cout_trajet: number;
   gardes: LieuGarde[];
   laisses: LieuLaisse[];
+  /** Faux si aucun tour complet n'existe (paire de trajet manquante = coût infini). Absent = supposé faisable. */
+  faisable?: boolean;
+  /** Raison d'une infaisabilité (ex. « aucune route entre X et Y »), pour l'expliquer à l'écran. */
+  raison?: string;
 }
