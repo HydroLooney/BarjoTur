@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { ESPACES } from '@/lib/libelles';
 import { useUi } from '@/stores/ui';
 import { useSyncMemoire } from '@/hooks/useSyncMemoire';
+import { useEnLigne } from '@/hooks/useEnLigne';
 
 // Socle d'app A20 : titres explicites pour un enfant (zéro jargon), nav mobile au pouce (barre du bas),
 // bandeau parcours persistant en tête de chaque vue (anti-« perdu »), squelette commun. Responsive-first,
@@ -28,6 +29,7 @@ const SECONDAIRES = [
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);
   const location = useLocation();
+  const enLigne = useEnLigne();
   // Sync mémoire perso (C-16/C-18/C-17) : inerte tant que le drapeau live est off (pré-bascule).
   useSyncMemoire();
 
@@ -81,6 +83,12 @@ export function Coquille() {
           Thème
         </Bouton>
       </header>
+
+      {!enLigne ? (
+        <div role="status" className="border-b border-border bg-muted px-4 py-1.5 text-center text-xs text-muted-foreground">
+          Hors ligne. Vous consultez la dernière version enregistrée du voyage.
+        </div>
+      ) : null}
 
       <BandeauParcours />
 

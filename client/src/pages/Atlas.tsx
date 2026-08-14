@@ -1,30 +1,29 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
+import { figeDetailDemo, scenarioDemo } from '@/lib/fixtures/fige-demo';
 import { FicheJour } from '@/components/FicheJour';
-import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 
-// Atlas imprimable (C-21) : toutes les fiches jour reliées, dans l'ordre du voyage, prêtes à imprimer
-// ou exporter en PDF (impression navigateur). Une page par jour à l'impression (break-after-page).
-// L'export = le PDF du navigateur ; pas de dépendance lourde côté client (A06).
+// Atlas imprimable (C-21 / M103) : le voyage sur papier, toutes les fiches jour reliées dans l'ordre, prêtes
+// à imprimer ou enregistrer en PDF (impression navigateur), une page par jour (break-after-page). De quoi
+// garder le voyage en main sans réseau. Flip-ready : hors live, la fixture (figeDetailDemo) alimente l'atlas ;
+// au flip, la compo retenue et le budget-jour de B fournissent les vraies étapes, la forme ne bouge pas.
 export default function Atlas() {
-  const { data: scenario, isLoading: chScenario, isError: errScenario } = useScenarioDefaut();
-  const figeId = scenario?.fige_id ?? null;
-  const { data: fige, isLoading: chFige, isError: errFige } = useFigeDetail(figeId);
+  const { data: scenarioLive } = useScenarioDefaut();
+  const figeId = scenarioLive?.fige_id ?? null;
+  const { data: figeLive } = useFigeDetail(figeId);
 
-  const etapes = useMemo(
-    () => [...(fige?.etapes ?? [])].sort((a, b) => a.jour - b.jour),
-    [fige],
-  );
+  const surDemo = !figeLive;
+  const scenario = scenarioLive ?? scenarioDemo;
+  const fige = figeLive ?? figeDetailDemo;
 
-  const enChargement = chScenario || (figeId != null && chFige);
-  const enErreur = errScenario || errFige;
+  const etapes = useMemo(() => [...fige.etapes].sort((a, b) => a.jour - b.jour), [fige]);
 
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center gap-4 print:hidden">
-        <Link to="/voyager" className="text-sm text-muted-foreground hover:text-foreground">
-          ← Voyager
+        <Link to="/preparatifs" className="text-sm text-muted-foreground hover:text-foreground">
+          ← Préparatifs
         </Link>
         {etapes.length > 0 ? (
           <button
@@ -40,18 +39,15 @@ export default function Atlas() {
       <header className="space-y-1">
         <h1 className="font-serif text-3xl">Atlas du voyage</h1>
         <p className="text-sm text-muted-foreground">
-          {scenario?.label ? `${scenario.label}, ` : ''}
+          {scenario.label ? `${scenario.label}, ` : ''}
           {etapes.length > 0 ? `${etapes.length} jour${etapes.length === 1 ? '' : 's'}` : 'itinéraire retenu'}
         </p>
+        {surDemo ? (
+          <p className="text-xs text-muted-foreground print:hidden">
+            Exemple, pour montrer la forme des pages. Le vrai voyage s'affichera quand la composition sera calculée.
+          </p>
+        ) : null}
       </header>
-
-      {enChargement && etapes.length === 0 ? <Chargement libelle="Chargement de l'atlas." /> : null}
-      {enErreur && etapes.length === 0 ? (
-        <MessageErreur>Atlas indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
-      ) : null}
-      {!enChargement && !enErreur && etapes.length === 0 ? (
-        <MessageVide>Aucune fiche jour dans l'itinéraire retenu.</MessageVide>
-      ) : null}
 
       {etapes.length > 0 ? (
         <nav aria-label="Sommaire des jours" className="print:hidden">
@@ -60,7 +56,7 @@ export default function Atlas() {
               <li key={e.jour}>
                 <Link
                   to={e.date_jour ? `/jour/${e.date_jour}` : '/atlas'}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="flex min-h-tactile items-center text-sm text-muted-foreground hover:text-foreground"
                 >
                   Jour {e.jour}
                   {e.date_jour ? `, ${e.date_jour}` : ''}
