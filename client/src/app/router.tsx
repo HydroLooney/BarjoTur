@@ -12,6 +12,7 @@ const Voyager = lazy(() => import('@/pages/Voyager'));
 const MesLieux = lazy(() => import('@/pages/MesLieux'));
 const Coulisses = lazy(() => import('@/pages/Coulisses'));
 const JourImprimable = lazy(() => import('@/pages/JourImprimable'));
+const Atlas = lazy(() => import('@/pages/Atlas'));
 
 // Compat strangler : les anciens deep-links v2 (?onglet=, ?fiche=) redirigent vers les routes
 // propres v3, pour ne pas casser les liens deja partages pendant la bascule.
@@ -80,6 +81,7 @@ export const router = createBrowserRouter([
       { path: 'mes-lieux', element: <MesLieux /> },
       { path: 'coulisses', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },
+      { path: 'atlas', element: <Atlas /> },
       // Bootstrap identite : /app/<code>/<Prenom> (non gate PIN, A03).
       { path: 'app/:code/:prenom', element: <BootstrapIdentite /> },
     ],

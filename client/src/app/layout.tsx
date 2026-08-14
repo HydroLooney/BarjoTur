@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Bouton } from '@/ui/primitives/button';
+import { LimiteErreur } from './LimiteErreur';
 import { cn } from '@/lib/utils';
 import { useUi } from '@/stores/ui';
 
@@ -16,6 +17,7 @@ const LIENS = [
 // (barre qui se replie, cibles tactiles). Le contenu lourd (cartes) se charge sous Suspense.
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);
+  const location = useLocation();
   // L'identite est resolue par la route /app/:code/:prenom (BootstrapIdentite dans router.tsx).
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -54,9 +56,11 @@ export function Coquille() {
         </Bouton>
       </header>
       <main id="contenu" className="mx-auto w-full max-w-6xl p-4">
-        <Suspense fallback={<p className="text-muted-foreground">Chargement en cours.</p>}>
-          <Outlet />
-        </Suspense>
+        <LimiteErreur key={location.pathname}>
+          <Suspense fallback={<p className="text-muted-foreground">Chargement en cours.</p>}>
+            <Outlet />
+          </Suspense>
+        </LimiteErreur>
       </main>
     </div>
   );

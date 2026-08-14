@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { MultiLineString } from 'geojson';
+import { Link } from 'react-router-dom';
 import { CarteItineraire } from '@/components/CarteItineraire';
 import { GalerieArchetypes } from '@/components/GalerieArchetypes';
+import { Composeur } from '@/components/Composeur';
+import { Comparateur } from '@/components/Comparateur';
 import { VueBudget } from '@/components/VueBudget';
+import { Intendance } from '@/components/Intendance';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
 import type { EtapeEntree } from '@/lib/anim-trajet';
@@ -34,9 +38,17 @@ export default function Voyager() {
         L'itineraire retenu, joue du depart au retour. Traversees d'eau en tirete, aucune ligne droite
         terrestre : le trace suit la geometrie continue du voyage.
       </p>
+      <div>
+        <Link to="/atlas" className="text-sm text-accent hover:underline">
+          Voir l'atlas imprimable du voyage →
+        </Link>
+      </div>
       <CarteItineraire geom={geom} etapes={etapes} />
       <GalerieArchetypes />
+      <Composeur />
+      <Comparateur />
       <VueBudget />
+      <Intendance />
     </section>
   );
 }
