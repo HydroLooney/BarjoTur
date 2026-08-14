@@ -1,8 +1,9 @@
 import { FilDuParcours } from '@/components/FilDuParcours';
-import { PipelineStepper } from '@/components/PipelineStepper';
+import { CransParcours } from '@/components/CransParcours';
 
-// Accueil : le fil conducteur du parcours (C19 / A15). Ce qu'il reste à décider, où en est le voyage,
-// et la progression par crans (C08). On ne se perd jamais : « quoi faire maintenant » est en tête.
+// Accueil : le fil conducteur du parcours (C19 / A15 / A18). Ce qu'il reste à décider, où en est le voyage,
+// et la machine à crans avec ses états de validation (M046). On ne se perd jamais : « quoi faire maintenant »
+// est en tête, la machine à crans (successeur contractuel du stepper local) juste après.
 export default function Accueil() {
   return (
     <section className="space-y-5">
@@ -13,10 +14,7 @@ export default function Accueil() {
         </p>
       </div>
       <FilDuParcours />
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium">Le parcours</h2>
-        <PipelineStepper />
-      </div>
+      <CransParcours />
     </section>
   );
 }
