@@ -46,6 +46,12 @@ export interface TransitionCran {
   voyage_id: number;
   cran: CranId;
   action: ActionCran;
+  /**
+   * Code PIN de l'organisateur. Requis pour une transition d'un cran MODIFIABLE (valider / rouvrir un
+   * `valide_modifiable`) — geste de verrouillage protégé (A18 §6 Q4). Un cran irréversible (`reouvrable:false` :
+   * réservation, paiement, ferry, dates A/R, trajet A/R figé) ne se rouvre PAS, PIN ou non.
+   */
+  pin?: string;
 }
 
 /** Résultat d'une transition. `ok:false` + `raison` = refus métier (rôle insuffisant, cran non rouvrable, dépendance aval). */
