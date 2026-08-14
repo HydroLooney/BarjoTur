@@ -30,6 +30,8 @@ export const Erreurs = {
     new ErreurRequete(404, 'code_inconnu', 'Lien perso inconnu ou inactif.'),
   requeteInvalide: (message: string) =>
     new ErreurRequete(400, 'requete_invalide', message),
+  roleInsuffisant: (message = 'Action réservée à un organisateur.') =>
+    new ErreurRequete(403, 'role_insuffisant', message),
   figeIntrouvable: () =>
     new ErreurRequete(404, 'fige_introuvable', 'Itinéraire figé introuvable.'),
 } as const;

@@ -16,6 +16,7 @@ import { routesEsprit } from './routes/esprit.js';
 import { routesMemoire } from './routes/memoire.js';
 import { routesParcours } from './routes/parcours.js';
 import { routesVoyage } from './routes/voyage.js';
+import { routesVoyageurs } from './routes/voyageurs.js';
 import { routesItineraire } from './routes/itineraire.js';
 import { routesComposeur } from './routes/composeur.js';
 import { entetesCache } from './middleware/cache.js';
@@ -59,6 +60,7 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesMemoire);
   app.use('/api', routesParcours);
   app.use('/api', routesVoyage);
+  app.use('/api', routesVoyageurs);
   app.use('/api', routesItineraire);
   app.use('/api', routesComposeur);
 
