@@ -14,6 +14,8 @@ import { BoutonVote } from '@/ui/blocs/BoutonVote';
 import { FichePOI } from '@/components/FichePOI';
 import { charte } from '@/ui/theme';
 import { CadreCarte } from '@/components/CadreCarte';
+import { ControleCamera } from '@/lib/carte-cadrage';
+import type { CibleCamera } from '@/components/CarteMapLibre';
 import { useUi } from '@/stores/ui';
 import { DIFFICULTES, SENTIERS_MINZOOM, layerIdSentier, libelleDifficulte } from '@/lib/sentiers';
 import { useDecoupageData, couleurRegionExpr } from '@/lib/decoupage';
@@ -57,7 +59,15 @@ interface PoiClique {
   votable: boolean;
 }
 
-export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
+export function CarteExplorer({
+  hauteur = '70vh',
+  centrer = null,
+  onBbox,
+}: {
+  hauteur?: string;
+  centrer?: CibleCamera | null;
+  onBbox?: (bbox: BBox) => void;
+}) {
   const theme = useUi((s) => s.theme);
   const [bbox, setBbox] = useState<BBox | null>(null);
   const { data: fc } = useBboxPois(bbox);
@@ -155,7 +165,10 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
   // bundle maplibre embarqué par @vis.gl/react-maplibre (mêmes membres, types nominalement distincts).
   function majBounds(map: { getBounds: () => LngLatBornes }): void {
     const b = map.getBounds();
-    setBbox({ minlon: b.getWest(), minlat: b.getSouth(), maxlon: b.getEast(), maxlat: b.getNorth() });
+    const nouvelle: BBox = { minlon: b.getWest(), minlat: b.getSouth(), maxlon: b.getEast(), maxlat: b.getNorth() };
+    setBbox(nouvelle);
+    // Remonte l'emprise pour piloter la liste par la vue (M505 §2b).
+    onBbox?.(nouvelle);
   }
 
   // Légende des sentiers par difficulté (T048), coin haut-droit, REPLIÉE PAR DÉFAUT (C17) : les sentiers eux-mêmes
@@ -326,6 +339,9 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
           });
         }}
       >
+        {/* Contrôle caméra partagé (M505 §3) : recentre + zoome sur un lieu au clic d'un panneau, sans quitter la carte. */}
+        <ControleCamera cible={centrer} zoomDefaut={11} />
+
         {/* Découpage EN CONTEXTE, SOUS les POI (étape 2). Zoom-adaptatif : présent en vue d'ensemble, s'efface
             quand on zoome sur les lieux. Contours tiretés + label muté = repère, pas frontière ni sujet. */}
         {/* ZONES (C14) : aplat discret + limite + NOM, zoom-adaptatif (apparaît à l'échelle moyenne, sous les POI). */}

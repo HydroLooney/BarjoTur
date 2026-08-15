@@ -13,6 +13,7 @@ import {
 import { charte } from '@/ui/theme';
 import { CENTRE_NORVEGE } from '@/lib/carte-config';
 import { CadreCarte } from '@/components/CadreCarte';
+import { ControleCamera } from '@/lib/carte-cadrage';
 import { CurseurAnime } from '@/components/CurseurAnime';
 import { useUi } from '@/stores/ui';
 
@@ -34,6 +35,8 @@ interface Props {
   geom: Geometry | null;
   etapes?: EtapeEntree[];
   hauteur?: string;
+  /** Recentre sur l'étape au clic d'une puce jour (barre d'animation, M499/M502/M511). */
+  centrer?: { lon: number; lat: number; zoom?: number } | null;
 }
 
 /** Reconstruit une [lon, lat] GeoJSON depuis un point interne [lat, lng]. */
@@ -201,7 +204,7 @@ function MarqueurMobile({ modele, t }: { modele: ModeleAnim; t: number }) {
   );
 }
 
-export function CarteItineraire({ geom, etapes = ETAPES_VIDES, hauteur = '70vh' }: Props) {
+export function CarteItineraire({ geom, etapes = ETAPES_VIDES, hauteur = '70vh', centrer = null }: Props) {
   const theme = useUi((s) => s.theme);
   const modele = useMemo(() => modeleAnimationFigeGeom(geom, etapes), [geom, etapes]);
   const vide = modele.pts.length < 2;
@@ -260,6 +263,9 @@ export function CarteItineraire({ geom, etapes = ETAPES_VIDES, hauteur = '70vh' 
   return (
     <CadreCarte initialViewState={CENTRE_NORVEGE} hauteur={hauteur} surimpression={surimpression}>
       <NavigationControl position="top-right" />
+      {/* Recentrage propre au clic d'une puce jour (M511, remplace le handle DEV window.__carte). */}
+      <ControleCamera cible={centrer} zoomDefaut={9} />
+
       {!vide && (
         <>
           <ChoregraphieCamera modele={modele} bornes={bornes} t={t} />

@@ -13,12 +13,14 @@ import { usePeut } from '@/hooks/usePeut';
 import { useMesVotes } from '@/lib/queries/votes';
 import { useRecos } from '@/lib/queries/recos';
 import { RECOS_TEST } from '@/lib/fixtures/recos-test';
-import { Link } from 'react-router-dom';
 import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
-import { CarteMapLibre } from '@/components/CarteMapLibre';
+import { CarteMapLibre, type CibleCamera } from '@/components/CarteMapLibre';
 import { Recommandations } from '@/components/Recommandations';
 import { QuestionnaireVoyageur } from '@/components/QuestionnaireVoyageur';
+import { FichePOI } from '@/components/FichePOI';
+import { poiDeReco } from '@/lib/adapt-poi-geojson';
+import type { BBox } from '@/lib/queries/poi-bbox';
 import { humaniserTexte } from '@/lib/libelles';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
@@ -56,6 +58,19 @@ export default function Explorer() {
   const [listeOuverte, setListeOuverte] = useState(false);
   const [questionnaireOuvert, setQuestionnaireOuvert] = useState(false);
 
+  // Caméra + emprise (M505/M511) : la liste se pilote par la VUE (bbox), et cliquer un lieu depuis un panneau
+  // RECENTRE la carte + ouvre la fiche EN OVERLAY (on ne quitte pas la carte).
+  const [bbox, setBbox] = useState<BBox | null>(null);
+  const [centrer, setCentrer] = useState<CibleCamera | null>(null);
+  const [fichePage, setFichePage] = useState<CataloguePoi | null>(null);
+  const dansVue = (p: CataloguePoi): boolean =>
+    !bbox || (p.lon >= bbox.minlon && p.lon <= bbox.maxlon && p.lat >= bbox.minlat && p.lat <= bbox.maxlat);
+  const listeVue = useMemo(() => liste.filter(dansVue), [liste, bbox]);
+  const ouvrirLieu = (poi: CataloguePoi) => {
+    setCentrer({ lon: poi.lon, lat: poi.lat, zoom: 12 });
+    setFichePage(poi);
+  };
+
   const astuceVoteVue = useOnboarding((s) => s.astuceVoteVue);
   const masquerAstuceVote = useOnboarding((s) => s.masquerAstuceVote);
   const aVote = mesVotes ? Object.keys(mesVotes.tiers).length > 0 : false;
@@ -63,8 +78,13 @@ export default function Explorer() {
 
   const panneauListe = (
     <div className="space-y-4">
+      {/* La liste reflète l'EMPRISE de la carte (M505 §2b) : les lieux dans la vue, cohérent « N dans la vue ». */}
+      <p className="text-xs text-muted-foreground">
+        <span className="chiffres text-foreground">{listeVue.length}</span> lieu{listeVue.length === 1 ? '' : 'x'} dans la vue
+        {bbox ? ' · dézoomez pour en voir plus' : ''}
+      </p>
       <BarreFiltres pois={pois} />
-      {liste.length > 1 ? (
+      {listeVue.length > 1 ? (
         <div className="flex items-center gap-2 text-sm" role="group" aria-label="Trier les lieux">
           <span className="text-muted-foreground">Trier :</span>
           <div className="inline-flex overflow-hidden rounded-md border border-border">
@@ -89,12 +109,12 @@ export default function Explorer() {
       {isError && pois.length === 0 ? (
         <MessageErreur>Catalogue indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
       ) : null}
-      {!isLoading && !isError && liste.length === 0 && pois.length > 0 ? (
-        <MessageVide>Aucun lieu ne correspond à ces filtres. Élargissez la recherche.</MessageVide>
+      {!isLoading && !isError && listeVue.length === 0 && pois.length > 0 ? (
+        <MessageVide>Aucun lieu dans la vue. Déplacez ou dézoomez la carte, ou élargissez les filtres.</MessageVide>
       ) : null}
-      {doitGrouper(liste) ? (
+      {doitGrouper(listeVue) ? (
         <div className="space-y-5">
-          {grouperParZone(liste).map((g) => (
+          {grouperParZone(listeVue).map((g) => (
             <section key={g.zone} aria-label={g.zone} className="space-y-2">
               <h2 className="text-sm font-medium">
                 {g.zone} <span className="font-normal text-muted-foreground">· {g.pois.length}</span>
@@ -109,7 +129,7 @@ export default function Explorer() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {liste.map((p) => (
+          {listeVue.map((p) => (
             <CartePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
           ))}
         </div>
@@ -130,7 +150,7 @@ export default function Explorer() {
     // CARTE PLEINE LARGEUR de fenêtre (full-bleed, M505) : on sort du conteneur centré ; les contrôles FLOTTENT
     // par-dessus (fini les gouttières beige). La carte reste centrale ; les panneaux ne la bloquent pas.
     <section className="relative -mt-4 h-[calc(100dvh-8.5rem)] w-screen left-1/2 -translate-x-1/2 overflow-hidden md:h-[calc(100dvh-6.5rem)]">
-      <CarteMapLibre mode="exploration" hauteur="100%" />
+      <CarteMapLibre mode="exploration" hauteur="100%" centrer={centrer} onBbox={setBbox} />
 
       {/* Contrôles FLOTTANTS translucides au-dessus de la carte (M505 §1). Action = « Commencer ici » (questionnaire) ;
           panneaux de données = La famille adore / Vos recommandations / Liste (un lourd à la fois). */}
@@ -145,7 +165,7 @@ export default function Explorer() {
           ✦ Vos recommandations
         </button>
         <button type="button" className={chipFlottant} aria-pressed={listeOuverte} onClick={() => ouvrir(listeOuverte ? null : 'liste')}>
-          ☰ Liste <span className="chiffres text-muted-foreground">{liste.length}</span>
+          ☰ Liste <span className="chiffres text-muted-foreground">{listeVue.length}</span>
         </button>
       </div>
 
@@ -156,7 +176,7 @@ export default function Explorer() {
             <h2 className="text-sm font-medium">❤ La famille adore</h2>
             <button type="button" onClick={() => ouvrir(null)} className="min-h-tactile px-2 text-muted-foreground hover:text-foreground" aria-label="Fermer">×</button>
           </div>
-          <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
+          <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} onSelect={ouvrirLieu} />
         </div>
       ) : null}
 
@@ -171,10 +191,15 @@ export default function Explorer() {
             <ul className="space-y-1">
               {vosRecos.map((r) => (
                 <li key={r.cle}>
-                  <Link to={`/explorer/${encodeURIComponent(r.cle)}`} className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-muted">
+                  {/* Clic = OVERLAY fiche + ZOOM sur la carte, on NE QUITTE PAS la carte (M505 §3). */}
+                  <button
+                    type="button"
+                    onClick={() => ouvrirLieu(pois.find((p) => p.id === r.cle) ?? poiDeReco(r))}
+                    className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-left text-sm hover:bg-muted"
+                  >
                     <span aria-hidden className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
                     {humaniserTexte(r.nom)}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -217,6 +242,20 @@ export default function Explorer() {
           >
             Compris
           </button>
+        </div>
+      ) : null}
+
+      {/* Fiche en OVERLAY au-dessus de la carte (M505 §3) : ouverte au clic d'un lieu depuis un panneau (recos), la
+          carte ayant recentré/zoomé dessus. On NE quitte PAS la carte. Colonne à droite (desktop) / bas (mobile). */}
+      {fichePage ? (
+        <div className="absolute inset-x-2 bottom-2 z-30 flex max-h-[80%] flex-col overflow-hidden rounded-lg border border-border bg-card shadow-flottante sm:inset-y-2 sm:left-auto sm:right-2 sm:max-h-none sm:w-[24rem]">
+          <div className="flex items-center justify-between gap-2 border-b border-border px-2 py-1.5">
+            <span className="truncate text-sm font-medium">{humaniserTexte(fichePage.nom)}</span>
+            <button type="button" onClick={() => setFichePage(null)} className="min-h-tactile px-2 text-lg text-muted-foreground hover:text-foreground" aria-label="Fermer la fiche">×</button>
+          </div>
+          <div className="overflow-y-auto p-3">
+            <FichePOI poi={fichePage} mode="popover" />
+          </div>
         </div>
       ) : null}
 

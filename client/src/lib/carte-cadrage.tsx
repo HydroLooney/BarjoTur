@@ -48,6 +48,27 @@ export function bboxDeFeatures(features: Feature<Geometry>[]): Bornes | null {
 }
 
 /**
+ * Recadre la caméra sur un POINT à chaque changement de `cible` (clic d'un lieu, d'une puce jour…). À monter en
+ * enfant de <Map>. Contrairement à CadrageAuto (qui cadre une emprise au montage), ceci VOLE vers un point à la
+ * demande — c'est le contrôle caméra partagé (Explorer clic-lieu, barre d'animation clic-puce). `null` = ne bouge pas.
+ */
+export function ControleCamera({
+  cible,
+  zoomDefaut = 10,
+}: {
+  cible: { lon: number; lat: number; zoom?: number } | null;
+  zoomDefaut?: number;
+}) {
+  const { current: carte } = useMap();
+  useEffect(() => {
+    if (carte && cible) {
+      carte.flyTo({ center: [cible.lon, cible.lat], zoom: cible.zoom ?? zoomDefaut, duration: 700 });
+    }
+  }, [carte, cible, zoomDefaut]);
+  return null;
+}
+
+/**
  * Cadre la carte sur `bornes` (élargies de `facteur`) au montage / changement de données. Ne joue qu'à ce
  * moment-là : la caméra ne chasse rien ensuite (l'utilisateur garde la main).
  */

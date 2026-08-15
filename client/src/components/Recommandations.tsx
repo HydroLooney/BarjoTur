@@ -11,9 +11,12 @@ import { libelleCategorie } from '@/lib/libelles';
 export function Recommandations({
   pois,
   mesTiers,
+  onSelect,
 }: {
   pois: CataloguePoi[];
   mesTiers: Record<string, VoteTier>;
+  /** Si fourni (Explorer, M505 §3) : clic = OVERLAY fiche + zoom carte, pas de navigation. Sinon lien vers la fiche. */
+  onSelect?: (poi: CataloguePoi) => void;
 }) {
   const rails = construireRails(pois, mesTiers);
   if (rails.length === 0) return null;
@@ -32,15 +35,27 @@ export function Recommandations({
                 key={poi.id}
                 className="flex w-56 shrink-0 flex-col rounded-lg border border-border bg-card p-3 shadow-posee transition-[box-shadow,transform] duration-court ease-doux hover:-translate-y-px hover:shadow-charte"
               >
-                <Link to={`/explorer/${encodeURIComponent(poi.id)}`} className="block grow hover:opacity-80">
-                  <p className="font-medium">{poi.nom}</p>
-                  {poi.categorie || poi.region ? (
-                    <p className="text-xs text-muted-foreground">
-                      {[libelleCategorie(poi.categorie), poi.region].filter(Boolean).join(' · ')}
-                    </p>
-                  ) : null}
-                  <p className="mt-1 text-xs text-accent">{pourquoi}</p>
-                </Link>
+                {onSelect ? (
+                  <button type="button" onClick={() => onSelect(poi)} className="block grow text-left hover:opacity-80">
+                    <p className="font-medium">{poi.nom}</p>
+                    {poi.categorie || poi.region ? (
+                      <p className="text-xs text-muted-foreground">
+                        {[libelleCategorie(poi.categorie), poi.region].filter(Boolean).join(' · ')}
+                      </p>
+                    ) : null}
+                    <p className="mt-1 text-xs text-accent">{pourquoi}</p>
+                  </button>
+                ) : (
+                  <Link to={`/explorer/${encodeURIComponent(poi.id)}`} className="block grow hover:opacity-80">
+                    <p className="font-medium">{poi.nom}</p>
+                    {poi.categorie || poi.region ? (
+                      <p className="text-xs text-muted-foreground">
+                        {[libelleCategorie(poi.categorie), poi.region].filter(Boolean).join(' · ')}
+                      </p>
+                    ) : null}
+                    <p className="mt-1 text-xs text-accent">{pourquoi}</p>
+                  </Link>
+                )}
                 {poi.votable ? (
                   <div className="mt-2 border-t border-border pt-2" data-guide="boutons-avis">
                     <BoutonVote cible={`p:${poi.id}`} tierDefaut={poi.tier_defaut} />
