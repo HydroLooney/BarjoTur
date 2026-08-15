@@ -25,4 +25,5 @@ export * from './voyage.js';
 export * from './reglage.js';
 export * from './philosophie.js';
 export * from './agenda.js';
+export * from './mon-voyage.js';
 export * from './api.js';
