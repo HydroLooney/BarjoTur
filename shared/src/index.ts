@@ -22,4 +22,5 @@ export * from './parcours.js';
 export * from './voyage.js';
 export * from './reglage.js';
 export * from './philosophie.js';
+export * from './agenda.js';
 export * from './api.js';
