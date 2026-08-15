@@ -3,6 +3,7 @@ import { createBrowserRouter, redirect, useNavigate, useParams } from 'react-rou
 import { Coquille } from './layout';
 import { useWhoami } from '@/lib/queries/whoami';
 import { useIdentite } from '@/stores/identite';
+import { useNavigation } from '@/stores/navigation';
 
 // Vues lourdes en lazy : chaque route tire son propre chunk (les cartes restent hors du chemin critique).
 // Socle d'app A20 : 7 espaces à titres explicites pour un enfant (« Le voyage », « Notre Voyage », « Mes
@@ -12,7 +13,12 @@ const Explorer = lazy(() => import('@/pages/Explorer'));
 const FichePoi = lazy(() => import('@/pages/FichePoi'));
 const LeTrajet = lazy(() => import('@/pages/LeTrajet')); // ex-Composer
 const Carte = lazy(() => import('@/pages/Carte'));
-const Preparatifs = lazy(() => import('@/pages/Preparatifs')); // ex-Intendance
+const Preparatifs = lazy(() => import('@/pages/Preparatifs')); // ex-Intendance (layout sous-onglets, M543)
+// Sous-onglets de Préparatifs (M543, pilote) : chacun son chunk lazy (le lourd Intendance reste hors main bundle).
+const PreparatifsBudget = lazy(() => import('@/pages/preparatifs/Budget'));
+const PreparatifsIntendance = lazy(() => import('@/pages/preparatifs/Intendance'));
+const PreparatifsFerry = lazy(() => import('@/pages/preparatifs/Ferry'));
+const PreparatifsReservations = lazy(() => import('@/pages/preparatifs/Reservations'));
 const MonVoyage = lazy(() => import('@/pages/MonVoyage')); // « Mon voyage » (par voyageur, A26)
 const MesEnvies = lazy(() => import('@/pages/MesEnvies')); // « Mes envies »
 const Coulisses = lazy(() => import('@/pages/Coulisses')); // « Réglages »
@@ -100,7 +106,21 @@ export const router = createBrowserRouter([
       { path: 'compter', element: <Compter /> },
       { path: 'le-trajet', element: <LeTrajet /> },
       { path: 'carte', element: <Carte /> },
-      { path: 'preparatifs', element: <Preparatifs /> },
+      {
+        // Préparatifs = layout à sous-onglets (M543). L'index rouvre le DERNIER onglet visité (mémoire nav), défaut Budget.
+        path: 'preparatifs',
+        element: <Preparatifs />,
+        children: [
+          {
+            index: true,
+            loader: () => redirect(`/preparatifs/${useNavigation.getState().dernier['preparatifs'] ?? 'budget'}`),
+          },
+          { path: 'budget', element: <PreparatifsBudget /> },
+          { path: 'intendance', element: <PreparatifsIntendance /> },
+          { path: 'ferry', element: <PreparatifsFerry /> },
+          { path: 'reservations', element: <PreparatifsReservations /> },
+        ],
+      },
       { path: 'mon-voyage', element: <MonVoyage /> },
       { path: 'mes-envies', element: <MesEnvies /> },
       { path: 'mes-paniers', element: <Paniers /> },
