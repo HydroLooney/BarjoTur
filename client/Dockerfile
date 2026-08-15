@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 COPY shared/package.json shared/
 COPY client/package.json client/
 RUN npm ci
+COPY tsconfig.base.json ./
 COPY shared/ shared/
 COPY client/ client/
 RUN npm run build --workspace shared && npm run build --workspace client
