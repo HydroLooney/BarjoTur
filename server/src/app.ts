@@ -22,6 +22,7 @@ import { routesComposeur } from './routes/composeur.js';
 import { routesActivite } from './routes/activite.js';
 import { routesAppetit } from './routes/appetit.js';
 import { routesPhilosophie } from './routes/philosophie.js';
+import { routesAgenda } from './routes/agenda.js';
 import { routesCircuit } from './routes/circuit.js';
 import { routesCarto } from './routes/carto.js';
 import { routesReglage } from './routes/reglage.js';
@@ -82,6 +83,7 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesActivite);
   app.use('/api', routesAppetit);
   app.use('/api', routesPhilosophie);
+  app.use('/api', routesAgenda);
   app.use('/api', routesCircuit);
   app.use('/api', routesCarto);
   app.use('/api', routesReglage);
