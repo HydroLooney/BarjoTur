@@ -3,9 +3,11 @@ import { useMesPropositions } from '@/lib/queries/carnet';
 import { useCollections } from '@/stores/collections';
 import { FormAjoutLieu } from '@/components/FormAjoutLieu';
 import { QuizzEnvies } from '@/components/QuizzEnvies';
+import { PhilosophieVoyage } from '@/components/PhilosophieVoyage';
 
-// Mes envies (C15 / A11) : le « papier ». 1re couche = carnet de lieux perso (ajout + mes propositions).
-// Les votes groupés par tier et les collections perso viendront (mémoire d'exploration serveur).
+// Voter (ossature V2, ex « Mes envies ») : dire ce qu'on aime. Le CŒUR = « Ta façon de voyager » (8 axes de
+// philosophie, AUDIT-FRONT P0 #1) qui pondèrent le composeur (MCDA v3). Puis le quizz raccourci, le carnet perso
+// (ajout + propositions) et les collections. Le vote par lieu se pose depuis la fiche (Explorer).
 export default function MesEnvies() {
   const code = useIdentite((s) => s.code);
   const { data: propositions } = useMesPropositions(code);
@@ -14,9 +16,9 @@ export default function MesEnvies() {
   if (!code) {
     return (
       <section className="space-y-3">
-        <h1 className="font-serif text-2xl">Mes envies</h1>
+        <h1 className="font-serif text-2xl">Voter</h1>
         <p className="max-w-prose text-muted-foreground">
-          Ouvrez votre lien perso pour accéder à votre carnet, vos votes et vos propositions.
+          Ouvrez votre lien perso pour dire votre façon de voyager, voter et proposer des lieux.
         </p>
       </section>
     );
@@ -24,10 +26,18 @@ export default function MesEnvies() {
 
   return (
     <section className="space-y-4">
-      <h1 className="font-serif text-2xl">Mes envies</h1>
+      <div className="space-y-1">
+        <h1 className="font-serif text-2xl">Voter</h1>
+        <p className="max-w-prose text-muted-foreground">
+          Dites ce que vous aimez, sans classer personne. D'abord votre façon de voyager, puis vos envies et vos
+          lieux.
+        </p>
+      </div>
 
-      {/* Quizz sur invitation (M181 §B6) : un raccourci pour pre-remplir ses envies sans regler chaque curseur.
-          Ne s'impose pas ; on l'ouvre si on veut. Les envies affinees vivent ensuite dans « Mon voyage ». */}
+      {/* CŒUR de Voter (P0 #1) : les 8 axes de philosophie qui orientent les propositions. */}
+      <PhilosophieVoyage />
+
+      {/* Quizz sur invitation (M181 §B6) : un raccourci pour pre-remplir ses envies sans regler chaque curseur. */}
       <QuizzEnvies />
 
       <FormAjoutLieu code={code} />
