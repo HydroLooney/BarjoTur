@@ -4,6 +4,7 @@ import { usePeut } from '@/hooks/usePeut';
 import { Champ } from '@/ui/primitives/input';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageVide } from '@/ui/blocs/EtatVue';
+import { ChargeUtile, Trousseau } from '@/components/ChargeUtileTrousseau';
 
 // Intendance (C-17) : recettes, menus et matériel du voyage, en client-local (privé, non destructif).
 // Trois listes tenues par le store `intendance` (blob perso, patron B024). UI sobre, dark-safe, tokens.
@@ -185,9 +186,13 @@ export function Intendance() {
       <div>
         <h2 className="text-sm font-medium">Intendance</h2>
         <p className="max-w-prose text-xs text-muted-foreground">
-          Recettes, menus et matériel du voyage. Privé et local pour l'instant ; se synchronisera plus tard.
+          Charge du van, trousseau, matériel, recettes et menus. Privé et local pour l'instant ; se
+          synchronisera plus tard.
         </p>
       </div>
+      {/* AUDIT-FRONT P0 #2 : charge utile (jauge poids) + trousseau, rétablis à côté de Matériel/Recettes/Menus. */}
+      <ChargeUtile />
+      <Trousseau />
       <Materiel />
       <Recettes />
       <Menus />
