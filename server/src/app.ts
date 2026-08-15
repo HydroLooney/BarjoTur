@@ -23,6 +23,7 @@ import { routesActivite } from './routes/activite.js';
 import { routesAppetit } from './routes/appetit.js';
 import { routesPhilosophie } from './routes/philosophie.js';
 import { routesAgenda } from './routes/agenda.js';
+import { routesBudgetVivant } from './routes/budget-vivant.js';
 import { routesCircuit } from './routes/circuit.js';
 import { routesCarto } from './routes/carto.js';
 import { routesReglage } from './routes/reglage.js';
@@ -84,6 +85,7 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesAppetit);
   app.use('/api', routesPhilosophie);
   app.use('/api', routesAgenda);
+  app.use('/api', routesBudgetVivant);
   app.use('/api', routesCircuit);
   app.use('/api', routesCarto);
   app.use('/api', routesReglage);
