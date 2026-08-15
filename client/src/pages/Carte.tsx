@@ -3,6 +3,7 @@ import type { MultiLineString } from 'geojson';
 import { Link } from 'react-router-dom';
 import { CarteMapLibre } from '@/components/CarteMapLibre';
 import { FilItineraire } from '@/components/FilItineraire';
+import { BarreAnimationJours } from '@/components/BarreAnimationJours';
 import { AffordanceExpert } from '@/components/coulisses/OverlayExpert';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
@@ -24,6 +25,19 @@ export default function Carte() {
 
   const geom = fige?.geom ?? demoGeom ?? null;
 
+  // Barre d'animation (M499/M502 §1) : les jours du fige, cliquables. Sélection → recadrage de la carte sur l'étape
+  // (best-effort via le handle carte ; un contrôle caméra propre suit). Les champs riches (heure/durée) = DTO B v3.1.
+  const etapesFige = useMemo(() => [...(fige?.etapes ?? [])], [fige]);
+  const [jourSel, setJourSel] = useState<number | null>(null);
+  const recadrer = (jour: number) => {
+    setJourSel(jour);
+    const e = etapesFige.find((x) => x.jour === jour);
+    const carte = (window as unknown as { __carte?: { jumpTo?: (o: unknown) => void } }).__carte;
+    if (e && e.aire_lon != null && e.aire_lat != null && carte?.jumpTo) {
+      carte.jumpTo({ center: [e.aire_lon, e.aire_lat], zoom: 9 });
+    }
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -36,6 +50,8 @@ export default function Carte() {
         (prévu et, au fil du voyage, vécu). Les ancres du ferry, début et fin, sont visibles.
       </p>
       <CarteMapLibre mode="lecture-ideal" geom={geom} etapes={etapes} />
+      {/* Barre d'animation : le voyage jour par jour, puces cliquables + marqueur nuit + ancres ferry (M499/M502 §1). */}
+      <BarreAnimationJours etapes={etapesFige} jourSelectionne={jourSel} onSelect={recadrer} />
       <FilItineraire />
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <Link to="/carte/routes-sceniques" className="text-sm text-accent hover:underline">
