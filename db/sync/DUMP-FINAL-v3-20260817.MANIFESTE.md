@@ -28,10 +28,20 @@
   + 55 base_voisine), **6 non-couvertes = résidu « grande étape de roulage »** (jamais comblé de force). base_interne total = 17
   (dont 2 sur zones sans_poi). 69 sous-zones sans_poi = n/a.
 
-## Empreintes gelées
-- bases_ideales_v3 `1fae76658077e5f6c6b570db611857df` (18)
-- base_reward_v3 `7661b1d545c69c4b8cebfa331367e72c` (18)
-- reward_poi `1c544690952e621f3395b643919d9e4d` (767)
+## Empreintes gelées (CORRIGÉES 18/08, M459/A154 — recette CANONIQUE reproductible)
+> Correction R1 : les empreintes initiales (`1fae7665`/`7661b1d5`/`1c544690`) provenaient d'une projection AD HOC non
+> persistée en script, irréproductible (recherche exhaustive → aucun match). Remplacées par la recette CANONIQUE documentée
+> (A078, `empreintes-reference.tsv`), vérifiée indépendamment par M sur DB1 et reproduite par B sur `norvege_stage` (gate
+> 0-perte du go-live, triple confirmation à l'octet). Recette : `SET extra_float_digits=3; SELECT md5(string_agg(md5(t.*::text),
+> '' ORDER BY <clé>)) FROM (<projection>) t;` (projection excluant les colonnes volatiles geom/jsonb).
+
+| relation | lignes | projection (ordonnée) | ORDER BY | empreinte |
+|---|--:|---|---|---|
+| `mcda2.reward_poi` | 767 | poi_id, v_poi, tier, tres_frequente | poi_id | `80b6ee34d35ef25a6941b56f5c30168a` |
+| `mcda2.base_reward` | 18 | base_id, reward_atteignable, n_poi | base_id | `779e9b4edbe38ad09c3690622961593a` |
+| `mcda2.bases_ideales` | 18 | base_id, mclp_rang, structurante, reward, rayonnement, zero_reward | base_id | `deb43d9b375579d8f1cc618a80b4a0e7` |
+| `mcda2.reward_poi` (ligne complète) | 767 | toutes colonnes | poi_id | `6fcaa8b51111e07e341011788f179385` |
+
 - matrice reachability `8088e472…` (staging.floc_reach)
 
 ## Backups (réversibilité)

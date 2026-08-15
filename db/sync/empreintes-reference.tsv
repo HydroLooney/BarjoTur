@@ -1,15 +1,18 @@
-# Empreintes de reference DB1 (Worker A) — pour la parite DB1<->DB2 (M234 Q4)
-# ATTENTION : l'empreinte du manifest est une PROJECTION SEMANTIQUE, pas un hash de ligne complete.
-#   Recette exacte, identique cote DB2 :
-#     SET (ou PGOPTIONS) extra_float_digits = 3;
+# Empreintes de reference DB1 (Worker A) — parite DB1<->DB2, gate 0-perte go-live v3.
+# REGÉNÉRÉ v3 le 2026-08-18 par SCRIPT VERSIONNÉ : calc/recette/passe2/83_empreintes_reference.sql (registre meta.empreinte_spec).
+# Fin du manquement repro (M459/A154) : plus aucune empreinte figee ad hoc ; ces valeurs sont reproductibles des deux cotes.
+# Recette CANONIQUE (A078), identique DB1/DB2 :
+#     SET extra_float_digits = 3;   (ou PGOPTIONS='-c extra_float_digits=3')
 #     SELECT md5(string_agg(md5(t.*::text), '' ORDER BY <ordre>)) FROM (<projection>) t;
-#   -> md5 par ligne (t.*::text), concatenes AVEC SEPARATEUR VIDE '', tries par <ordre>, puis md5 du tout.
-#   La projection exclut volontairement les colonnes volatiles (params jsonb, timestamps, geom, colonnes owner DB2).
-#   Reproduit a l'octet le 2026-08-15 sur DB1.
+#   -> md5 par ligne de la projection, concatenes AVEC SEPARATEUR VIDE '', tries par <ordre>, puis md5 du tout.
+#   La projection EXCLUT les colonnes volatiles (geom, jsonb) ; couvertes par le load a l'octet + les comptes.
+# Verifie independamment par M sur DB1 + reproduit par B sur norvege_stage (triple confirmation, gate go-live).
+# NB1 : remplace la version v2-era (reward_poi 778 / base_reward 104 / bases_ideales 104).
+# NB2 : base_rayonnement (v3 = 18) et l'ancienne matrice_base_base (remplacee par staging.bb_route, pas encore promue en mcda2)
+#       seront ajoutees a meta.empreinte_spec quand promues ; le spec est extensible (1 ligne/relation), aucune valeur inventee.
 #
 # relation	lignes	md5	projection (colonnes)	ordre
-mcda2.base_reward	104	63dfd6ec10eb3e7c2c8249900227ac6f	base_id, reward_atteignable, n_poi	base_id
-mcda2.reward_poi	778	8aab0f6558a93e4a8b84a91138299ac9	poi_id, v_poi, tier, tres_frequente	poi_id
-mcda2.base_rayonnement	104	0df7bf3b3a4dad8a3587bc21d36221a3	base_id, rayonnement, n_poi	base_id
-mcda2.bases_ideales	104	574628b89d7bcc5a611c37b9defb5dee	base_id, mclp_rang, structurante, reward, rayonnement, zero_reward	base_id
-mcda2.matrice_base_base	10712	f8a28782afbd6d58e748310be20b6a94	source_base, target_base, minutes_roulage, minutes_ferry, km, ferry, n_ferries	source_base, target_base
+mcda2.reward_poi	767	80b6ee34d35ef25a6941b56f5c30168a	poi_id, v_poi, tier, tres_frequente	poi_id
+mcda2.base_reward	18	779e9b4edbe38ad09c3690622961593a	base_id, reward_atteignable, n_poi	base_id
+mcda2.bases_ideales	18	deb43d9b375579d8f1cc618a80b4a0e7	base_id, mclp_rang, structurante, reward, rayonnement, zero_reward	base_id
+mcda2.reward_poi_ligne_complete	767	6fcaa8b51111e07e341011788f179385	toutes colonnes	poi_id
