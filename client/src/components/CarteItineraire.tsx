@@ -1,7 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Source, Layer, Marker, NavigationControl, useMap } from '@vis.gl/react-maplibre';
-import type { Feature, FeatureCollection, Geometry, LineString } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import {
   modeleAnimationFigeGeom,
   etatAuTemps,
@@ -62,10 +62,33 @@ function segmentsFiltre(modele: ModeleAnim, nat: Nature, phase: Phase): FeatureC
   return { type: 'FeatureCollection', features };
 }
 
-/** Trace complet en une LineString (pour le ghost estompe). */
+/**
+ * Trace complet estompé (ghost), mais UNIQUEMENT sur les segments ROUTÉS : on ROMPT le trait aux « liaisons »
+ * (traversées d'eau / corridors non routés) pour ne JAMAIS dessiner une droite PLEINE point-à-point (M555 §2, R1 :
+ * on ne fait pas croire à une route qui n'existe pas). Les liaisons restent rendues à part, en TIRETÉS « en attente /
+ * traversée ». Résultat : ghost plein le long de la route, pointillés sur l'eau, aucune droite pleine visible.
+ */
 function traceComplet(modele: ModeleAnim): FeatureCollection {
-  const ligne: LineString = { type: 'LineString', coordinates: modele.pts.map(versLonLat) };
-  return { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: ligne }] };
+  const features: Feature[] = [];
+  let run: [number, number][] = [];
+  const pousser = () => {
+    if (run.length >= 2) {
+      features.push({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: run } });
+    }
+  };
+  for (let i = 0; i < modele.pts.length; i++) {
+    const p = modele.pts[i];
+    if (!p) continue;
+    // La nature d'indice i décrit le segment pts[i-1]→pts[i] : une liaison est un SAUT → on coupe le ghost avant.
+    if (i > 0 && modele.nature[i] === 'liaison') {
+      pousser();
+      run = [versLonLat(p)];
+    } else {
+      run.push(versLonLat(p));
+    }
+  }
+  pousser();
+  return { type: 'FeatureCollection', features };
 }
 
 /** Emprise [[minLon, minLat], [maxLon, maxLat]] du trace, ou null si vide. */

@@ -142,19 +142,27 @@ export default function Carte() {
         Le voyage jour après jour : l'itinéraire retenu joué du départ au retour, puis la frise des 21 jours
         (prévu et, au fil du voyage, vécu). Les ancres du ferry, début et fin, sont visibles.
       </p>
-      <CarteMapLibre mode="lecture-ideal" geom={geom} etapes={etapes} centrer={centrer} />
-
-      {/* Contrôles d'animation (M552 §1a) : play / pause / rejouer + vitesse (curseur + saisie) + jours de route. */}
-      <BarreLectureAnimation
-        lecture={lecture}
-        onLecture={basculerLecture}
-        onRejouer={rejouer}
-        vitesse={vitesse}
-        onVitesse={setVitesse}
-        transit={transit}
-        onTransit={setTransit}
-        actif={joursJouables.length >= 2}
-      />
+      {/* Carte PLEINE LARGEUR (full-bleed, M555 §1) comme l'Explorer : on sort du conteneur centré (fini les
+          gouttières), et la barre de LECTURE flotte par-dessus le bas de la carte (contrôles flottants). La frise des
+          jours + la carte du jour restent lisibles dessous. */}
+      <div className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden">
+        <CarteMapLibre mode="lecture-ideal" geom={geom} etapes={etapes} centrer={centrer} hauteur="58vh" />
+        {/* Contrôles d'animation (M552 §1a) : play / pause / rejouer + vitesse (curseur + saisie) + jours de route. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center px-3">
+          <div className="pointer-events-auto w-full max-w-2xl">
+            <BarreLectureAnimation
+              lecture={lecture}
+              onLecture={basculerLecture}
+              onRejouer={rejouer}
+              vitesse={vitesse}
+              onVitesse={setVitesse}
+              transit={transit}
+              onTransit={setTransit}
+              actif={joursJouables.length >= 2}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Barre d'animation : le voyage jour par jour, puces cliquables + marqueur nuit + ancres ferry (M499/M502 §1). */}
       <BarreAnimationJours etapes={etapesFige} jourSelectionne={jourSel} onSelect={recadrer} />

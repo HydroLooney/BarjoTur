@@ -29,7 +29,7 @@ export function BarreLectureAnimation({
   const borne = (v: number) => Math.min(3, Math.max(0.5, Number.isFinite(v) ? v : 1));
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-card p-3">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-card/95 p-3 text-foreground shadow-flottante backdrop-blur-sm">
       <div className="flex items-center gap-2">
         <Bouton size="sm" onClick={() => onLecture(!lecture)} aria-label={lecture ? 'Mettre en pause' : 'Lancer la lecture'}>
           {lecture ? '⏸ Pause' : '▶ Lecture'}
