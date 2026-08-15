@@ -150,7 +150,7 @@ export default function Explorer() {
     setListeOuverte(quoi === 'liste');
   };
   const chipFlottant =
-    'pointer-events-auto inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/95 px-3 py-1.5 text-sm font-medium shadow-flottante backdrop-blur-sm transition-colors hover:bg-card';
+    'pointer-events-auto inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/95 px-2.5 py-1 text-sm font-medium shadow-flottante backdrop-blur-sm transition-colors hover:bg-card';
 
   return (
     // CARTE PLEINE LARGEUR de fenêtre (full-bleed, M505) : on sort du conteneur centré ; les contrôles FLOTTENT

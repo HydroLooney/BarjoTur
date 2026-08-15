@@ -138,7 +138,7 @@
   --rayon-s: 8px; /* boutons, champs, badges */
   --rayon: 12px; /* cartes, panneaux, popovers, modales, feuilles */
   --rayon-plein: 999px; /* pilules : onglets, chips, poignee SplitScreen, pastilles rondes */
-  --cible-tactile: 44px; /* tactile d'abord, A06 */
+  --cible-tactile: 40px; /* tactile au pouce (M520) : plancher resserre a ~40px, le bouton epouse son texte sans descendre sous l'accessible */
 
   /* Espacement semantique (CHARTE v3 §3) : on ne nomme que les 3 gouttieres recurrentes ; le pas 4/8 reste
      porte par Tailwind. Permet de basculer la densite par format sans toucher chaque composant. */

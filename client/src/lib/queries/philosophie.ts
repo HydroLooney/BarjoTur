@@ -1,53 +1,44 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { PhilosophieReponse, PhilosophieMajInput, CurseurCatalogue, EnvieCatalogue } from '@barjotur/shared';
 import { api } from '@/lib/api';
-import { AXES_PHILO } from '@/lib/philosophie';
+import { fusionnerCatalogue, completerProfil, profilDefaut } from '@/lib/philosophie';
 
-// Profil philosophie <-> serveur (B154, contrat confirmé) : GET/PUT /api/philosophie/:code, axes 0-1 normalisés
-// (défaut 0.5). Le store front travaille en 0-100 (sliders) → on convertit à la frontière. Ces 8 axes pilotent la
-// signature du composeur (mapping côté BFF, R1). FLIP-READY : gaté tant que l'endpoint n'est pas live (VITE_PHILO_LIVE
-// / ?philo) ; inerte et sans crash avant. Au flip, on hydrate le store depuis le serveur et on pousse à chaque réglage.
+// Profil voyageur <-> serveur (M508, endpoints LIVE B166/B169) : GET/PUT /api/philosophie/:code. Le serveur est la
+// SEULE vérité (DB2, versionné) ; le catalogue de libellés vient de lui (A159), fusionné sur le secours local pour ne
+// jamais afficher un écran nu. Modèle NATIF [0..1] (curseurs + envies + cap_nord) : aucune conversion, le store, la
+// route et l'UI parlent la même échelle. Écriture gatée capacité `voter` côté serveur ; ici partiel accepté.
 
-interface ProfilPhiloServeur {
-  axes: Record<string, number>; // 0-1
+export interface CataloguePhilo {
+  curseurs: CurseurCatalogue[];
+  envies: EnvieCatalogue[];
 }
 
-const PHILO_LIVE =
-  import.meta.env.VITE_PHILO_LIVE === '1' ||
-  (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('philo'));
-
-/** 0-100 (store) → 0-1 (serveur), clampé, sur les 8 axes connus. */
-export function axes100Vers01(v100: Record<string, number>): Record<string, number> {
-  return Object.fromEntries(
-    AXES_PHILO.map((a) => [a.cle, Math.min(1, Math.max(0, (v100[a.cle] ?? 50) / 100))]),
-  );
-}
-
-/** 0-1 (serveur) → 0-100 (store) sur les 8 axes. */
-export function axes01Vers100(v01: Record<string, number>): Record<string, number> {
-  return Object.fromEntries(AXES_PHILO.map((a) => [a.cle, Math.round((v01[a.cle] ?? 0.5) * 100)]));
-}
-
-/** Lit le profil du voyageur (0-100 pour le store). Inerte tant que le drapeau live est off. */
-export function useProfilPhilo(code: string | null) {
+/**
+ * Lit le catalogue + le profil du voyageur. Toujours utile : sans `code` (ou avant réponse) on rend le catalogue de
+ * SECOURS + un profil par défaut, pour que l'écran soit lisible et jouable hors ligne. Retry 0 (famille, pas d'attente).
+ */
+export function usePhilosophieProfil(code: string | null) {
   return useQuery({
     queryKey: ['philosophie', code],
-    enabled: PHILO_LIVE && !!code,
-    queryFn: async () => {
-      const rep = await api.get<ProfilPhiloServeur>(`/philosophie/${code}`);
-      return axes01Vers100(rep.axes ?? {});
-    },
+    enabled: !!code,
+    queryFn: () => api.get<PhilosophieReponse>(`/philosophie/${code}`),
     staleTime: 60_000,
     retry: 0,
+    select: (rep) => ({
+      catalogue: fusionnerCatalogue(rep.catalogue),
+      profil: completerProfil(rep.profil),
+      version: rep.version,
+    }),
   });
 }
 
-/** Écrit le profil (le store envoie du 0-100, on convertit en 0-1). PUT idempotent côté route. */
-export function useEcrireProfilPhilo(code: string | null) {
+/** Écrit le profil (partiel { curseurs?, envies?, cap_nord? }). PUT idempotent ; invalide la lecture au succès. */
+export function useEcrirePhilosophieProfil(code: string | null) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (valeurs100: Record<string, number>) => {
+    mutationFn: (maj: PhilosophieMajInput) => {
       if (!code) throw new Error('Aucun lien perso : profil non enregistré.');
-      return api.put(`/philosophie/${code}`, { axes: axes100Vers01(valeurs100) });
+      return api.put(`/philosophie/${code}`, maj);
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['philosophie', code] });
@@ -55,4 +46,7 @@ export function useEcrireProfilPhilo(code: string | null) {
   });
 }
 
-export const philoLive = PHILO_LIVE;
+/** Catalogue + profil de secours, pour l'affichage tant que le serveur n'a pas répondu (ou sans lien). */
+export function philoSecours(): { catalogue: CataloguePhilo; profil: ReturnType<typeof profilDefaut> } {
+  return { catalogue: fusionnerCatalogue(), profil: profilDefaut() };
+}

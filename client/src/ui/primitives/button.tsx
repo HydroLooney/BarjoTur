@@ -3,8 +3,9 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-// Bouton shadcn/ui, restyle par les jetons de charte (aucun hex : tout passe par les classes
-// token-driven). Hauteur h-11 = 44px, cible tactile minimale (A06).
+// Bouton shadcn/ui, restyle par les jetons de charte (aucun hex : tout passe par les classes token-driven).
+// M520 : le bouton EPOUSE son texte — padding resserre, plus de hauteur fixe (min-h-tactile = plancher au pouce,
+// ~40px), le texte garde sa taille (M516). Un seul jeu de padding, propage partout (barre d'actions, chips, votes).
 const boutonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
   {
@@ -17,11 +18,11 @@ const boutonVariants = cva(
         destructive: 'bg-destructive text-destructive-foreground hover:opacity-90',
       },
       size: {
-        default: 'h-11 px-4 py-2',
-        // sm : padding resserré mais hauteur tactile garantie (>= 44px, A06/A20 « utilisable au pouce »).
-        sm: 'min-h-tactile px-3 py-1.5',
-        lg: 'h-12 px-6 text-base',
-        icon: 'h-11 w-11',
+        // Hauteur = min-h-tactile (plancher au pouce) ; le padding fait le reste, le bouton colle au libelle.
+        default: 'min-h-tactile px-3 py-1.5',
+        sm: 'min-h-tactile px-2.5 py-1',
+        lg: 'min-h-12 px-5 py-2 text-base',
+        icon: 'h-10 w-10',
       },
     },
     defaultVariants: { variant: 'default', size: 'default' },

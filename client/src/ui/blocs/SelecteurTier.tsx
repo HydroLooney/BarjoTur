@@ -42,7 +42,7 @@ export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, classN
               title={AVIS[t as keyof typeof AVIS] ?? t}
               onClick={() => onChoisir(actif ? null : t)}
               className={cn(
-                'flex h-11 w-11 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50',
+                'flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50',
                 actif
                   ? cn(CLASSE_TIER[t], 'border-transparent text-primary-foreground')
                   : 'border-border text-muted-foreground hover:bg-muted',
@@ -58,7 +58,7 @@ export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, classN
           <span
             aria-label={`Proposé par défaut : ${AVIS[tierDefaut as keyof typeof AVIS] ?? tierDefaut}`}
             title={`Proposé par défaut : ${AVIS[tierDefaut as keyof typeof AVIS] ?? tierDefaut}`}
-            className="flex h-11 min-w-[2.75rem] cursor-default select-none flex-col items-center justify-center rounded-full border border-dashed border-border px-2 leading-none text-muted-foreground"
+            className="flex h-10 min-w-[2.5rem] cursor-default select-none flex-col items-center justify-center rounded-full border border-dashed border-border px-2 leading-none text-muted-foreground"
           >
             <span className="text-[0.5rem] uppercase tracking-wide">défaut</span>
             <span className="mt-0.5 text-sm font-semibold">{tierDefaut}</span>

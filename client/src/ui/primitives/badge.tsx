@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 // Badge / chip shadcn, token-driven. Variantes de tier (T/S/A/B) branchees sur les jetons `tier-*`
 // (source unique), pour afficher un niveau sans jamais recoder une couleur (R03).
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium',
+  'inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium',
   {
     variants: {
       variant: {
