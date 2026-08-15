@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { CataloguePoi, VoteTier } from '@barjotur/shared';
 import { construireRails } from '@/lib/recommandations';
 import { BoutonVote } from '@/ui/blocs/BoutonVote';
+import { libelleCategorie } from '@/lib/libelles';
 
 // Rails de recommandation (A20 §11 / M057) : recommander, pas lister à plat. Des rails curés au-dessus du
 // parcours libre, chacun disant POURQUOI (R1). Reçoit le catalogue filtré + mes votes (surface unique).
@@ -35,7 +36,7 @@ export function Recommandations({
                   <p className="font-medium">{poi.nom}</p>
                   {poi.categorie || poi.region ? (
                     <p className="text-xs text-muted-foreground">
-                      {[poi.categorie, poi.region].filter(Boolean).join(' · ')}
+                      {[libelleCategorie(poi.categorie), poi.region].filter(Boolean).join(' · ')}
                     </p>
                   ) : null}
                   <p className="mt-1 text-xs text-accent">{pourquoi}</p>

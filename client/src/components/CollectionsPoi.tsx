@@ -1,4 +1,5 @@
 import { useCollections } from '@/stores/collections';
+import { humaniserCle } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Chips pour ranger un POI dans mes collections perso (bascule). Léger, local, privé (A11).
@@ -26,7 +27,7 @@ export function CollectionsPoi({ osmId }: { osmId: string }) {
                   : 'border-border text-muted-foreground hover:bg-muted',
               )}
             >
-              {nom}
+              {humaniserCle(nom)}
             </button>
           );
         })}

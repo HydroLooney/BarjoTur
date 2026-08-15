@@ -13,6 +13,7 @@ import { HeroCarrousel } from '@/components/HeroCarrousel';
 import { FilArianePoi } from '@/components/FilArianePoi';
 import { enrichissementDemo } from '@/lib/fixtures/enrichissement-demo';
 import { usePoiFiche } from '@/lib/queries/poi-fiche';
+import { libelleCategorie, humaniserTexte } from '@/lib/libelles';
 import { cn } from '@/lib/utils';
 
 // Fiche POI PARTAGÉE (design-system unifié, SPEC-CONSOLIDEE §A) : un seul composant, deux modes.
@@ -49,7 +50,7 @@ export function FichePOI({ poi, mode = 'plein', className }: Props) {
   const fiche = usePoiFiche(poi.id);
   const photos = fiche.data?.photos ?? [];
   const detail = fiche.data?.detail ?? null;
-  const presentation = detail?.presentation ?? detail?.description ?? poi.presentation ?? null;
+  const presentation = humaniserTexte(detail?.presentation ?? detail?.description ?? poi.presentation ?? null);
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -78,7 +79,7 @@ export function FichePOI({ poi, mode = 'plein', className }: Props) {
           ici on montre le chemin connu (région) sans inventer (R1). */}
       <div className="space-y-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className={cn('font-serif', popover ? 'text-lg' : 'text-2xl')}>{poi.nom}</h2>
+          <h2 className={cn('font-serif', popover ? 'text-lg' : 'text-2xl')}>{humaniserTexte(poi.nom)}</h2>
           <EtiquetteMiseEnAvant score={poi.score_mcda} />
         </div>
         {/* Sous-titre = FIL D'ARIANE réel (M388/M419) : Région › District › Paysage via `sous_zone_id` du POI. */}
@@ -107,7 +108,7 @@ export function FichePOI({ poi, mode = 'plein', className }: Props) {
 
       {/* 4. LE RESTE : méta pratique + détail rédigé + actions. */}
       <div className="flex flex-wrap gap-x-2 text-sm text-muted-foreground">
-        {poi.categorie ? <span>{poi.categorie}</span> : null}
+        {libelleCategorie(poi.categorie) ? <span>{libelleCategorie(poi.categorie)}</span> : null}
         {poi.payant ? <span>· payant{poi.tarif ? ` (${poi.tarif})` : ''}</span> : null}
         {poi.saison ? <span>· {poi.saison}</span> : null}
       </div>

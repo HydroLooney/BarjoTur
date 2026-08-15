@@ -19,6 +19,7 @@ import { DIFFICULTES, SENTIERS_MINZOOM, layerIdSentier, libelleDifficulte } from
 import { useDecoupageData, couleurRegionExpr } from '@/lib/decoupage';
 import { useCartoData, martinTuiles, martinSourceLayer } from '@/lib/carto-source';
 import { CATEGORIES } from '@/lib/categories-poi';
+import { libelleCategorie } from '@/lib/libelles';
 import { PanneauCategories } from '@/components/PanneauCategories';
 import { MarqueursCategories } from '@/components/MarqueursCategories';
 
@@ -227,7 +228,7 @@ export function CarteExplorer({ hauteur = '70vh' }: { hauteur?: string }) {
         // Repli minimal si le POI cliqué n'est pas dans le catalogue scoré (emprise plus large que le catalogue).
         <div className="space-y-2">
           <p className="font-serif text-base">{clique.nom}</p>
-          {clique.categorie ? <p className="text-xs text-muted-foreground">{clique.categorie}</p> : null}
+          {libelleCategorie(clique.categorie) ? <p className="text-xs text-muted-foreground">{libelleCategorie(clique.categorie)}</p> : null}
           {clique.votable ? (
             <BoutonVote cible={`p:${clique.osmId}`} tierDefaut={clique.tierDefaut} />
           ) : (

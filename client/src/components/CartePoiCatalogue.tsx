@@ -3,6 +3,7 @@ import { Carte, CarteEntete, CarteTitre, CarteContenu } from '@/ui/primitives/ca
 import { Badge, type BadgeProps } from '@/ui/primitives/badge';
 import { BoutonVote } from '@/ui/blocs/BoutonVote';
 import { EtiquetteMiseEnAvant } from '@/components/EtiquetteMiseEnAvant';
+import { libelleCategorie, humaniserTexte } from '@/lib/libelles';
 
 interface Props {
   poi: CataloguePoi;
@@ -33,14 +34,14 @@ export function CartePoiCatalogue({ poi, explore }: Props) {
     <Carte className="flex flex-col transition-[box-shadow,transform] duration-court ease-doux hover:-translate-y-px hover:shadow-charte">
       <CarteEntete>
         <div className="flex items-start justify-between gap-2">
-          <CarteTitre>{poi.nom}</CarteTitre>
+          <CarteTitre>{humaniserTexte(poi.nom)}</CarteTitre>
           <div className="flex shrink-0 flex-wrap justify-end gap-1">
             <EtiquetteMiseEnAvant score={poi.score_mcda} />
             {poi.tier_defaut ? <Badge variant={varianteBadge(poi.tier_defaut)}>{poi.tier_defaut}</Badge> : null}
           </div>
         </div>
         <div className="flex flex-wrap gap-x-2 text-xs text-muted-foreground">
-          {poi.categorie ? <span>{poi.categorie}</span> : null}
+          {libelleCategorie(poi.categorie) ? <span>{libelleCategorie(poi.categorie)}</span> : null}
           {poi.region ? <span>· {poi.region}</span> : null}
           {poi.payant ? <span>· payant</span> : null}
           {explore ? <span className="text-accent">· déjà vu</span> : null}
@@ -48,7 +49,7 @@ export function CartePoiCatalogue({ poi, explore }: Props) {
       </CarteEntete>
       {poi.presentation ? (
         <CarteContenu className="grow">
-          <p className="line-clamp-3 text-sm text-muted-foreground">{poi.presentation}</p>
+          <p className="line-clamp-3 text-sm text-muted-foreground">{humaniserTexte(poi.presentation)}</p>
         </CarteContenu>
       ) : (
         <div className="grow" />

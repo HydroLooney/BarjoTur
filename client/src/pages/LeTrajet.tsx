@@ -8,7 +8,7 @@ import { ComposeurItineraire } from '@/components/ComposeurItineraire';
 import { ReglageBudgetTemps } from '@/components/ReglageBudgetTemps';
 import { ArbitrageLiaison } from '@/components/ArbitrageLiaison';
 import { SuggestionsAuPassage } from '@/components/SuggestionsAuPassage';
-import { Comparateur } from '@/components/Comparateur';
+import { ComparateurVoyages } from '@/components/ComparateurVoyages';
 import { CarteMapLibre } from '@/components/CarteMapLibre';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
@@ -72,9 +72,9 @@ export default function LeTrajet() {
         </p>
       </section>
 
-      {/* 3. Comparer les alternatives — accordéon fermé. Volet cartographique flottant à venir (M163). */}
-      <Accordeon titre="Comparer les alternatives">
-        <Comparateur />
+      {/* 3. Comparer les voyages (M478) — archétype en carte animée, moi vs nous, deux voyages, écarts. */}
+      <Accordeon titre="Comparer les voyages">
+        <ComparateurVoyages />
       </Accordeon>
 
       {/* Réservations : elles se SAISISSENT dans Préparatifs (M163, supersede A33). Notre Voyage n'en crée

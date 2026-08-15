@@ -4,6 +4,7 @@ import { useCollections } from '@/stores/collections';
 import { FormAjoutLieu } from '@/components/FormAjoutLieu';
 import { QuizzEnvies } from '@/components/QuizzEnvies';
 import { PhilosophieVoyage } from '@/components/PhilosophieVoyage';
+import { libelleCategorie, humaniserCle } from '@/lib/libelles';
 
 // Voter (ossature V2, ex « Mes envies ») : dire ce qu'on aime. Le CŒUR = « Ta façon de voyager » (8 axes de
 // philosophie, AUDIT-FRONT P0 #1) qui pondèrent le composeur (MCDA v3). Puis le quizz raccourci, le carnet perso
@@ -48,8 +49,10 @@ export default function MesEnvies() {
             {propositions.map((p) => (
               <li key={p.osm_id} className="rounded-md border border-border bg-card px-3 py-2 text-sm">
                 <span className="font-medium">{p.nom}</span>
-                {p.categorie ? <span className="text-muted-foreground"> · {p.categorie}</span> : null}
-                {p.source ? <span className="text-muted-foreground"> · {p.source}</span> : null}
+                {/* Catégorie HUMANISÉE (M484) ; la source (provenance technique) n'est pas montrée à l'utilisateur. */}
+                {libelleCategorie(p.categorie) ? (
+                  <span className="text-muted-foreground"> · {libelleCategorie(p.categorie)}</span>
+                ) : null}
                 {p.flag_pepite ? <span className="text-accent"> · pépite</span> : null}
               </li>
             ))}
@@ -64,7 +67,7 @@ export default function MesEnvies() {
         <div className="flex flex-wrap gap-2">
           {Object.entries(collections).map(([nom, refs]) => (
             <span key={nom} className="rounded-md border border-border bg-card px-3 py-2 text-sm">
-              {nom} <span className="text-muted-foreground">({refs.length})</span>
+              {humaniserCle(nom)} <span className="text-muted-foreground">({refs.length})</span>
             </span>
           ))}
         </div>
