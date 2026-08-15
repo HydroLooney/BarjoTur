@@ -17,6 +17,8 @@ export * from './allocation.js';
 export * from './composition.js';
 export * from './carburant.js';
 export * from './budget.js';
+export * from './budget-vivant.js';
+export * from './collegial.js';
 export * from './memoire.js';
 export * from './parcours.js';
 export * from './voyage.js';
