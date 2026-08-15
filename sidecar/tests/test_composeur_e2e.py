@@ -13,10 +13,10 @@ from allocation import (  # noqa: E402
     Cadre,
     EntreeAllocation,
     agreger_egalitariste,
-    resoudre_allocation,
+    resoudre_allocation_entree,
     ideal_voyageur,
     ecart_ideal,
-    satisfaction_par_voyageur,
+    _satisfaction_nuits,
     leximin_cle,
 )
 from horaires import HeuresPoi, hhmm_en_minutes  # noqa: E402
@@ -38,7 +38,7 @@ def test_composeur_bout_en_bout_voyage_synthetique():
         CourbeLieu(lieu_id=lid, marginaux=agreger_egalitariste(list(v.values())))
         for lid, v in courbes.items()
     ]
-    res = resoudre_allocation(EntreeAllocation(lieux=lieux_consensus, couts_trajet=couts, cadre=cadre, mode="full_auto"))
+    res = resoudre_allocation_entree(EntreeAllocation(lieux=lieux_consensus, couts_trajet=couts, cadre=cadre, mode="full_auto"))
     assert res.selection == [1, 2]           # lieu 3 tombe (consensus faible)
     assert res.nuits == {1: 2, 2: 1}
     assert res.faisable is True and res.ordre  # route trouvée (Held-Karp)
@@ -55,7 +55,7 @@ def test_composeur_bout_en_bout_voyage_synthetique():
     assert ec_B["ecart"] > 0 and ec_B["cede"] == ["3"]  # B cède le lieu 3
 
     # satisfaction FINALE par personne + clé leximin (on soigne d'abord le moins bien servi).
-    sat = satisfaction_par_voyageur(res.nuits, courbes)
+    sat = _satisfaction_nuits(res.nuits, courbes)
     assert sat == {"A": 24.0, "B": 18.0}             # B est le moins bien servi
     assert leximin_cle(sat.values()) == (18.0, 24.0)
 

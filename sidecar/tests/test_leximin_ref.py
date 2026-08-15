@@ -8,7 +8,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from allocation import CourbeLieu, satisfaction_par_voyageur  # noqa: E402
+from allocation import CourbeLieu, _satisfaction_nuits  # noqa: E402
 from leximin_ref import allocations_faisables, leximin_optimal  # noqa: E402
 
 
@@ -73,10 +73,10 @@ def test_leximin_optimal_diverge_de_l_utilitaire():
 
 
 def test_leximin_optimal_coherent_avec_satisfaction_par_voyageur():
-    # L'oracle doit rendre exactement la satisfaction que calcule satisfaction_par_voyageur pour son allocation.
+    # L'oracle doit rendre exactement la satisfaction que calcule _satisfaction_nuits pour son allocation.
     lieux = [_lieu(1, [8, 5]), _lieu(2, [8, 5])]
     courbes = {1: {"X": [8, 5], "Y": [2, 1]}, 2: {"X": [2, 1], "Y": [8, 5]}}
     nuits, sat = leximin_optimal(lieux, 2, courbes)
-    recompute = satisfaction_par_voyageur(nuits, courbes)
+    recompute = _satisfaction_nuits(nuits, courbes)
     for v in sat:
         assert abs(sat[v] - recompute.get(v, 0.0)) < 1e-9

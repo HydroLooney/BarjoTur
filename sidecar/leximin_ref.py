@@ -1,6 +1,6 @@
 """Oracle leximin de reference (prep CP-SAT, M240/M254).
 
-Le solveur pur `resoudre_allocation` (allocation.py) maximise la valeur totale captee sur la courbe CONSENSUS : c'est
+Le solveur pur `resoudre_allocation_entree` (allocation.py) maximise la valeur totale captee sur la courbe CONSENSUS : c'est
 un choix UTILITAIRE (somme), pas un max-min par voyageur. Le solveur de deploiement `resoudre_allocation_cpsat` (OR-Tools,
 gate ortools) vise, lui, le LEXIMIN par voyageur (soigner d'abord le moins bien servi, puis le suivant). Pour pouvoir
 FAIRE CONFIANCE a ce CP-SAT quand ortools sera installe sur Bomp4rd, il faut une reference exacte a laquelle le comparer.
@@ -12,7 +12,7 @@ jamais de solveur de production (l'enumeration explose au-dela de quelques lieux
 
 from __future__ import annotations
 
-from allocation import CourbeLieu, leximin_cle, satisfaction_par_voyageur
+from allocation import CourbeLieu, leximin_cle, _satisfaction_nuits
 
 
 def allocations_faisables(lieux: list[CourbeLieu], total: int) -> list[dict[int, int]]:
@@ -66,7 +66,7 @@ def leximin_optimal(
     meilleure_cle: tuple | None = None
 
     for nuits in allocations_faisables(lieux, total):
-        partielle = satisfaction_par_voyageur(nuits, courbes)
+        partielle = _satisfaction_nuits(nuits, courbes)
         sat = {v: partielle.get(v, 0.0) for v in voyageurs}
         cle = leximin_cle([sat[v] for v in voyageurs])
         if meilleure_cle is None or cle > meilleure_cle:

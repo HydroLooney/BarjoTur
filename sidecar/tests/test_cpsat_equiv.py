@@ -4,7 +4,7 @@
 #
 # Deux niveaux :
 #  1. OBJECTIF ACTUEL (utilitaire sur la courbe consensus) : resoudre_allocation_cpsat doit capter la MEME valeur
-#     totale que le solveur pur exact resoudre_allocation. C'est ce qui est reellement code aujourd'hui.
+#     totale que le solveur pur exact resoudre_allocation_entree. C'est ce qui est reellement code aujourd'hui.
 #  2. OBJECTIF LEXIMIN (extension flip, pas encore codee) : quand le CP-SAT portera le max-min par voyageur, il devra
 #     coincider avec l'oracle exact leximin_optimal (leximin_ref). Marque xfail en attendant que l'objectif soit code.
 
@@ -21,7 +21,7 @@ from allocation import (  # noqa: E402
     CourbeLieu,
     Cadre,
     EntreeAllocation,
-    resoudre_allocation,
+    resoudre_allocation_entree,
     resoudre_allocation_cpsat,
 )
 
@@ -38,7 +38,7 @@ def _entree_synthetique() -> EntreeAllocation:
 
 def test_cpsat_capte_la_meme_valeur_que_le_solveur_pur():
     entree = _entree_synthetique()
-    pur = resoudre_allocation(entree)
+    pur = resoudre_allocation_entree(entree)
     cpsat = resoudre_allocation_cpsat(entree)
     # objectif identique (utilitaire exact) : meme valeur captee, meme nombre de nuits allouees.
     assert abs(cpsat.valeur_captee - pur.valeur_captee) < 1e-6

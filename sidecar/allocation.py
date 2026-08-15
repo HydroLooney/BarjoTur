@@ -95,9 +95,10 @@ def agreger_egalitariste(courbes_par_voyageur: list[list[float]]) -> list[float]
     return [min(c[k] for c in courbes_par_voyageur) for k in range(longueur)]
 
 
-def satisfaction_par_voyageur(nuits: dict[int, int], courbes: dict[int, dict[str, list[float]]]) -> dict[str, float]:
+def _satisfaction_nuits(nuits: dict[int, int], courbes: dict[int, dict[str, list[float]]]) -> dict[str, float]:
     """Valeur captée PAR VOYAGEUR pour une allocation (compteur d'ÉQUITÉ A25 : de combien chacun est servi ; le min =
-    la personne la moins bien servie). `courbes[lieu][voyageur]` = courbe marginale de ce voyageur pour ce lieu. Pure."""
+    la personne la moins bien servie). `courbes[lieu][voyageur]` = courbe marginale de ce voyageur pour ce lieu. Pure.
+    NB : helper interne (M550) ; l'API v3.1 = satisfaction_par_voyageur(alloc, signatures, courbes)."""
     sat: dict[str, float] = {}
     for lieu, n in nuits.items():
         for voyageur, courbe in courbes.get(lieu, {}).items():
@@ -187,10 +188,11 @@ def ordonner_route(
     return ordre, best_cout, True
 
 
-def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
+def resoudre_allocation_entree(entree: EntreeAllocation) -> Resultat:
     """Résout l'allocation (amorce PURE, DP exact). Modes : `manuel` (nuits imposées en contrainte), `assiste`/
     `full_auto` (optimise). Rend sélection + nuits + ordre + valeur + arbitrage lisible (gardés/laissés + marginaux,
-    de quoi dire « un jour de plus ici vaut X », « un de moins ici (Y) vaut un de plus là (Z) »). Pure."""
+    de quoi dire « un jour de plus ici vaut X », « un de moins ici (Y) vaut un de plus là (Z) »). Pure.
+    NB : moteur INTERNE (M550 option A) ; l'API v3.1 = resoudre_allocation(signatures, courbes, budget_nuits, bases_ouvertes) l'appelle."""
     lieux_par_id = {l.lieu_id: l for l in entree.lieux}
     if entree.mode == "manuel":
         nuits = {lid: n for lid, n in entree.nuits_imposees.items() if n > 0}
@@ -226,6 +228,25 @@ def resoudre_allocation(entree: EntreeAllocation) -> Resultat:
     )
 
 
+# --- G6 : courbe valeur-par-nuit (signature INTERFACES.md, M548) --------------------------------------
+
+def courbe_valeur_nuit(base_id: int, signature: dict, offre_max: int) -> list[float]:
+    """Marginaux DÉCROISSANTS des nuits 1..offre_max sur une base (satiété G6, FORMULES-COMPOSEUR-v3.1.md).
+
+    Nuit 1 = pleine valeur (reward_base) ; chaque nuit suivante vaut MOINS (satiété), décroissance réglée par le curseur
+    `cadence` de la signature (contemplation → satiété LENTE, plus de nuits valent ; découverte → satiété RAPIDE, on bouge).
+    Rend une liste NON croissante de longueur offre_max. Import tardif de reward (dépend de la DB) pour garder allocation pur."""
+    from reward import reward_base  # import tardif : allocation reste testable sans DB
+
+    if offre_max <= 0:
+        return []
+    base = float(reward_base(base_id, signature))
+    cadence = float(signature.get("cadence", 0.5))  # 0 = contemplation (satiété lente), 1 = découverte (satiété rapide)
+    # facteur de satiété par nuit supplémentaire : contemplation ~0.85 (garde de la valeur), découverte ~0.45 (chute vite).
+    decay = 0.85 - 0.40 * cadence
+    return [round(base * (decay ** k), 6) for k in range(offre_max)]
+
+
 def ideal_voyageur(
     membre_id: int,
     lieux: list[CourbeLieu],
@@ -235,7 +256,7 @@ def ideal_voyageur(
 ) -> dict:
     """Idéal d'UN voyageur (M120) = allocation à SES seuls poids (leximin dégénéré à une personne), mémorisé comme
     référence pour mesurer l'écart au voyage commun. Rend le contrat partagé `IdealVoyageur` {membre_id, resultat}. Pure."""
-    r = resoudre_allocation(EntreeAllocation(lieux=lieux, couts_trajet=couts_trajet, cadre=cadre, mode=mode))
+    r = resoudre_allocation_entree(EntreeAllocation(lieux=lieux, couts_trajet=couts_trajet, cadre=cadre, mode=mode))
     return {"membre_id": membre_id, "resultat": resultat_vers_json(r)}
 
 
@@ -417,3 +438,43 @@ def resoudre_allocation_cpsat(entree: EntreeAllocation) -> Resultat:
         selection, entree.couts_trajet, entree.cadre.depart, entree.cadre.arrivee
     )
     return Resultat(selection, nuits, ordre, valeur, cout, gardes=[], laisses=[], faisable=bool(nuits) and faisable_route)
+
+
+# --- API v3.1 (INTERFACES.md, M550 option A) : wrappers aux signatures figées -------------------------
+
+def resoudre_allocation(signatures, courbes, budget_nuits, bases_ouvertes):
+    """API v3.1 (INTERFACES.md) : alloue `budget_nuits` aux `bases_ouvertes` en LEXIMIN entre voyageurs (le moins servi d'abord).
+    `signatures` = liste des voyageurs ; `courbes[base_id]` = [Courbe par voyageur] (aligné sur `signatures`). Construit
+    l'EntreeAllocation (courbe consensus égalitariste + courbes_par_voyageur pour le max-min) → moteur interne (CP-SAT leximin si
+    ortools, sinon DP consensus) → Allocation. Le ROUTAGE (ordre/coûts) est fait par B avec cout_multimodal, pas ici."""
+    from modele_types import Allocation
+
+    lieux, cpv = [], []
+    for b in bases_ouvertes:
+        cbs = courbes.get(b, [])
+        if not cbs:
+            continue
+        lieux.append(CourbeLieu(lieu_id=b, marginaux=agreger_egalitariste(cbs)))
+        cpv.append(CourbesVoyageurLieu(lieu_id=b, par_voyageur={t: cbs[t] for t in range(len(cbs))}))
+    entree = EntreeAllocation(
+        lieux=lieux, couts_trajet={}, cadre=Cadre(total_nuits=int(budget_nuits), depart=0, arrivee=0),
+        mode="full_auto", courbes_par_voyageur=cpv,
+    )
+    try:
+        r = resoudre_allocation_cpsat(entree)      # leximin exact (v3.1) si ortools présent (sidecar container)
+    except RuntimeError:
+        r = resoudre_allocation_entree(entree)     # repli DP pur (consensus égalitariste) si ortools absent (env local)
+    courbes_dict = {b: {str(t): courbes[b][t] for t in range(len(courbes.get(b, [])))} for b in bases_ouvertes if courbes.get(b)}
+    sat = _satisfaction_nuits(r.nuits, courbes_dict)
+    nuits_placees = sum(r.nuits.values())
+    return Allocation(
+        par_base=dict(r.nuits), nuits_placees=nuits_placees,
+        deficit=max(0, int(budget_nuits) - nuits_placees),
+        satisfaction={int(t): v for t, v in sat.items()},
+    )
+
+
+def satisfaction_par_voyageur(alloc, signatures, courbes):
+    """API v3.1 (INTERFACES.md) : satisfaction par voyageur d'une Allocation (le min = le voyageur le moins bien servi, A25)."""
+    courbes_dict = {b: {str(t): courbes[b][t] for t in range(len(courbes.get(b, [])))} for b in alloc.par_base if courbes.get(b)}
+    return {int(t): v for t, v in _satisfaction_nuits(alloc.par_base, courbes_dict).items()}

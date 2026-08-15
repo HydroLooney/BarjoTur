@@ -14,8 +14,8 @@ from allocation import (  # noqa: E402
     valeur_captee,
     valider_decroissance,
     agreger_egalitariste,
-    satisfaction_par_voyageur,
-    resoudre_allocation,
+    _satisfaction_nuits,
+    resoudre_allocation_entree,
     entree_depuis_json,
     resultat_vers_json,
 )
@@ -49,7 +49,7 @@ def test_full_auto_un_lieu_qui_domine_fait_TOMBER_les_autres():
         cadre=Cadre(total_nuits=3, depart=0, arrivee=9),
         mode="full_auto",
     )
-    r = resoudre_allocation(e)
+    r = resoudre_allocation_entree(e)
     assert r.selection == [1]  # 2 et 3 TOMBENT
     assert r.nuits == {1: 3}
     assert r.valeur_captee == 27
@@ -64,7 +64,7 @@ def test_full_auto_rendement_decroissant_fait_repartir_le_temps():
         cadre=Cadre(total_nuits=2, depart=0, arrivee=9),
         mode="full_auto",
     )
-    r = resoudre_allocation(e)
+    r = resoudre_allocation_entree(e)
     assert r.nuits == {1: 1, 2: 1}
     assert r.valeur_captee == 18
 
@@ -77,7 +77,7 @@ def test_mode_manuel_respecte_les_nuits_imposees():
         mode="manuel",
         nuits_imposees={1: 1, 2: 2},
     )
-    r = resoudre_allocation(e)
+    r = resoudre_allocation_entree(e)
     assert r.nuits == {1: 1, 2: 2}
     assert r.valeur_captee == 10 + (5 + 4)
 
@@ -85,9 +85,9 @@ def test_mode_manuel_respecte_les_nuits_imposees():
 def test_equite_par_voyageur_expose_le_moins_bien_servi():
     # allocation {1:1, 2:1} ; A adore le 1 (10) peu le 2 (1), B l'inverse -> min = celui qu'on soigne.
     courbes = {1: {"A": [10], "B": [1]}, 2: {"A": [1], "B": [10]}}
-    sat = satisfaction_par_voyageur({1: 1, 2: 1}, courbes)
+    sat = _satisfaction_nuits({1: 1, 2: 1}, courbes)
     assert sat["A"] == 11 and sat["B"] == 11  # ici équilibré
-    sat2 = satisfaction_par_voyageur({1: 1}, courbes)
+    sat2 = _satisfaction_nuits({1: 1}, courbes)
     assert min(sat2.values()) == 1  # B est le moins bien servi
 
 
@@ -104,7 +104,7 @@ def test_mapping_json_contrat_partage_round_trip():
     }
     entree = entree_depuis_json(payload)
     assert entree.couts_trajet[(0, 1)] == 5  # liste -> dict interne
-    out = resultat_vers_json(resoudre_allocation(entree))
+    out = resultat_vers_json(resoudre_allocation_entree(entree))
     assert set(out.keys()) == {"selection", "nuits", "ordre", "valeur_captee", "cout_trajet", "gardes", "laisses", "faisable"}
     assert out["selection"] == [1]  # domination -> drop
     assert out["cout_trajet"] == 5 + 7  # route 0->1->9 (Held-Karp)
