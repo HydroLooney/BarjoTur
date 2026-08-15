@@ -29,7 +29,7 @@ interface Props {
 export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, className }: Props) {
   return (
     <div className={cn('space-y-1', className)}>
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Mon vote">
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Mon vote">
         {TIERS.map((t) => {
           const actif = monTier === t;
           return (

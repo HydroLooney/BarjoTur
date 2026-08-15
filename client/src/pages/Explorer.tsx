@@ -150,7 +150,7 @@ export default function Explorer() {
     setListeOuverte(quoi === 'liste');
   };
   const chipFlottant =
-    'pointer-events-auto inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/95 px-2.5 py-1 text-sm font-medium shadow-flottante backdrop-blur-sm transition-colors hover:bg-card';
+    'pointer-events-auto inline-flex min-h-tactile max-w-[46vw] items-center gap-1.5 truncate rounded-full border border-border bg-card/98 px-2.5 py-1 text-sm font-medium text-foreground shadow-flottante backdrop-blur-sm transition-colors hover:bg-card sm:max-w-none';
 
   return (
     // CARTE PLEINE LARGEUR de fenêtre (full-bleed, M505) : on sort du conteneur centré ; les contrôles FLOTTENT
@@ -177,7 +177,7 @@ export default function Explorer() {
 
       {/* Panneau « La famille adore » (Recommandations, catalogue) — flottant translucide, haut-gauche. */}
       {recosOuvertes ? (
-        <div className="absolute inset-x-2 top-16 z-10 max-h-[62vh] overflow-y-auto rounded-lg border border-border bg-card/95 p-3 shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-3 sm:max-w-sm">
+        <div className="absolute inset-x-2 top-16 z-10 max-h-[62vh] overflow-y-auto rounded-lg border border-border bg-card/98 p-3 text-foreground shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-3 sm:max-w-sm">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium">❤ La famille adore</h2>
             <button type="button" onClick={() => ouvrir(null)} className="min-h-tactile px-2 text-muted-foreground hover:text-foreground" aria-label="Fermer">×</button>
@@ -188,7 +188,7 @@ export default function Explorer() {
 
       {/* Panneau JUMEAU « Vos recommandations » (recos_voyageur personnalisées, M505 §4) — même pattern. */}
       {vosRecosOuvertes ? (
-        <div className="absolute inset-x-2 top-16 z-10 max-h-[62vh] overflow-y-auto rounded-lg border border-border bg-card/95 p-3 shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-3 sm:max-w-sm">
+        <div className="absolute inset-x-2 top-16 z-10 max-h-[62vh] overflow-y-auto rounded-lg border border-border bg-card/98 p-3 text-foreground shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-3 sm:max-w-sm">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium">✦ Vos recommandations</h2>
             <button type="button" onClick={() => ouvrir(null)} className="min-h-tactile px-2 text-muted-foreground hover:text-foreground" aria-label="Fermer">×</button>
@@ -219,7 +219,7 @@ export default function Explorer() {
           la carte reste VISIBLE et centrale, pas d'overlay opaque plein écran. */}
       {listeOuverte ? (
         <div
-          className="absolute inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-border bg-card/97 p-4 shadow-flottante backdrop-blur-sm sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-2/5 sm:min-w-[22rem] sm:max-w-md sm:rounded-none sm:border-l sm:border-t-0"
+          className="absolute inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-border bg-card/98 p-4 text-foreground shadow-flottante backdrop-blur-sm sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-full sm:max-w-[22rem] sm:rounded-none sm:border-l sm:border-t-0"
           role="dialog"
           aria-label="Liste des lieux"
         >
@@ -235,9 +235,9 @@ export default function Explorer() {
       {montrerAstuce ? (
         <div
           role="status"
-          className="absolute inset-x-2 bottom-2 z-10 flex items-start justify-between gap-2 rounded-lg border border-primary bg-card/95 p-3 text-sm shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-1/2 sm:max-w-md sm:-translate-x-1/2"
+          className="absolute inset-x-2 bottom-2 z-10 flex items-start justify-between gap-2 rounded-lg border border-primary bg-card/98 p-3 text-sm text-foreground shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-1/2 sm:max-w-md sm:-translate-x-1/2"
         >
-          <p className="max-w-prose text-muted-foreground">
+          <p className="max-w-prose text-foreground">
             Astuce : ouvrez un lieu et dites ce que vous aimez (coup de cœur, vraiment envie, bien, pourquoi
             pas). C'est votre vote, changeable quand vous voulez.
           </p>
