@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { Qualification, Role, Whoami } from '@barjotur/shared';
 
 const ROLES: readonly Role[] = ['organisateur_principal', 'organisateur', 'voyageur', 'demo', 'invite'];
@@ -36,13 +37,20 @@ const PRENOM_DEMO: Record<string, string> = {
 
 // Identite du voyageur (etat de session UI). L'autorite reste serveur : une mutation est refusee sans
 // jeton valide, quoi que dise ce store. Aucun PIN ne transite ni n'est stocke ici.
-export const useIdentite = create<EtatIdentite>((set) => ({
-  code: null,
-  membreId: null,
-  prenom: null,
-  role: null,
-  qualification: null,
-  conducteur: false,
+// PERSISTÉE (M468 §1) : l'app est PRIVÉE, on n'entre que par le lien perso /app/<token>/. Une fois entré, on
+// persiste l'identité (le token `code` + le profil résolu par whoami) pour que le voyageur RESTE identifié au
+// rechargement (sinon reload = perte d'identité). Sans identité persistée ni token à l'URL → page d'accès privé
+// (GardeAcces). Le token EST le sésame : le persister = « rester connecté », comme tout lien perso. L'autorité
+// des écritures reste serveur (un token révoqué → mutations refusées, un nouveau /app/<token> écrase).
+export const useIdentite = create<EtatIdentite>()(
+  persist(
+    (set) => ({
+      code: null,
+      membreId: null,
+      prenom: null,
+      role: null,
+      qualification: null,
+      conducteur: false,
   // whoami porte la qualification (adulte/enfant), dérivée par B de `membre.membre` (M082/B042). On la lit
   // telle quelle (repli null si absente) : elle active le masque enfant du budget détaillé côté rendu, en
   // cohérence avec l'autorité serveur (`peut`).
@@ -67,6 +75,20 @@ export const useIdentite = create<EtatIdentite>((set) => ({
       qualification: 'adulte',
       conducteur: role === 'organisateur_principal',
     }),
-  deconnecter: () =>
-    set({ code: null, membreId: null, prenom: null, role: null, qualification: null, conducteur: false }),
-}));
+      deconnecter: () =>
+        set({ code: null, membreId: null, prenom: null, role: null, qualification: null, conducteur: false }),
+    }),
+    {
+      name: 'barjotur-identite',
+      // On persiste le profil résolu (pas les fonctions). Le `code` = le token, garant de « rester identifié ».
+      partialize: (s) => ({
+        code: s.code,
+        membreId: s.membreId,
+        prenom: s.prenom,
+        role: s.role,
+        qualification: s.qualification,
+        conducteur: s.conducteur,
+      }),
+    },
+  ),
+);

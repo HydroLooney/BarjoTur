@@ -20,10 +20,22 @@ export const CRANS: Record<CranId, string> = {
 };
 
 /** Les 7 espaces de l'app (A20), titres explicites pour un enfant. */
+// Ossature de nav V2 (M471, directive Guillaume) : espaces PAR ACTIVITÉ, à plat, chacun une action / une question.
+// Accueil hub « Où en est-on ? » par-dessus (M471 (C)) ; frise 21 j dans « Le réel » (M471 (D)). On garde les
+// anciens libellés pour la compat des menus perso, mais la barre primaire suit l'ossature d'activité.
 export const ESPACES = {
+  // Ossature d'activité V2 (M473, référence définitive) :
+  accueil: 'Accueil',
+  explorer: 'Explorer',
+  voter: 'Voter',
+  composer: 'Composer',
+  notreVoyage: 'Notre voyage',
+  preparer: 'Préparer',
+  compter: 'Compter',
+  coulisses: 'Coulisses',
+  // Anciens libellés conservés (menus perso / compat) :
   voyage: 'Le voyage',
   monVoyage: 'Mon voyage',
-  explorer: 'Explorer',
   envies: 'Mes envies',
   trajet: 'Notre Voyage',
   carte: 'Carte',

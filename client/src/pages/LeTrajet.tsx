@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { usePeut } from '@/hooks/usePeut';
 import { FilItineraire } from '@/components/FilItineraire';
@@ -9,6 +9,10 @@ import { ReglageBudgetTemps } from '@/components/ReglageBudgetTemps';
 import { ArbitrageLiaison } from '@/components/ArbitrageLiaison';
 import { SuggestionsAuPassage } from '@/components/SuggestionsAuPassage';
 import { Comparateur } from '@/components/Comparateur';
+import { CarteMapLibre } from '@/components/CarteMapLibre';
+import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
+import { etapesDepuisFige } from '@/lib/fige-adapt';
+import type { EtapeEntree } from '@/lib/anim-trajet';
 
 // Espace « Notre Voyage » (A20 §10 / A33 / SPEC-CONSOLIDEE M161). Ordre VOYAGE-FIRST tranché : le voyage commun
 // en vedette (fil collectif + description) → mon écart au commun → comparateur (accordéon fermé) → réservations
@@ -28,19 +32,27 @@ function Accordeon({ titre, children }: { titre: string; children: ReactNode }) 
 
 export default function LeTrajet() {
   const peutRecomposer = usePeut('valider_composition');
+  // Carte CENTRALE (M468/M473) : l'itinéraire composé, joué sur la carte, en tête de l'espace Composer. On garde le
+  // fil (perles) et le composeur v3 en dessous. Même géométrie réelle que « Notre voyage » (fige.geom).
+  const { data: scenario } = useScenarioDefaut();
+  const figeId = scenario?.fige_id ?? null;
+  const { data: fige } = useFigeDetail(figeId);
+  const etapes = useMemo<EtapeEntree[]>(() => (fige ? etapesDepuisFige(fige) : []), [fige]);
+  const geom = fige?.geom ?? null;
 
   return (
     <section className="space-y-6">
       <header className="space-y-1">
-        <h1 className="font-serif text-2xl">Notre Voyage</h1>
+        <h1 className="font-serif text-2xl">Composer</h1>
         <p className="max-w-prose text-muted-foreground">
-          Le voyage de toute la famille : on le voit d'abord tel qu'il est décidé ensemble, puis on regarde l'écart de
-          chacun et on compare les alternatives. C'est ici que le voyage commun prend forme.
+          Le voyage de toute la famille prend forme ici : la carte de l'itinéraire d'abord, puis les outils pour le
+          bâtir, l'écart de chacun et la comparaison des alternatives.
         </p>
       </header>
 
-      {/* 1. VEDETTE : le voyage commun d'abord (fil collectif). Composer full-auto en tête (proposition auto). */}
+      {/* 1. VEDETTE : LA CARTE de l'itinéraire (central, M468). Puis le fil (perles) + le composeur v3. */}
       <div className="space-y-4 rounded-lg border border-border bg-card p-4">
+        <CarteMapLibre mode="lecture-ideal" geom={geom} etapes={etapes} hauteur="48vh" />
         <FilItineraire variant="collectif" />
         <ComposeurItineraire />
       </div>

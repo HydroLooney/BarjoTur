@@ -27,6 +27,7 @@ const Paniers = lazy(() => import('@/pages/Paniers')); // écran classement pani
 const Decoupage = lazy(() => import('@/pages/Decoupage')); // C15 drill-down interactif région › district › paysage
 const RoutesSceniquesPage = lazy(() => import('@/pages/RoutesSceniques')); // C19 routes scéniques + couche bases
 const Agenda = lazy(() => import('@/pages/Agenda')); // #6 agenda confort (type de nuit, série autonomie/PPC, laverie)
+const Compter = lazy(() => import('@/pages/Compter')); // espace « Compter » (budget prévisionnel, ossature V2 M473)
 
 // Compat strangler : les anciens deep-links v2 (?onglet=, ?fiche=) redirigent vers les routes
 // propres v3, pour ne pas casser les liens deja partages pendant la bascule.
@@ -91,6 +92,12 @@ export const router = createBrowserRouter([
       { index: true, loader: redirigerDepuisV2, element: <Accueil /> },
       { path: 'explorer', element: <Explorer /> },
       { path: 'explorer/:osm', element: <FichePoi /> },
+      // Ossature d'activité V2 (M473) : Voter / Composer / Notre voyage / Compter. Les anciens chemins restent
+      // servis (compat liens + QA) ; la nav primaire pointe sur ces espaces d'activité.
+      { path: 'voter', element: <MesEnvies /> },
+      { path: 'composer', element: <LeTrajet /> },
+      { path: 'notre-voyage', element: <Carte /> },
+      { path: 'compter', element: <Compter /> },
       { path: 'le-trajet', element: <LeTrajet /> },
       { path: 'carte', element: <Carte /> },
       { path: 'preparatifs', element: <Preparatifs /> },

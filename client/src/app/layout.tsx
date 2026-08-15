@@ -2,9 +2,9 @@ import { Suspense, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Bouton } from '@/ui/primitives/button';
 import { LimiteErreur } from './LimiteErreur';
-import { BandeauParcours } from '@/components/BandeauParcours';
 import { MenuAvatar } from '@/components/MenuAvatar';
 import { GuideEcran } from '@/components/GuideEcran';
+import AccesPrive from '@/pages/AccesPrive';
 import { LEGENDES, espaceGuideDepuisRoute } from '@/lib/guides/catalogue';
 import { cn } from '@/lib/utils';
 import { ESPACES } from '@/lib/libelles';
@@ -46,15 +46,21 @@ function LabelNav({ to, libelle, pastille = true }: { to: string; libelle: strin
 // bandeau parcours persistant en tête de chaque vue (anti-« perdu »), squelette commun. Responsive-first,
 // petit écran d'abord : la nav primaire passe en barre basse sur mobile, inline en tête sur desktop.
 // Libellés depuis le tableau central (miroir du glossaire figé, M067).
-// Barre principale (A33 / M158) : Le voyage / Explorer / Notre Voyage / Carte / Préparatifs. « Mon voyage » et
-// « Mes envies » passent par l'avatar (menu perso), pas par un 6e onglet.
+// Barre principale = OSSATURE V2 par activité (M471, directive Guillaume) : Accueil (hub « Où en est-on ? ») +
+// Explorer · Décider · Préparer · Compter · Le réel. Chaque mot est une action, chaque espace répond à UNE
+// question. Coulisses (owner) reste dans le menu avatar. Fini le bandeau « Parcours » incohérent (retiré ci-dessous).
 const PRIMAIRES = [
-  { to: '/', libelle: ESPACES.voyage, exact: true },
+  { to: '/', libelle: ESPACES.accueil, exact: true },
   { to: '/explorer', libelle: ESPACES.explorer, exact: false },
-  { to: '/le-trajet', libelle: ESPACES.trajet, exact: false },
-  { to: '/carte', libelle: ESPACES.carte, exact: false },
-  { to: '/preparatifs', libelle: ESPACES.preparatifs, exact: false },
+  { to: '/voter', libelle: ESPACES.voter, exact: false },
+  { to: '/composer', libelle: ESPACES.composer, exact: false },
+  { to: '/notre-voyage', libelle: ESPACES.notreVoyage, exact: false },
+  { to: '/preparatifs', libelle: ESPACES.preparer, exact: false },
+  { to: '/compter', libelle: ESPACES.compter, exact: false },
 ] as const;
+// Barre BASSE mobile : sous-ensemble CORE (7 entrées ne tiennent pas au pouce) ; Accueil = logo-maison, Compter +
+// Coulisses via l'accueil-hub + l'avatar. Desktop montre tout en tête.
+const PRIMAIRES_MOBILE = PRIMAIRES.filter((l) => l.to !== '/' && l.to !== '/compter');
 
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);
@@ -76,13 +82,27 @@ export function Coquille() {
     if (r && (roles as readonly string[]).includes(r)) demoDevIdentite(r as (typeof roles)[number]);
   }, [demoDevIdentite]);
 
+  // GARDE D'ACCÈS (M468 §1) : l'app est PRIVÉE. Sans identité résolue (ni persistée d'une visite précédente du
+  // lien perso, ni en cours de résolution via /app/<token>/), on ne montre RIEN de l'app → page d'accès privé.
+  // L'identité est hydratée SYNCHRONE depuis localStorage (persist) → pas de flash à froid pour un invité connu.
+  // En DEV, `?identite=<role>` (résolu à l'effet ci-dessus) bypasse la garde pour les captures QA.
+  const codeResolu = useIdentite((s) => s.code) !== null;
+  const estBootstrap = location.pathname.startsWith('/app/');
+  const bypassDemo = import.meta.env.DEV && new URLSearchParams(location.search).has('identite');
+  if (!codeResolu && !estBootstrap && !bypassDemo) {
+    return <AccesPrive />;
+  }
+
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <a href="#contenu" className="lien-evitement">
         Aller au contenu
       </a>
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
-        <span className="font-serif text-lg">Barjøtur</span>
+        {/* Logo-maison : ramène à l'accueil hub depuis n'importe où (v2). */}
+        <NavLink to="/" className="font-serif text-xl hover:text-accent">
+          Barjøtur
+        </NavLink>
         <nav aria-label="Navigation principale" className="hidden flex-wrap gap-1 md:flex">
           {PRIMAIRES.map((l) => (
             <NavLink
@@ -91,7 +111,8 @@ export function Coquille() {
               end={l.exact}
               className={({ isActive }) =>
                 cn(
-                  'inline-flex min-h-tactile items-center rounded-md px-3 py-2 text-sm transition-colors',
+                  // Textes PLUS GROS (M471) : la v2 les avait plus lisibles (Mamie + enfants).
+                  'inline-flex min-h-tactile items-center rounded-md px-3 py-2 text-base transition-colors',
                   isActive ? 'bg-muted font-medium text-foreground' : 'text-muted-foreground hover:bg-muted',
                 )
               }
@@ -133,10 +154,6 @@ export function Coquille() {
         </div>
       ) : null}
 
-      <div data-guide="bandeau">
-        <BandeauParcours />
-      </div>
-
       <main id="contenu" className="mx-auto w-full max-w-6xl p-4 pb-24 md:pb-4">
         <LimiteErreur key={location.pathname}>
           <Suspense fallback={<p className="text-muted-foreground">Chargement en cours.</p>}>
@@ -151,14 +168,14 @@ export function Coquille() {
         data-guide="barre-bas"
         className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-card md:hidden"
       >
-        {PRIMAIRES.map((l) => (
+        {PRIMAIRES_MOBILE.map((l) => (
           <NavLink
             key={l.to}
             to={l.to}
             end={l.exact}
             className={({ isActive }) =>
               cn(
-                'flex min-h-tactile flex-1 flex-col items-center justify-center gap-0.5 py-2 text-center text-nav-bas leading-tight transition-colors',
+                'flex min-h-tactile flex-1 flex-col items-center justify-center gap-0.5 py-2 text-center text-sm leading-tight transition-colors',
                 isActive ? 'font-medium text-primary' : 'text-muted-foreground',
               )
             }
