@@ -8,9 +8,13 @@ import { useGeojsonPublic } from '@/lib/geojson-public';
 // Bascule globale. 'endpoint' = données réelles via Martin/BFF (B119) ; 'statique' = anciens assets public/data (repli).
 const SOURCE: 'statique' | 'endpoint' = 'endpoint';
 
-// Bases de DEV (B119). Au Go Live, Martin/BFF sont servis sur prod → passer ces bases en relatif/same-origin.
-const BFF = 'http://localhost:8099/api/carto';
-const MARTIN = 'http://localhost:8003';
+// Bases d'URL carto, pilotées par env pour ne JAMAIS coder en dur un localhost dans le build prod (C162, B145).
+// En PROD, défaut SAME-ORIGIN derrière le reverse-proxy de la stack v3 (comme `/api` dans api.ts) : `/api/carto`
+// pour le GeoJSON BFF, `/tiles` pour les tuiles Martin (MVT). En DEV, on garde la stack locale de B (B119). B peut
+// surcharger l'un ou l'autre par `VITE_CARTO_BFF` / `VITE_MARTIN` au montage de la stack (subdomain, CDN…). Le
+// navigateur du visiteur ne connaît ainsi qu'une seule origine (voyage.barjot.net), zéro CORS, zéro hostname figé.
+const BFF = import.meta.env.VITE_CARTO_BFF ?? (import.meta.env.DEV ? 'http://localhost:8099/api/carto' : '/api/carto');
+const MARTIN = import.meta.env.VITE_MARTIN ?? (import.meta.env.DEV ? 'http://localhost:8003' : '/tiles');
 
 type Nature = 'tuile' | 'geojson';
 
