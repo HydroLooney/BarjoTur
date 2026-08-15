@@ -3,7 +3,7 @@
 // `voter` (carte partagée `peut`, M077) — un invité ne règle pas ses envies. Passe-plat des RPC api.appetit_*.
 // Flip-ready : logique + garde testées ; les RPC (009) se jouent au flip (DSN).
 
-import { appelerRpc, argTexte, argFloat } from '../db/rpc.js';
+import { appelerRpc, argTexte, argNumerique } from '../db/rpc.js';
 import { Erreurs, ErreurRequete } from '../http/erreurs.js';
 import { lireWhoami } from './identite.js';
 import { exigerCapacite } from './voyageurs.js';
@@ -37,7 +37,7 @@ export async function ecrireAppetit(code: string, appetit: AppetitThematique, rp
   const res = await rpc<{ ok: boolean; error?: string; theme?: string; appetit?: number }>('appetit_ecrire', [
     argTexte(code),
     argTexte(appetit.theme),
-    argFloat(appetit.appetit),
+    argNumerique(appetit.appetit),
   ]);
   if (!res?.ok) throw new ErreurRequete(400, 'appetit_refuse', res?.error ?? 'Appétit refusé.');
   return { theme: res.theme ?? appetit.theme, appetit: res.appetit ?? appetit.appetit };

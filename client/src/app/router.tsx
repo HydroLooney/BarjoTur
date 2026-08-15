@@ -5,7 +5,7 @@ import { useWhoami } from '@/lib/queries/whoami';
 import { useIdentite } from '@/stores/identite';
 
 // Vues lourdes en lazy : chaque route tire son propre chunk (les cartes restent hors du chemin critique).
-// Socle d'app A20 : 7 espaces à titres explicites pour un enfant (« Le voyage », « Le trajet », « Mes
+// Socle d'app A20 : 7 espaces à titres explicites pour un enfant (« Le voyage », « Notre Voyage », « Mes
 // envies », « Préparatifs », « Réglages »…). Les anciens chemins redirigent (compat strangler).
 const Accueil = lazy(() => import('@/pages/Accueil')); // « Le voyage »
 const Explorer = lazy(() => import('@/pages/Explorer'));
@@ -14,10 +14,19 @@ const LeTrajet = lazy(() => import('@/pages/LeTrajet')); // ex-Composer
 const Carte = lazy(() => import('@/pages/Carte'));
 const Preparatifs = lazy(() => import('@/pages/Preparatifs')); // ex-Intendance
 const MonVoyage = lazy(() => import('@/pages/MonVoyage')); // « Mon voyage » (par voyageur, A26)
-const MesLieux = lazy(() => import('@/pages/MesLieux')); // « Mes envies »
+const MesEnvies = lazy(() => import('@/pages/MesEnvies')); // « Mes envies »
 const Coulisses = lazy(() => import('@/pages/Coulisses')); // « Réglages »
 const JourImprimable = lazy(() => import('@/pages/JourImprimable'));
 const Atlas = lazy(() => import('@/pages/Atlas'));
+const Conseils = lazy(() => import('@/pages/Conseils')); // « Les conseils du voyage » (T056, react-markdown lazy)
+const CarteCoulisses = lazy(() => import('@/pages/CarteCoulisses')); // carte de coulisses backstage (T069)
+const ConceptSymbologie = lazy(() => import('@/pages/ConceptSymbologie')); // planche de concepts symbologie POI (étape 3)
+const ConceptVignettes = lazy(() => import('@/pages/ConceptVignettes')); // planche de concept vignette + fallback (C12)
+const ConceptClustering = lazy(() => import('@/pages/ConceptClustering')); // planche de concept clustering + proéminence 5 tiers (C13)
+const Paniers = lazy(() => import('@/pages/Paniers')); // écran classement paniers / budget TSAB (M383/M394)
+const Decoupage = lazy(() => import('@/pages/Decoupage')); // C15 drill-down interactif région › district › paysage
+const RoutesSceniquesPage = lazy(() => import('@/pages/RoutesSceniques')); // C19 routes scéniques + couche bases
+const Agenda = lazy(() => import('@/pages/Agenda')); // #6 agenda confort (type de nuit, série autonomie/PPC, laverie)
 
 // Compat strangler : les anciens deep-links v2 (?onglet=, ?fiche=) redirigent vers les routes
 // propres v3, pour ne pas casser les liens deja partages pendant la bascule.
@@ -86,10 +95,20 @@ export const router = createBrowserRouter([
       { path: 'carte', element: <Carte /> },
       { path: 'preparatifs', element: <Preparatifs /> },
       { path: 'mon-voyage', element: <MonVoyage /> },
-      { path: 'mes-envies', element: <MesLieux /> },
+      { path: 'mes-envies', element: <MesEnvies /> },
+      { path: 'mes-paniers', element: <Paniers /> },
       { path: 'reglages', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },
       { path: 'atlas', element: <Atlas /> },
+      { path: 'conseils', element: <Conseils /> },
+      { path: 'conseils/:slug', element: <Conseils /> },
+      { path: 'coulisses/carte', element: <CarteCoulisses /> },
+      { path: 'coulisses/symbologie', element: <ConceptSymbologie /> },
+      { path: 'coulisses/vignettes', element: <ConceptVignettes /> },
+      { path: 'coulisses/clustering', element: <ConceptClustering /> },
+      { path: 'coulisses/decoupage', element: <Decoupage /> },
+      { path: 'carte/routes-sceniques', element: <RoutesSceniquesPage /> },
+      { path: 'agenda', element: <Agenda /> },
       // Compat des anciens chemins (strangler) : redirection vers les espaces A20.
       { path: 'voyager', loader: () => redirect('/carte') },
       { path: 'mes-lieux', loader: () => redirect('/mes-envies') },

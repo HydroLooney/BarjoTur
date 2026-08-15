@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { MultiLineString } from 'geojson';
 import { Link } from 'react-router-dom';
-import { CarteItineraire } from '@/components/CarteItineraire';
+import { CarteMapLibre } from '@/components/CarteMapLibre';
+import { FilItineraire } from '@/components/FilItineraire';
+import { AffordanceExpert } from '@/components/coulisses/OverlayExpert';
 import { useScenarioDefaut, useFigeDetail } from '@/lib/queries/fige';
 import { etapesDepuisFige } from '@/lib/fige-adapt';
 import type { EtapeEntree } from '@/lib/anim-trajet';
@@ -24,13 +26,21 @@ export default function Carte() {
 
   return (
     <section className="space-y-4">
-      <h1 className="font-serif text-2xl">Carte</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h1 className="font-serif text-2xl">Carte</h1>
+        {/* Overlay expert (M343) : reglages ecran='carte', gate mode expert + capacite. Invisible sinon. */}
+        <AffordanceExpert ecran="carte" />
+      </div>
       <p className="max-w-prose text-muted-foreground">
         L'itinéraire retenu, joué du départ au retour. Traversées d'eau en tireté, aucune ligne droite
         terrestre : le tracé suit la géométrie continue du voyage.
       </p>
-      <CarteItineraire geom={geom} etapes={etapes} />
-      <div>
+      <CarteMapLibre mode="lecture-ideal" geom={geom} etapes={etapes} />
+      <FilItineraire />
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        <Link to="/carte/routes-sceniques" className="text-sm text-accent hover:underline">
+          Routes scéniques et points de chute →
+        </Link>
         <Link to="/atlas" className="text-sm text-accent hover:underline">
           Voir l'atlas imprimable du voyage →
         </Link>

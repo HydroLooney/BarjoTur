@@ -53,6 +53,39 @@ export const RPC_AUTORISEES = [
   'circuits_lire',
   'circuit_lire',
   'zones_activites_lire',
+  'variante_liaison',
+  'voyageur_lien_generer',
+  'voyageur_lien_revoquer',
+  // Carto (M272 §3, B088) : wrappers des vues de diffusion v3 (livrées par A en Passe 2). Absentes d'ici là → 42883.
+  'carto_calques',
+  'carto_decoupage',
+  'carto_sentiers_difficultes',
+  'carto_circuits',
+  'carto_bases',
+  // Réglages (M361/M363) : lecture/écriture des params budget.parametre par famille (écriture gatée go bascule, 014).
+  'reglages_lire',
+  'reglage_ecrire',
+  // Carto GeoJSON (M367) : couches servies depuis les vues diffusion (plus de statique). Absentes en dev → FC vide.
+  'carto_poi_geojson',
+  'carto_decoupage_geojson',
+  'carto_services_van_geojson',
+  'carto_routes_sceniques_geojson',
+  'carto_sentiers_geojson',
+  // Circuits + bases idéales en GeoJSON (M410/C139) : derniers statiques retirés. Vues au dump final → 42883/FC vide d'ici là.
+  'carto_circuits_geojson',
+  'carto_bases_geojson',
+  // Recos personnalisées par voyageur (M380) : top-N POI par sa valeur/appétit.
+  'recos_voyageur',
+  // Fiche POI (M405/A140) : détail (poi.poi) + photos (v_web_poi_photos au dump final). poi_photos absente d'ici là → 42883/manifeste.
+  'poi_detail',
+  'poi_photos',
+  // Échange atomique de vote (M392) : retire + pose au même tier en une transaction.
+  'echanger_vote',
+  // Paniers hors-budget & cascade (M393/M396) : lecture des paniers, pose du surplus hors-budget (voie b),
+  // cascade de déclassement (voie a). Atomiques, posées au flip → 42883 avant, dégradation propre (surplus non compté).
+  'paniers_lire',
+  'poser_hors_budget',
+  'cascade_declassement',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
@@ -60,7 +93,7 @@ export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
 /** Un argument lié, avec un cast Postgres optionnel (ex. un objet passé en jsonb). */
 export interface ArgRpc {
   valeur: unknown;
-  cast?: 'text' | 'jsonb' | 'bigint' | 'integer' | 'double precision';
+  cast?: 'text' | 'text[]' | 'jsonb' | 'bigint' | 'integer' | 'numeric' | 'double precision';
 }
 
 /** Argument texte simple. */
@@ -73,9 +106,20 @@ export function argJsonb(valeur: unknown): ArgRpc {
   return { valeur: JSON.stringify(valeur), cast: 'jsonb' };
 }
 
+/** Argument tableau de texte (text[]), pour les RPC à param `text[]` (ex. espaces visibles d'un lien). `null` → NULL. */
+export function argTexteArray(valeur: readonly string[] | null): ArgRpc {
+  return { valeur: valeur === null ? null : [...valeur], cast: 'text[]' };
+}
+
 /** Argument entier long (bigint). On passe la valeur en chaîne pour éviter toute perte de précision. */
 export function argBigint(valeur: number): ArgRpc {
   return { valeur: String(valeur), cast: 'bigint' };
+}
+
+/** Argument `numeric` (pour les RPC dont la signature est numeric, ex. appetit ∈ [0,1]). Passé en chaîne (précision),
+ *  casté ::numeric : `double precision` ne résout PAS un paramètre numeric (pas de cast implicite). */
+export function argNumerique(valeur: number): ArgRpc {
+  return { valeur: String(valeur), cast: 'numeric' };
 }
 
 /** Argument entier (integer), pour les RPC dont la signature est `int` (ex. poi_id). Résolution de fonction exacte. */
@@ -86,6 +130,18 @@ export function argEntier(valeur: number): ArgRpc {
 /** Argument flottant (double precision), pour les coordonnées et autres réels. */
 export function argFloat(valeur: number): ArgRpc {
   return { valeur, cast: 'double precision' };
+}
+
+/** Dégradation propre (M147/M173) : tant qu'A n'a pas posé une RPC (tables pas livrées), Postgres lève
+ *  `undefined_function` (SQLSTATE 42883). On rend alors `defaut` (→ 200 vide) au lieu d'un 500. TOUTE autre erreur
+ *  remonte (un vrai problème doit rester visible). Se retire de lui-même à la livraison d'A. */
+export async function siRpcAbsente<T>(promesse: Promise<T>, defaut: T): Promise<T> {
+  try {
+    return await promesse;
+  } catch (e) {
+    if ((e as { code?: string })?.code === '42883') return defaut;
+    throw e;
+  }
 }
 
 /**

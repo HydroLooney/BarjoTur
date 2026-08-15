@@ -1,7 +1,9 @@
 import type { CataloguePoi } from '@barjotur/shared';
+import { bucketDepuisSource, CATEGORIES, type CategoriePoi } from '@/lib/categories-poi';
 
 export interface FiltresCatalogue {
   recherche: string;
+  /** BUCKET (cle des 18 catégories), aligné sur la carte/légende/panneau (étape 3-5). */
   categorie: string | null;
   /** Compare a tier_defaut (chaine : T/S/A/B, voire au-dela). */
   tier: string | null;
@@ -22,16 +24,16 @@ export function filtrerCatalogue(pois: CataloguePoi[], f: FiltresCatalogue): Cat
   return pois.filter((p) => {
     if (p.exclu === true) return false;
     if (f.votableSeul && !p.votable) return false;
-    if (f.categorie && p.categorie !== f.categorie) return false;
+    if (f.categorie && bucketDepuisSource(p.categorie).cle !== f.categorie) return false;
     if (f.tier && p.tier_defaut !== f.tier) return false;
     if (q && !normaliserTexte(p.nom).includes(q)) return false;
     return true;
   });
 }
 
-/** Liste triee (fr) des categories presentes dans le catalogue, pour le selecteur de facette. */
-export function categoriesDisponibles(pois: CataloguePoi[]): string[] {
-  const set = new Set<string>();
-  for (const p of pois) if (p.categorie) set.add(p.categorie);
-  return [...set].sort((a, b) => a.localeCompare(b, 'fr'));
+/** Les BUCKETS (catégories des 18) présents dans le catalogue, dans l'ordre du contrat — pour le sélecteur de facette. */
+export function bucketsDisponibles(pois: CataloguePoi[]): CategoriePoi[] {
+  const presents = new Set<string>();
+  for (const p of pois) presents.add(bucketDepuisSource(p.categorie).cle);
+  return CATEGORIES.filter((c) => presents.has(c.cle));
 }

@@ -2,10 +2,11 @@ import { useIdentite } from '@/stores/identite';
 import { useMesPropositions } from '@/lib/queries/carnet';
 import { useCollections } from '@/stores/collections';
 import { FormAjoutLieu } from '@/components/FormAjoutLieu';
+import { QuizzEnvies } from '@/components/QuizzEnvies';
 
-// Mes lieux (C15 / A11) : le « papier ». 1re couche = carnet de lieux perso (ajout + mes propositions).
+// Mes envies (C15 / A11) : le « papier ». 1re couche = carnet de lieux perso (ajout + mes propositions).
 // Les votes groupés par tier et les collections perso viendront (mémoire d'exploration serveur).
-export default function MesLieux() {
+export default function MesEnvies() {
   const code = useIdentite((s) => s.code);
   const { data: propositions } = useMesPropositions(code);
   const collections = useCollections((s) => s.collections);
@@ -13,7 +14,7 @@ export default function MesLieux() {
   if (!code) {
     return (
       <section className="space-y-3">
-        <h1 className="font-serif text-2xl">Mes lieux</h1>
+        <h1 className="font-serif text-2xl">Mes envies</h1>
         <p className="max-w-prose text-muted-foreground">
           Ouvrez votre lien perso pour accéder à votre carnet, vos votes et vos propositions.
         </p>
@@ -23,7 +24,12 @@ export default function MesLieux() {
 
   return (
     <section className="space-y-4">
-      <h1 className="font-serif text-2xl">Mes lieux</h1>
+      <h1 className="font-serif text-2xl">Mes envies</h1>
+
+      {/* Quizz sur invitation (M181 §B6) : un raccourci pour pre-remplir ses envies sans regler chaque curseur.
+          Ne s'impose pas ; on l'ouvre si on veut. Les envies affinees vivent ensuite dans « Mon voyage ». */}
+      <QuizzEnvies />
+
       <FormAjoutLieu code={code} />
       <div className="space-y-2">
         <h2 className="text-sm font-medium">Mes propositions</h2>

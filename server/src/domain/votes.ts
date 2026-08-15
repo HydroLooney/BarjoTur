@@ -11,6 +11,12 @@ export type {
   SetVotesResult,
   VoteUnitaireResult,
   PoidsVoteBase,
+  DemandeEchangeVote,
+  LieuVote,
+  PanierTier,
+  EtatPaniers,
+  EtapeCascade,
+  DemandePoserHorsBudget,
 } from '@barjotur/shared';
 
 import type { RefVote, VoteTier } from '@barjotur/shared';

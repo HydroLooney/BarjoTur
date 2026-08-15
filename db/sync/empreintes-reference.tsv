@@ -1,0 +1,15 @@
+# Empreintes de reference DB1 (Worker A) — pour la parite DB1<->DB2 (M234 Q4)
+# ATTENTION : l'empreinte du manifest est une PROJECTION SEMANTIQUE, pas un hash de ligne complete.
+#   Recette exacte, identique cote DB2 :
+#     SET (ou PGOPTIONS) extra_float_digits = 3;
+#     SELECT md5(string_agg(md5(t.*::text), '' ORDER BY <ordre>)) FROM (<projection>) t;
+#   -> md5 par ligne (t.*::text), concatenes AVEC SEPARATEUR VIDE '', tries par <ordre>, puis md5 du tout.
+#   La projection exclut volontairement les colonnes volatiles (params jsonb, timestamps, geom, colonnes owner DB2).
+#   Reproduit a l'octet le 2026-08-15 sur DB1.
+#
+# relation	lignes	md5	projection (colonnes)	ordre
+mcda2.base_reward	104	63dfd6ec10eb3e7c2c8249900227ac6f	base_id, reward_atteignable, n_poi	base_id
+mcda2.reward_poi	778	8aab0f6558a93e4a8b84a91138299ac9	poi_id, v_poi, tier, tres_frequente	poi_id
+mcda2.base_rayonnement	104	0df7bf3b3a4dad8a3587bc21d36221a3	base_id, rayonnement, n_poi	base_id
+mcda2.bases_ideales	104	574628b89d7bcc5a611c37b9defb5dee	base_id, mclp_rang, structurante, reward, rayonnement, zero_reward	base_id
+mcda2.matrice_base_base	10712	f8a28782afbd6d58e748310be20b6a94	source_base, target_base, minutes_roulage, minutes_ferry, km, ferry, n_ferries	source_base, target_base

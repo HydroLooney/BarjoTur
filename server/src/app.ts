@@ -22,7 +22,13 @@ import { routesComposeur } from './routes/composeur.js';
 import { routesActivite } from './routes/activite.js';
 import { routesAppetit } from './routes/appetit.js';
 import { routesCircuit } from './routes/circuit.js';
+import { routesCarto } from './routes/carto.js';
+import { routesReglage } from './routes/reglage.js';
+import { routesLiaison } from './routes/liaison.js';
+import { routesLien } from './routes/lien.js';
 import { entetesCache } from './middleware/cache.js';
+import { entetesSecurite } from './middleware/securite.js';
+import { creerLimiteDebit } from './middleware/limite-debit.js';
 import { middlewareErreurs, middlewareIntrouvable } from './middleware/erreurs.js';
 
 /** CORS minimal, piloté par l'environnement. Origines vides = permissif (dev local uniquement). */
@@ -48,9 +54,15 @@ function cors(origins: readonly string[]): RequestHandler {
 export function creerApp(env: Env): Express {
   const app = express();
   app.disable('x-powered-by');
+  app.set('trust proxy', 1); // derrière le proxy (NPM/Authentik) : req.ip = vraie IP client (X-Forwarded-For)
+  app.use(entetesSecurite);
   app.use(cors(env.corsOrigins));
   app.use(entetesCache);
   app.use(express.json({ limit: '256kb' }));
+  // Garde-fou anti-abus (cercle familial) : 300 requêtes/min/IP. Store mémoire (mono-instance) ; Redis si scale-out.
+  app.use('/api', creerLimiteDebit({ fenetreMs: 60_000, max: 300 }));
+  // Plafond plus strict sur les ÉCRITURES (anti-spam votes/POI/liens) : 40 mutations/min/IP ; les lectures ne pèsent pas.
+  app.use('/api', creerLimiteDebit({ fenetreMs: 60_000, max: 40, compteSi: (m) => m !== 'GET' && m !== 'HEAD' }));
 
   app.use('/api', routesSante);
   app.use('/api', routesIdentite);
@@ -69,6 +81,10 @@ export function creerApp(env: Env): Express {
   app.use('/api', routesActivite);
   app.use('/api', routesAppetit);
   app.use('/api', routesCircuit);
+  app.use('/api', routesCarto);
+  app.use('/api', routesReglage);
+  app.use('/api', routesLiaison);
+  app.use('/api', routesLien);
 
   app.use(middlewareIntrouvable);
   app.use(middlewareErreurs);

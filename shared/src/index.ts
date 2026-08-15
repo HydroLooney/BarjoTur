@@ -20,4 +20,5 @@ export * from './budget.js';
 export * from './memoire.js';
 export * from './parcours.js';
 export * from './voyage.js';
+export * from './reglage.js';
 export * from './api.js';

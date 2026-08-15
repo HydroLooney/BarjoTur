@@ -48,7 +48,7 @@
     left: 0.5rem;
     z-index: 50;
     transform: translateY(-150%);
-    transition: transform 0.15s ease;
+    transition: transform var(--anim-court) var(--easing-doux);
     background: var(--card);
     color: var(--card-foreground);
     border: 1px solid var(--border);
@@ -62,4 +62,45 @@
   .lien-evitement:focus {
     transform: translateY(0);
   }
+
+  /* Chiffres alignes (CHARTE v3 §5) : tabular-nums sur toute valeur/duree (budget, km, durees, votes, compteurs)
+     pour des colonnes de chiffres propres. A appliquer via la classe .chiffres. */
+  .chiffres {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Carte de survol des marqueurs POI (etape 3, SPEC §5) : chrome MapLibre de la popup habille aux jetons de charte
+   (dark-safe). Scope par .carte-survol pour battre le style par defaut de maplibre-gl.css sans !important. */
+.maplibregl-popup.carte-survol .maplibregl-popup-content {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre-flottante);
+  padding: 0;
+}
+.maplibregl-popup.carte-survol.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: var(--card);
+}
+.maplibregl-popup.carte-survol.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: var(--card);
+}
+.maplibregl-popup.carte-survol.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--card);
+}
+.maplibregl-popup.carte-survol.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--card);
+}
+
+/* Recommandations personnalisées (M379/M426) : halo pulsé en CSS (DOM, PAS le canvas WebGL → captures stables) ;
+   respecte prefers-reduced-motion (halo statique discret si l'utilisateur réduit les animations). */
+@keyframes hl-reco-pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  70% { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+.reco-halo { animation: hl-reco-pulse 2.2s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .reco-halo { animation: none; opacity: 0.35; }
 }

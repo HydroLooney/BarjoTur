@@ -7,10 +7,11 @@ import {
   validerEtapeTransit,
   arretsImposesPourCompose,
   orchestrerItineraire,
+  sequenceReservationBases,
 } from './itineraire.js';
 import type { EtapeItineraire } from '../domain/itineraire.js';
 import type { ArretTransit, EtapeTransit } from '../domain/voyage.js';
-import type { ComposeInput, ComposeReponse } from '../domain/composeur.js';
+import type { ArretImpose, ComposeInput, ComposeReponse } from '../domain/composeur.js';
 import { ErreurRequete } from '../http/erreurs.js';
 
 const P = { label: 'x', lat: 60, lon: 8 };
@@ -46,6 +47,14 @@ test('validerEtapeTransit exige des points depuis/vers valides', () => {
   assert.equal(ok.jalon_date, '2027-08-04T18:40:00Z');
 });
 
+test('validerEtapeTransit câble budget_min (M305) : nombre préservé, null/absent → null, type invalide → 400', () => {
+  assert.equal(validerEtapeTransit({ depuis: P, vers: P, faisceau: [], budget_min: 120 }).budget_min, 120);
+  assert.equal(validerEtapeTransit({ depuis: P, vers: P, faisceau: [] }).budget_min, null);
+  assert.equal(validerEtapeTransit({ depuis: P, vers: P, faisceau: [], budget_min: null }).budget_min, null);
+  assert.throws(() => validerEtapeTransit({ depuis: P, vers: P, faisceau: [], budget_min: 'x' }), ErreurRequete);
+  assert.throws(() => validerEtapeTransit({ depuis: P, vers: P, faisceau: [], budget_min: -5 }), ErreurRequete);
+});
+
 test('arretsImposesPourCompose traduit les arrêts imposés en contrainte {lat,lon}', () => {
   const out = arretsImposesPourCompose([arret('a', { reserve: true }), arret('b')]);
   assert.deepEqual(out, [{ lat: 60, lon: 8 }]); // seul le réservé est imposé
@@ -77,4 +86,38 @@ test('orchestrerItineraire rend une suite EtapeRoutee typée (expérience routé
   assert.equal(res.etapes[1]!.nature, 'transit');
   assert.equal(res.etapes[1]!.statut, 'en_attente_corridor');
   assert.deepEqual(res.etapes.map((e) => e.ordre), [0, 1, 2]); // ordre préservé
+});
+
+// A* réservation (A33) : une réservation confirmée = jalon imposé, waypoint OBLIGATOIRE du routage A* base-à-base.
+function imp(base_id: number | null, lat = 60, lon = 8): ArretImpose {
+  return { base_id, lat, lon };
+}
+
+test('sequenceReservationBases sans imposé : simple départ→arrivée', () => {
+  const r = sequenceReservationBases(10, 20, []);
+  assert.deepEqual(r.bases, [10, 20]);
+  assert.deepEqual(r.imposes_non_routables, []);
+});
+
+test('sequenceReservationBases insère les imposés routables dans l’ordre entre départ et arrivée', () => {
+  const r = sequenceReservationBases(10, 20, [imp(15), imp(17)]);
+  assert.deepEqual(r.bases, [10, 15, 17, 20]);
+  assert.deepEqual(r.imposes_non_routables, []);
+});
+
+test('sequenceReservationBases écarte et SIGNALE les imposés sans base_id (non routables sur le graphe, R1)', () => {
+  const sansBase = imp(null, 61, 9);
+  const r = sequenceReservationBases(10, 20, [imp(15), sansBase]);
+  assert.deepEqual(r.bases, [10, 15, 20]);
+  assert.deepEqual(r.imposes_non_routables, [sansBase]);
+});
+
+test('sequenceReservationBases fusionne les doublons consécutifs (imposé == départ/arrivée)', () => {
+  const r = sequenceReservationBases(10, 20, [imp(10), imp(15), imp(20)]);
+  assert.deepEqual(r.bases, [10, 15, 20]); // 10 et 20 non redoublés
+});
+
+test('sequenceReservationBases : deux imposés identiques consécutifs ne se répètent pas', () => {
+  const r = sequenceReservationBases(10, 20, [imp(15), imp(15)]);
+  assert.deepEqual(r.bases, [10, 15, 20]);
 });

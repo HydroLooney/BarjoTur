@@ -1,5 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { DemandeRegenererLien, DemandeRole, Voyageur } from '@barjotur/shared';
+import type {
+  DemandeGenererLien,
+  DemandeRegenererLien,
+  DemandeRevoquerLien,
+  DemandeRole,
+  LienGenere,
+  Voyageur,
+} from '@barjotur/shared';
 import { api } from '@/lib/api';
 
 // Admin des voyageurs (T039) : l'organisateur liste la famille, régénère un lien perso, change un rôle.
@@ -34,5 +41,25 @@ export function useRegenererLien(voyageId: number, code: string | null) {
   return useMutation({
     mutationFn: (d: DemandeRegenererLien) =>
       api.post<Voyageur>(`${base(voyageId, code ?? '')}/${d.membre_id}/regenerer-lien`, d, { idempotent: true }),
+  });
+}
+
+// Liens de partage à PORTÉE (T057 / M199, contrat `@barjotur/shared` f9e5fda) : l'organisateur génère un lien
+// Membre / Suggestion / Vitrine (votesComptent + espaces visibles portés par la portée) et peut le révoquer.
+// Route : le code du DEMANDEUR (organisateur) reste dans le PATH (convention `base`, comme le reste de l'admin) ;
+// la cible à révoquer voyage dans le corps (`DemandeRevoquerLien.code`). PIN vérifié serveur, jamais stocké (A03/R2).
+
+/** Générer un lien de partage à portée. Renvoie `LienGenere` (voyageur + portée effective + votesComptent). */
+export function useGenererLien(voyageId: number, code: string | null) {
+  return useMutation({
+    mutationFn: (d: DemandeGenererLien) => api.post<LienGenere>(`${base(voyageId, code ?? '')}/lien`, d),
+  });
+}
+
+/** Révoquer un lien (le code cible meurt). Idempotent : révoquer deux fois ne casse rien. */
+export function useRevoquerLien(voyageId: number, code: string | null) {
+  return useMutation({
+    mutationFn: (d: DemandeRevoquerLien) =>
+      api.post<{ ok: true }>(`${base(voyageId, code ?? '')}/revoquer`, d, { idempotent: true }),
   });
 }

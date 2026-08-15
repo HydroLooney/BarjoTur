@@ -46,13 +46,13 @@ export function VueBudget() {
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         <span>
           Budget :{' '}
-          <span className="font-medium">
+          <span className="font-medium tabular-nums">
             de {euro(b.total_non_prudent_eur)} à {euro(b.total_prudent_eur)}
           </span>
         </span>
         <span className="text-muted-foreground">estimation basse → haute</span>
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground tabular-nums">
         Par adulte ({b.par_adulte.nb_adultes}) : de {euro(b.par_adulte.non_prudent_eur)} à{' '}
         {euro(b.par_adulte.prudent_eur)}. {b.par_adulte.note}
       </p>

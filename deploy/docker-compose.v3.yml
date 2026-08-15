@@ -1,0 +1,59 @@
+# Stack v3 BarjoTur (M280 §1) — déploiement push-button, strangler-fig vers voyage.barjot.net.
+# 4 services : bff (Node/Express) · sidecar (Python/OR-Tools) · martin (tuiles MVT) · client (nginx statique).
+# DB2 (norvege_v2) est EXTERNE (conteneur norvege-db existant) : la stack s'y connecte, ne la gère pas.
+# Secrets HORS dépôt (R2) : fournir via un .env non commité (deploy/.env) ou l'orchestrateur. Ne jamais committer les valeurs.
+#   NORVEGE_DB2_URI=postgres://norvege:***@norvege-db:5432/norvege_v2
+#   CORS_ORIGINS=https://voyage.barjot.net
+# Réseau `web` partagé avec le proxy amont (NPM/Authentik) qui route voyage.barjot.net → client, /api → bff, /tiles → martin.
+services:
+  bff:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    environment:
+      DATABASE_URL: ${NORVEGE_DB2_URI}
+      SIDECAR_URL: http://sidecar:8001
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      PORT: "8080"
+    networks: [web]
+    restart: unless-stopped
+    # bff n'ouvre son port qu'une fois le sidecar SAIN (le HEALTHCHECK du Dockerfile sidecar sonde /health).
+    depends_on:
+      sidecar:
+        condition: service_healthy
+
+  sidecar:
+    build:
+      context: ../sidecar
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: ${NORVEGE_DB2_URI}
+      PORT: "8001"
+    networks: [web]
+    restart: unless-stopped
+    # HEALTHCHECK porté par sidecar/Dockerfile (urllib → /health) : sert de gate à bff (depends_on service_healthy).
+
+  martin:
+    image: ghcr.io/maplibre/martin:latest
+    command: ["--config", "/config.yaml"]
+    # tiles/config.toml lit `connection_string = "${MARTIN_DB_URL}"` : c'est CETTE variable qu'il faut fournir (pas
+    # DATABASE_URL). Martin écoute sur 0.0.0.0:8003 (déclaré dans le config) ; le proxy amont route /tiles → martin:8003.
+    environment:
+      MARTIN_DB_URL: ${NORVEGE_DB2_URI}
+    volumes:
+      # config.yaml (Martin 1.13 = YAML ; auto-publie le schéma diffusion v3, 6 couches tuiles dont v_web_bases_ideales).
+      # L'ancien config.toml (TOML + couches absentes circuits/fige) est obsolète, remplacé par config.yaml (M431/A146).
+      - ../tiles/config.yaml:/config.yaml:ro
+    networks: [web]
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ..
+      dockerfile: client/Dockerfile
+    networks: [web]
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true

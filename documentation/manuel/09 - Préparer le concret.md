@@ -1,6 +1,8 @@
 # Préparer le concret
 
-Un beau trajet ne suffit pas : il faut savoir combien il coûte, ce qu'on mangera, ce qu'on emporte, et ce qu'on doit réserver à l'avance. C'est le rôle de l'espace Préparatifs. On y prépare le voyage avant de partir, on y ajuste au fil du réel.
+Un beau trajet ne suffit pas : il faut savoir combien il coûte et ce qu'on doit réserver à l'avance. C'est le rôle de l'espace Préparatifs. On y prépare le voyage avant de partir, on y ajuste au fil du réel.
+
+L'espace se range en onglets, qu'on ouvre l'un après l'autre. Le budget vient en premier, parce que c'est ce qu'on regarde le plus. Les réservations suivent, rangées dans l'ordre du calendrier.
 
 ## Le budget
 
@@ -15,6 +17,8 @@ Le budget se lit poste par poste, pour voir où part l'argent. Les postes sont c
 - **Activités** : les visites et les entrées payantes.
 - **Transit** : ce que coûtent les tronçons de route pour se repositionner.
 
+Deux postes sont déjà des chiffres fermes, parce que tout est réservé et payé : la location du van, deux mille huit cent vingt-six euros et quatre-vingt-un centimes, et la grande traversée en bateau à l'aller et au retour, six cent quatre-vingt-six euros. Ceux-là ne bougent plus. Les autres postes restent des estimations, qui s'affinent à mesure qu'on réserve.
+
 Le budget se donne en fourchette, pas en chiffre unique : il vaut mieux une estimation qui ne surprend pas au retour. L'app montre deux bords. L'estimation basse est le coût sans coussin, si tout se passe au plus juste. L'estimation haute ajoute la marge de sécurité, pour n'être pas pris de court. La vérité probable se tient entre les deux. Le total se rapporte à chaque adulte, pour savoir ce que chacun met dans la cagnotte. Les chiffres sont des estimations réelles, jamais un nombre inventé pour faire joli.
 
 La marge de sécurité est un coussin, réglable en pourcentage, ajouté au budget. C'est elle, et elle seule, qui sépare l'estimation basse de l'estimation haute : à zéro, les deux bords se rejoignent ; plus on la relève, plus la fourchette s'ouvre vers le haut.
@@ -27,9 +31,9 @@ Le carburant est le poste qui bouge le plus, et l'app le laisse régler, au curs
 
 Une carte de prépaiement norvégienne, l'AutoPASS, donne droit à une réduction sur le prix des ferries. Si vous en prenez une, l'app en tient compte : un curseur dit le pourcentage de la ristourne, et le budget des ferries baisse d'autant. Laissée à zéro par défaut, l'app compte le plein tarif, sans supposer un rabais que vous n'auriez pas.
 
-## Les repas, le matériel
+## Les repas, le matériel (à venir)
 
-À côté du budget, l'intendance rassemble ce qu'on prépare à la main. On tient une liste de recettes, une liste de menus, et une liste de matériel à cocher au fur et à mesure qu'on l'emballe : le réchaud, les gourdes, la popote. Ces listes sont privées et restent sur votre appareil.
+Une intendance est prévue à côté du budget, pour ce qu'on prépare à la main : une liste de recettes, une liste de menus, une liste de matériel à cocher au fur et à mesure qu'on l'emballe. Un partage des dépenses entre voyageurs est prévu de même. Ces fonctions ne sont pas encore dans l'app ; elles viendront après la mise en service, et ce manuel les décrira quand elles seront là.
 
 ## Les nuits en autonomie
 
@@ -37,4 +41,6 @@ Sur les tronçons de route, l'app cherche où passer la nuit, et elle préfère 
 
 ## Les réservations
 
-Une réservation, une fois payée, devient un point fixe que tout le reste du voyage respecte. Elle se pose à une date, comme un jalon sur le trajet, et l'app ne la déplace plus. C'est la garantie qu'un nouveau calcul ne viendra jamais bousculer un billet déjà pris ou une nuit déjà réglée. Ce sont ces points fixes, la traversée en bateau, les dates, la location du van, qui tiennent le voyage et se verrouillent définitivement, comme le rappelle le chapitre [Le fil du voyage](03 - Le fil du voyage.md).
+Une réservation, une fois payée, devient un point fixe que tout le reste du voyage respecte. Elle se pose à une date et, toujours, à un lieu réel : une adresse ou un point désigné sur la carte, jamais une date en l'air. C'est ce qui permet à l'app de tracer aussitôt le vrai chemin qui y mène. Une fois posée, l'app ne la déplace plus : un nouveau calcul ne viendra jamais bousculer un billet déjà pris ou une nuit déjà réglée. Ce sont ces points fixes, la traversée en bateau, les dates, la location du van, les nuits réservées, qui tiennent le voyage et se verrouillent définitivement, comme le rappelle le chapitre [Le fil du voyage](03 - Le fil du voyage.md).
+
+Les réservations se posent ici, dans Préparatifs, rangées par ordre de date, mais aussi depuis l'espace Notre Voyage, en épinglant l'endroit sur la carte ou en marquant l'étape sur le fil. C'est le même geste, la même règle du lieu réel, décrit au chapitre [Notre Voyage](07 - Notre Voyage.md).

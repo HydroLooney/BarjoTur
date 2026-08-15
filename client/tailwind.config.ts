@@ -38,13 +38,41 @@ export default {
         sans: ['var(--sans)'],
         serif: ['var(--serif)'],
       },
+      // Echelle de 4 rayons en tokens (CHARTE v3 §2) : plus de 4px litteral (violation R03 levee).
       borderRadius: {
-        lg: 'var(--rayon)',
+        sm: 'var(--rayon-xs)',
         md: 'var(--rayon-s)',
-        sm: '4px',
+        lg: 'var(--rayon)',
+        full: 'var(--rayon-plein)',
       },
+      // 3 niveaux d'elevation (CHARTE v3 §4).
       boxShadow: {
+        posee: 'var(--ombre-posee)',
         charte: 'var(--ombre)',
+        flottante: 'var(--ombre-flottante)',
+      },
+      // Echelle typographique nommee (CHARTE v3 §5) : cesser d'utiliser text-lg/sm/xs au juge.
+      fontSize: {
+        hero: 'var(--t-hero)',
+        carte: 'var(--t-carte)',
+        titre: 'var(--t-titre)',
+        section: 'var(--t-section)',
+        corps: 'var(--t-corps)',
+        meta: 'var(--t-meta)',
+        micro: 'var(--t-micro)',
+        'nav-bas': 'var(--t-nav-bas)',
+      },
+      // Motion tokens (CHARTE v3 §6) : durees et courbes nommees, coupees en reduced-motion (tokens a 0ms).
+      transitionDuration: {
+        instant: 'var(--anim-instant)',
+        court: 'var(--anim-court)',
+        moyen: 'var(--anim-moyen)',
+        long: 'var(--anim-long)',
+      },
+      transitionTimingFunction: {
+        doux: 'var(--easing-doux)',
+        entree: 'var(--easing-entree)',
+        sortie: 'var(--easing-sortie)',
       },
       minHeight: {
         tactile: 'var(--cible-tactile)',

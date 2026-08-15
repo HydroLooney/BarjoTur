@@ -15,7 +15,12 @@ export interface BudgetPostes {
   transit?: number;
 }
 
-/** Marge de sécurité par défaut, en % (Guillaume : prudent, réglable). Le budget prudent applique une marge. */
+/**
+ * Marge de sécurité par défaut, en % — REPLI SEULEMENT (B109). La vérité, ce sont les marges PAR POSTE de
+ * `budget.parametre` (carburant/camping/confort/activités/ferry/péages/imprévus/inflation/courses), appliquées en DB2.
+ * Ne PAS s'en servir pour afficher la marge d'un budget réel : utiliser `margeEffectivePct` (marge effective mesurée).
+ * Cette constante ne vaut que comme défaut de secours quand aucun comparatif n'est disponible.
+ */
 export const MARGE_SECURITE_PCT = 20;
 
 /**
@@ -57,4 +62,27 @@ export interface BudgetComparatif {
   alertes: BudgetAlertes;
   total_prudent_eur: number;
   total_non_prudent_eur: number;
+}
+
+/**
+ * Marge EFFECTIVE d'un comparatif, en % : (prudent − non_prudent) / non_prudent × 100. Source de vérité pour le
+ * curseur et l'affichage (B109) — reflète les vraies marges par poste appliquées en DB2, PAS la constante
+ * `MARGE_SECURITE_PCT`. Rend 0 si `non_prudent` ≤ 0 (évite la division par zéro). Pur.
+ */
+export function margeEffectivePct(c: Pick<BudgetComparatif, 'total_prudent_eur' | 'total_non_prudent_eur'>): number {
+  if (c.total_non_prudent_eur <= 0) return 0;
+  return ((c.total_prudent_eur - c.total_non_prudent_eur) / c.total_non_prudent_eur) * 100;
+}
+
+/**
+ * Garde de cohérence du budget en EUR (B109) : tous les totaux/postes sont des nombres finis et EUR-only (aucun montant
+ * NOK non converti ne doit fuiter dans un total). Rend false au moindre montant non fini. Pur.
+ */
+export function budgetEurCoherent(c: BudgetComparatif): boolean {
+  const montants = [
+    c.total_prudent_eur,
+    c.total_non_prudent_eur,
+    ...Object.values(c.postes),
+  ].filter((v): v is number => v !== undefined);
+  return montants.every((v) => Number.isFinite(v));
 }

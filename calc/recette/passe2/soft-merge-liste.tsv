@@ -1,0 +1,43 @@
+# Liste keep/merge — DEDUP MULTI-SIGNAL (M283 geo 150m + M284 nom fuzzy). Soft-merge Passe 2 en UN geste.
+# geo 150m : 9 MERGE. + signal NOM (noms normalises identiques au-dela de 150m) : 7 MERGE de plus = entites
+#   LINEAIRES/ETENDUES que la geo rate (Sognefjord, Lysefjord, Parc Femundsmarka, Utsira, routes, vallee) -> 16 MERGE.
+# 11 paires BOTH_SCORED -> double-comptent dans les 778 -> le merge ramene a ~767. 2 ont des TIERS DIVERGENTS
+#   entre copies (Lysefjord A/B, Route Lysevegen T/A) -> le re-score v3 from-scratch (90_) tranche.
+# TODO description-similarite (3e signal) apres integration enrichissement. KEEP notable : Fisketorget x2 (160 km = villes differentes).
+# Cle = osm_id. survivant = scoré (si both-scored : id OSM reel positif ; tier tranché au re-score). MERGE=meme lieu / KEEP=distinct.
+#
+# decision	survivant_osm_id	survivant_nom	fusionne_osm_id	fusionne_nom	dist_m	note
+MERGE	79028146	Vigelandsparken	79001225	Parc Vigeland	3	survivant scoré B
+MERGE	79788887	Église en bois debout - Urnes	90000018	Stavkirke d'Urnes	10	survivant scoré B
+MERGE	79788893	Église en bois debout - Kaupanger	90000019	Stavkirke de Kaupanger	15	survivant scoré B
+MERGE	79788918	Église en bois debout - Rødven	90000022	Stavkirke de Rodven	17	survivant scoré B
+MERGE	79788898	Église en bois debout - Lom	90000021	Stavkirke de Lom	22	BOTH_SCORED (double-compte)
+MERGE	79788896	Église en bois debout - Øye	90000020	Stavkirke d'Oye	76	BOTH_SCORED (double-compte)
+MERGE	79695386	Green Garden	90000034	Green Garden (dejeuner), Alesund	13	survivant scoré B
+MERGE	79786692	Kjosfossen	90000014	Cascade de Kjosfossen	65	BOTH_SCORED (double-compte)
+MERGE	79029611	Île d’Odderøya	-6	Île d'Odderøya	108	BOTH_SCORED (double-compte ; variante apostrophe, seuil 150m M283)
+KEEP	79381756	Lyngen Husky Safari	79381904	Lyngen Safari Snowshoe Walk	11	activités distinctes, même opérateur
+KEEP	79715842	Grand Hotell Egersund	79508593	Egersund	29	hôtel vs ville
+KEEP	79367867	Stakeriet Mat og Vinhus	79367935	Erica Mat og Vinbar	32	deux restaurants
+KEEP	79435228	Valberget	79421757	Valbergtårnet	33	rocher vs tour (landmark distinct)
+KEEP	79674475	Boulangerie de Marens	79674481	Boucherie Inderøy	52	boulangerie vs boucherie
+KEEP	79714874	Apotekergata No. 5	79714922	The Greedy Box	58	deux lieux Ålesund
+KEEP	79790169	Brimibue Hotel	79790603	Lom Bakery	58	hôtel vs boulangerie
+KEEP	79804920	Musée d'art Rasmus Meyer	79804927	Bergen Kunsthall	62	deux institutions KODE distinctes
+KEEP	79435228	Valberget	79421961	Øvre Holmegate	63	rocher vs rue colorée
+KEEP	79695356	Centre d'Art nouveau	79714897	Vino Bar	65	musée vs bar
+KEEP	79084834	Stock	79085219	Maaemo	67	deux restaurants Oslo
+KEEP	79714865	Restaurant Olebuda	79714866	Brasserie Posten	68	deux tables
+KEEP	79507847	Flekkefjord	79030029	Grand Hotell Flekkefjord	71	ville vs hôtel
+KEEP	79421961	Øvre Holmegate	79421757	Valbergtårnet	95	rue vs tour
+KEEP	79350012	Rjukan	79384211	Rjukan Hytteby Kro	97	ville vs auberge
+KEEP	79714897	Vino Bar	79714922	The Greedy Box	99	deux lieux Ålesund
+MERGE	79715115	Sognefjord	90000002	Sognefjord	2727	BOTH_SCORED ; signal NOM (fjord, geo rate)
+MERGE	79412639	Lysefjord	-22	Lysefjord	8816	BOTH_SCORED ; TIER_DIVERGENT B/A ; signal NOM (fjord)
+MERGE	79694770	Parc national de Femundsmarka	90000045	Parc national de Femundsmarka	1266	BOTH_SCORED ; signal NOM (parc)
+MERGE	79412782	Île d’Utsira	-27	Île d'Utsira	222	BOTH_SCORED ; signal NOM (ile)
+MERGE	79412739	Route Lysevegen	-25	Route Lysevegen	1005	BOTH_SCORED ; TIER_DIVERGENT A/T ; signal NOM (route)
+MERGE	79714366	Gamle Strynefjellsvegen	route-gamle-strynefjellsvegen	Gamle Strynefjellsvegen	6789	BOTH_SCORED ; signal NOM (route panoramique)
+MERGE	79695336	Vallée de Romsdal	90000031	Vallee de Romsdal	12946	BOTH_SCORED ; signal NOM (vallee)
+REVIEW	79715130	Village de Lom	90000003	Village de Lom	15689	nom identique mais 15,7 km -> verifier (2 points Lom ?) avant merge
+KEEP	79788876	Fisketorget	79430525	Fisketorget	160316	marches aux poissons de villes differentes (160 km)

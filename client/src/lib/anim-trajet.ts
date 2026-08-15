@@ -22,6 +22,9 @@ export type LL = [number, number];
 /** Nature d'un point du trace : 'boucle' = route terrestre continue, 'liaison' = traversee d'eau (tiretee). */
 export type Nature = 'boucle' | 'liaison';
 
+/** Phase du voyage : 'aller' (départ → apex) vs 'retour' (apex → départ). Apex = point le plus loin du départ. */
+export type Phase = 'aller' | 'retour';
+
 /** Une etape (nuitee) fournie par l'agenda, avec sa coordonnee resolue en [lon, lat] (ou null si non calee). */
 export interface EtapeEntree {
   ordre: number;
@@ -61,6 +64,10 @@ export interface ModeleAnim {
   cum: number[];
   /** Convention d'index : nature[i] qualifie l'ARC entrant au point i (segment pts[i-1] -> pts[i]). nature[0] = 'boucle' (le premier point n'a pas d'arc entrant). */
   nature: Nature[];
+  /** Phase par point : 'aller' jusqu'à l'apex (le plus loin du départ), 'retour' ensuite. Support unique des couleurs aller/retour (tracé/barre/agenda/carnet). */
+  phase: Phase[];
+  /** Temps cumulé (dans [0, total]) à l'apex : bascule aller → retour. */
+  tApex: number;
   legs: Leg[];
   etapes: EtapeAnim[];
   /** Temps total (echelle des cum). Vaut 1 si trace vide, pour eviter les divisions par zero. */
@@ -128,7 +135,7 @@ export function modeleAnimationFigeGeom(
   geom: Geometry | Feature | null | undefined,
   etapesSrc: EtapeEntree[] = [],
 ): ModeleAnim {
-  const vide: ModeleAnim = { pts: [], cum: [], nature: [], legs: [], etapes: [], total: 1, schematique: false };
+  const vide: ModeleAnim = { pts: [], cum: [], nature: [], phase: [], tApex: 0, legs: [], etapes: [], total: 1, schematique: false };
 
   const segs = extraireSegments(geom);
   const runs = segs
@@ -184,26 +191,47 @@ export function modeleAnimationFigeGeom(
   if (pts.length < 2) return vide;
   const total = cum[cum.length - 1] || 1;
 
-  // Etapes (dates/nuits) projetees sur le point le plus proche du trace.
-  const etapes: EtapeAnim[] = etapesSrc
-    .map((e, i) => {
-      const coord = e.coord;
-      let best = 0;
-      let bd = Infinity;
-      if (coord) {
-        const cible: LL = [coord[1], coord[0]];
-        for (let k = 0; k < pts.length; k++) {
-          const pk = pts[k];
-          if (!pk) continue;
-          const d = dist(pk, cible);
-          if (d < bd) {
-            bd = d;
-            best = k;
-          }
+  // Projection des etapes sur le point le plus proche (on garde `best` pour le dwell du rythme).
+  const projete = etapesSrc.map((e, i) => {
+    const coord = e.coord;
+    let best = 0;
+    let bd = Infinity;
+    if (coord) {
+      const cible: LL = [coord[1], coord[0]];
+      for (let k = 0; k < pts.length; k++) {
+        const pk = pts[k];
+        if (!pk) continue;
+        const d = dist(pk, cible);
+        if (d < bd) {
+          bd = d;
+          best = k;
         }
       }
+    }
+    return { e, i, best, nuits: Number(e.nuits) || 1 };
+  });
+
+  // RYTHME ∝ TEMPS (M307 sous-brique 4) : on ajoute un DWELL au temps cumule a chaque etape, proportionnel aux
+  // NUITS (une base par etape + un supplement par nuit). Le curseur RALENTIT en approchant d'un camp, et d'autant
+  // plus qu'on y reste plusieurs nuits — le rythme raconte l'allocation reelle du temps, pas une vitesse constante.
+  const DWELL_BASE = total * 0.05;
+  const DWELL_NUIT = total * 0.08;
+  const dwellAt = new Array<number>(pts.length).fill(0);
+  for (const p of projete) dwellAt[p.best] = (dwellAt[p.best] ?? 0) + DWELL_BASE + p.nuits * DWELL_NUIT;
+  const cumD: number[] = [];
+  let acc = 0;
+  for (let k = 0; k < pts.length; k++) {
+    acc += dwellAt[k] ?? 0;
+    cumD.push((cum[k] ?? 0) + acc);
+  }
+  const totalD = cumD[cumD.length - 1] || 1;
+
+  // Etapes finales, temps recalcule APRES dwell (l'agenda pilote la vitesse locale).
+  const etapes: EtapeAnim[] = projete
+    .map(({ e, i, best }) => {
+      const coord = e.coord;
       const ancre = pts[best];
-      const tb = cum[best] ?? 0;
+      const tb = cumD[best] ?? 0;
       return {
         ll: coord ? ([coord[1], coord[0]] as LL) : (ancre ?? [0, 0]),
         ordre: e.ordre ?? i + 1,
@@ -212,13 +240,34 @@ export function modeleAnimationFigeGeom(
         date: e.date ?? null,
         type: e.type,
         time: tb,
-        pos: tb / total,
+        pos: tb / totalD,
       } satisfies EtapeAnim;
     })
     .sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
 
-  const legs: Leg[] = [{ a: 0, b: total, libelle: 'Itinéraire', kind: 'boucle', scenique: false }];
-  return { pts, cum, nature, legs, etapes, total, schematique: false };
+  // Phase aller/retour : l'APEX = le point le plus loin (géographiquement) du départ (inchange par le dwell).
+  const depart = pts[0] as LL;
+  let apex = 0;
+  let dMax = -1;
+  for (let k = 0; k < pts.length; k++) {
+    const pk = pts[k];
+    if (!pk) continue;
+    const d = dist(pk, depart);
+    if (d > dMax) {
+      dMax = d;
+      apex = k;
+    }
+  }
+  const phase: Phase[] = pts.map((_, k) => (k <= apex ? 'aller' : 'retour'));
+  const tApex = cumD[apex] ?? totalD;
+
+  const legs: Leg[] = [{ a: 0, b: totalD, libelle: 'Itinéraire', kind: 'boucle', scenique: false }];
+  return { pts, cum: cumD, nature, phase, tApex, legs, etapes, total: totalD, schematique: false };
+}
+
+/** Phase (aller/retour) au temps t : bascule à l'apex. */
+export function phaseAuTemps(modele: ModeleAnim, t: number): Phase {
+  return t <= modele.tApex ? 'aller' : 'retour';
 }
 
 /**
@@ -245,6 +294,38 @@ export function positionAuTemps(modele: ModeleAnim, t: number): LL | null {
     }
   }
   return pts[pts.length - 1] ?? premier;
+}
+
+/** Mode de déplacement figuré par l'icône du curseur (carte animée, sous-brique 2). */
+export type ModeCurseur = 'van' | 'pied' | 'transport' | 'ferry';
+
+export interface EtatCurseur {
+  ll: LL;
+  mode: ModeCurseur;
+  /** Le curseur est au voisinage TEMPOREL d'une étape à nuitée (variante nuit de l'icône). */
+  nuit: boolean;
+}
+
+/**
+ * État du curseur au temps t : position + MODE + NUIT (carte animée M218, sous-brique 2).
+ * Mode DÉRIVÉ de la nature du segment courant : 'liaison' (traversée d'eau) → `ferry` ; 'boucle' (terre) → `van`.
+ * R1 : `pied` / `transport` ne sont pas encore dans le modèle d'anim (pas de mode par segment) — ils se
+ * brancheront ici quand la donnée arrivera (fige/étapes de transit d'A). NUIT = proche en temps d'une nuitée.
+ */
+export function etatAuTemps(modele: ModeleAnim, t: number): EtatCurseur | null {
+  const { pts, cum, nature, etapes, total } = modele;
+  const ll = positionAuTemps(modele, t);
+  if (!ll) return null;
+  const cible = Math.max(0, Math.min(t, total));
+  let i = 1;
+  for (; i < pts.length; i++) {
+    if (cible <= (cum[i] ?? cible)) break;
+  }
+  const nat = nature[Math.min(i, nature.length - 1)] ?? 'boucle';
+  const mode: ModeCurseur = nat === 'liaison' ? 'ferry' : 'van';
+  const fenetre = total * 0.04;
+  const nuit = etapes.some((e) => e.nuits >= 1 && Math.abs(e.time - cible) < fenetre);
+  return { ll, mode, nuit };
 }
 
 /**

@@ -31,6 +31,11 @@ export function validerEtapeTransit(brut: unknown): EtapeTransit {
   if (jalon !== null && typeof jalon !== 'string') {
     throw Erreurs.requeteInvalide('Étape transit : jalon_date doit être une chaîne ISO ou null.');
   }
+  // budget_min (M305) : budget de route en minutes de l'étape obligatoire ; null/absent = libre. Entier ≥ 0.
+  const budget = t.budget_min === undefined || t.budget_min === null ? null : t.budget_min;
+  if (budget !== null && (typeof budget !== 'number' || !Number.isFinite(budget) || budget < 0)) {
+    throw Erreurs.requeteInvalide('Étape transit : budget_min doit être un nombre de minutes ≥ 0 ou null.');
+  }
   return {
     id: typeof t.id === 'string' ? t.id : '',
     ordre: typeof t.ordre === 'number' ? t.ordre : 0,
@@ -38,6 +43,7 @@ export function validerEtapeTransit(brut: unknown): EtapeTransit {
     vers: t.vers as PointVoyage,
     jalon_date: jalon,
     faisceau: t.faisceau as EtapeTransit['faisceau'],
+    budget_min: budget,
   };
 }
 
@@ -69,6 +75,34 @@ export function validerEtapesItineraire(corps: unknown): EtapeItineraire[] {
  *  (M062 : `ComposeInput.arretsImposes`). Sert au routage transit quand le corridor d'A arrive. Pure. */
 export function arretsImposesPourCompose(faisceau: ArretTransit[]): ArretImpose[] {
   return arretsImposes(faisceau).map((a) => ({ lat: a.lat, lon: a.lon }));
+}
+
+/** Séquence de bases à router par A* réservation (A33) + les imposés non routables (signalés, R1). */
+export interface SequenceReservation {
+  /** Séquence ORDONNÉE de `base_id` à passer à `api.geom_route_astar` : départ, jalons imposés, arrivée. */
+  bases: number[];
+  /** Imposés SANS `base_id` : non plaçables sur le graphe des bases, donc écartés du routage (honnêteté R1). */
+  imposes_non_routables: ArretImpose[];
+}
+
+/**
+ * A* réservation (A33) : une réservation confirmée est un JALON IMPOSÉ (A18/A19 §8.1, cf `epinglerReserves`) que le
+ * routage A* base-à-base DOIT traverser. On assemble la séquence ordonnée de `base_id` — départ, imposés routables (dans
+ * l'ordre reçu), arrivée — à passer à `api.geom_route_astar(int[])` (graphe `ways_*`, lecture seule DB2). Les imposés
+ * sans `base_id` ne sont pas plaçables sur le graphe des bases : on les ÉCARTE et on les SIGNALE (R1), on n'invente pas
+ * de tracé. Les doublons consécutifs (un imposé confondu avec le départ, l'arrivée ou le précédent) sont fusionnés pour
+ * ne pas router un tronçon nul. Pure.
+ */
+export function sequenceReservationBases(
+  depart: number,
+  arrivee: number,
+  imposes: readonly ArretImpose[],
+): SequenceReservation {
+  const routables = imposes.filter((a): a is ArretImpose & { base_id: number } => a.base_id != null);
+  const imposes_non_routables = imposes.filter((a) => a.base_id == null);
+  const brute = [depart, ...routables.map((a) => a.base_id), arrivee];
+  const bases = brute.filter((b, i) => i === 0 || b !== brute[i - 1]);
+  return { bases, imposes_non_routables };
 }
 
 /**

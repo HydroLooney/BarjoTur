@@ -1,19 +1,24 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { CataloguePoi, VoteTier } from '@barjotur/shared';
+import type { CataloguePoi } from '@barjotur/shared';
 import { useCatalogue } from '@/lib/queries/catalogue';
 import { filtrerCatalogue } from '@/lib/filtrer-catalogue';
+import { trierCatalogue, TRIS, type TriCatalogue } from '@/lib/trier-catalogue';
+import { grouperParZone, doitGrouper } from '@/lib/grouper-zone';
 import { useExplorer } from '@/stores/explorer';
 import { useIdentite } from '@/stores/identite';
 import { useMemoireExploration } from '@/stores/memoire-exploration';
 import { useOnboarding } from '@/stores/onboarding';
 import { usePeut } from '@/hooks/usePeut';
 import { useGrandEcran } from '@/hooks/useMediaQuery';
-import { useMesVotes, useVoteUnitaire } from '@/lib/queries/votes';
+import { useMesVotes } from '@/lib/queries/votes';
 import { BarreFiltres } from '@/components/BarreFiltres';
+import { IndicateurPaniers } from '@/components/IndicateurPaniers';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
-import { CarteExplorer } from '@/components/CarteExplorer';
+import { CarteMapLibre } from '@/components/CarteMapLibre';
 import { Recommandations } from '@/components/Recommandations';
+import { RailARevoir } from '@/components/RailARevoir';
 import { ActiviteIdealeZone } from '@/components/ActiviteIdealeZone';
+import { SplitScreen } from '@/ui/blocs/SplitScreen';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
@@ -39,13 +44,14 @@ export default function Explorer() {
   const onglet = useExplorer((s) => s.onglet);
   const setOnglet = useExplorer((s) => s.setOnglet);
   const filtres = useExplorer((s) => s.filtres);
-  const liste = useMemo(() => filtrerCatalogue(pois, filtres), [pois, filtres]);
+  // Tri par defaut « recommandes » (M181 §B5) : on commence par ce qui vaut le voyage, pas par 700 lignes a plat.
+  const [tri, setTri] = useState<TriCatalogue>('recommandes');
+  const liste = useMemo(() => trierCatalogue(filtrerCatalogue(pois, filtres), tri), [pois, filtres, tri]);
 
   const code = useIdentite((s) => s.code);
   const peutVoter = usePeut('voter');
   const grandEcran = useGrandEcran();
   const { data: mesVotes } = useMesVotes(code);
-  const voter = useVoteUnitaire(code);
   const explores = useMemoireExploration((s) => s.explores);
   const nbExplores = liste.filter((p) => explores.includes(p.id)).length;
 
@@ -56,16 +62,33 @@ export default function Explorer() {
   const aVote = mesVotes ? Object.keys(mesVotes.tiers).length > 0 : false;
   const montrerAstuce = peutVoter && !astuceVoteVue && !aVote;
 
-  const monTierPour = (osmId: string): VoteTier | null => {
-    const v = mesVotes?.tiers[`p:${osmId}`];
-    return v ?? null;
-  };
-
   // Panneau liste (contenu), réutilisé tel quel sur mobile (un onglet à la fois) ET sur grand écran (à côté de
   // la carte). Extrait pour ne pas dupliquer la grille de cartes entre les deux mises en page.
   const panneauListe = (
     <div className="space-y-4">
       <BarreFiltres pois={pois} />
+      {/* Tri de la liste (M181 §B5) : « Recommandés » d'abord (defaut), « A → Z » pour retrouver un lieu precis. */}
+      {liste.length > 1 ? (
+        <div className="flex items-center gap-2 text-sm" role="group" aria-label="Trier les lieux">
+          <span className="text-muted-foreground">Trier :</span>
+          <div className="inline-flex overflow-hidden rounded-md border border-border">
+            {TRIS.map((t) => (
+              <button
+                key={t.cle}
+                type="button"
+                aria-pressed={tri === t.cle}
+                onClick={() => setTri(t.cle)}
+                className={cn(
+                  'min-h-tactile px-3 py-1.5 text-sm transition-colors duration-[var(--anim-court)] ease-[var(--easing-doux)]',
+                  tri === t.cle ? 'bg-muted font-medium text-foreground' : 'text-muted-foreground hover:bg-muted',
+                )}
+              >
+                {t.libelle}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
       {isLoading && pois.length === 0 ? <Chargement libelle="Chargement du catalogue." /> : null}
       {isError && pois.length === 0 ? (
         <MessageErreur>Catalogue indisponible pour l'instant (le service n'est pas branché).</MessageErreur>
@@ -73,18 +96,53 @@ export default function Explorer() {
       {!isLoading && !isError && liste.length === 0 && pois.length > 0 ? (
         <MessageVide>Aucun lieu ne correspond à ces filtres. Élargissez la recherche.</MessageVide>
       ) : null}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-        {liste.map((p) => (
-          <CartePoiCatalogue
-            key={p.id}
-            poi={p}
-            monTier={monTierPour(p.id)}
-            peutVoter={peutVoter}
-            explore={explores.includes(p.id)}
-            onVoter={(tier) => voter.mutate({ ref: `p:${p.id}`, tier: tier ?? undefined })}
-          />
-        ))}
-      </div>
+      {/* Jamais de liste plate au-delà de 20 (audit) : on groupe par zone pour orienter l'œil, sinon grille simple. */}
+      {doitGrouper(liste) ? (
+        <div className="space-y-5">
+          {grouperParZone(liste).map((g) => (
+            <section key={g.zone} aria-label={g.zone} className="space-y-2">
+              <h2 className="text-sm font-medium">
+                {g.zone} <span className="font-normal text-muted-foreground">· {g.pois.length}</span>
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                {g.pois.map((p) => (
+                  <CartePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          {liste.map((p) => (
+            <CartePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
+          ))}
+        </div>
+      )}
+      {/* Jauge d'exploration (M181 §B8) : repère de progression discret en pied de liste, jamais un score. Dit
+          simplement combien de lieux affichés on a déjà ouverts, pour se situer sans se sentir noté (R1/R7). */}
+      {liste.length > 0 ? (
+        <div className="pt-1" aria-hidden={nbExplores === 0}>
+          <div
+            className="h-1.5 overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={liste.length}
+            aria-valuenow={nbExplores}
+            aria-label="Lieux déjà parcourus"
+          >
+            <div
+              className="h-full rounded-full bg-primary transition-[width] duration-[var(--anim-moyen)] ease-[var(--easing-doux)]"
+              style={{ width: `${Math.round((nbExplores / liste.length) * 100)}%` }}
+            />
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {nbExplores > 0
+              ? `Vous avez parcouru ${nbExplores} des ${liste.length} lieux affichés.`
+              : 'Ouvrez un lieu pour commencer votre exploration.'}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 
@@ -92,10 +150,14 @@ export default function Explorer() {
     <section className="space-y-4">
       <div className="flex items-baseline justify-between gap-2">
         <h1 className="font-serif text-2xl">Explorer</h1>
-        <span className="text-sm text-muted-foreground">
-          {liste.length} lieu{liste.length === 1 ? '' : 'x'}
-          {nbExplores > 0 ? ` · ${nbExplores} déjà vu${nbExplores === 1 ? '' : 's'}` : ''}
-        </span>
+        <div className="flex items-center gap-2">
+          {/* Notification discrète (M394) : n'apparaît que si un panier de vote déborde. */}
+          <IndicateurPaniers variante="pastille" />
+          <span className="text-sm text-muted-foreground">
+            {liste.length} lieu{liste.length === 1 ? '' : 'x'}
+            {nbExplores > 0 ? ` · ${nbExplores} déjà vu${nbExplores === 1 ? '' : 's'}` : ''}
+          </span>
+        </div>
       </div>
 
       {montrerAstuce ? (
@@ -117,22 +179,32 @@ export default function Explorer() {
         </div>
       ) : null}
 
-      <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
+      <div data-guide="recos">
+        <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
+      </div>
+
+      <RailARevoir pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
 
       <ActiviteIdealeZone />
 
       {/* Multi-format (A26 / M112) : grand écran = liste ET carte côte à côte (deux volets) ; mobile = un onglet
           à la fois (un écran, une tâche). La carte lourde (A05) n'est montée que lorsqu'elle est visible. */}
       {grandEcran ? (
-        <div className="grid grid-cols-2 gap-4">
-          <div aria-label="Liste des lieux">{panneauListe}</div>
-          <div aria-label="Carte des lieux">
-            <CarteExplorer hauteur="calc(100dvh - 15rem)" />
-          </div>
-        </div>
+        <SplitScreen
+          cleEspace="explorer"
+          ratioDefaut={0.4}
+          ariaLabelGauche="Liste des lieux"
+          ariaLabelDroite="Carte des lieux"
+          gauche={<div className="pr-1">{panneauListe}</div>}
+          droite={
+            <div className="pl-1">
+              <CarteMapLibre mode="exploration" hauteur="calc(100dvh - 15rem)" />
+            </div>
+          }
+        />
       ) : (
         <>
-          <div role="tablist" aria-label="Mode d'exploration" className="flex gap-1 border-b border-border">
+          <div role="tablist" aria-label="Mode d'exploration" data-guide="bascule-vue" className="flex gap-1 border-b border-border">
             {ONGLETS.map((o, i) => (
               <button
                 key={o.cle}
@@ -167,7 +239,7 @@ export default function Explorer() {
 
           {onglet === 'carte' ? (
             <div role="tabpanel" id="panneau-carte" aria-labelledby="onglet-carte">
-              <CarteExplorer />
+              <CarteMapLibre mode="exploration" />
             </div>
           ) : (
             <div role="tabpanel" id="panneau-liste" aria-labelledby="onglet-liste">

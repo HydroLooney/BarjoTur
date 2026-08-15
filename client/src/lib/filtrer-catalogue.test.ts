@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { CataloguePoi } from '@barjotur/shared';
-import { filtrerCatalogue, categoriesDisponibles, normaliserTexte } from './filtrer-catalogue';
+import { filtrerCatalogue, bucketsDisponibles, normaliserTexte } from './filtrer-catalogue';
 
 // Fabrique un CataloguePoi minimal (champs requis) surchargeable pour les tests.
 function poi(over: Partial<CataloguePoi>): CataloguePoi {
@@ -70,9 +70,13 @@ describe('filtrerCatalogue', () => {
     const r = filtrerCatalogue(pois, { ...base, votableSeul: true });
     expect(r.map((p) => p.id)).toEqual(['a', 'c']);
   });
-  it('filtre par categorie', () => {
+  it('filtre par categorie (bucket) : source rando -> bucket rando', () => {
     const r = filtrerCatalogue(pois, { ...base, categorie: 'rando' });
     expect(r.map((p) => p.id)).toEqual(['a']);
+  });
+  it('filtre par categorie (bucket) : source manger -> bucket restauration', () => {
+    const r = filtrerCatalogue(pois, { ...base, categorie: 'restauration' });
+    expect(r.map((p) => p.id)).toEqual(['b']);
   });
   it('filtre par tier_defaut', () => {
     const r = filtrerCatalogue(pois, { ...base, tier: 'S' });
@@ -88,14 +92,14 @@ describe('filtrerCatalogue', () => {
   });
 });
 
-describe('categoriesDisponibles', () => {
-  it('liste triee et dedupliquee, sans null', () => {
+describe('bucketsDisponibles', () => {
+  it('buckets presents (source -> bucket), dans l ordre du contrat, dedupliques', () => {
     const pois = [
-      poi({ categorie: 'nature' }),
-      poi({ categorie: 'rando' }),
-      poi({ categorie: 'nature' }),
-      poi({ categorie: null }),
+      poi({ categorie: 'nature' }), // -> nature
+      poi({ categorie: 'rando' }), // -> rando
+      poi({ categorie: 'nature' }), // doublon
+      poi({ categorie: 'musee' }), // -> culture
     ];
-    expect(categoriesDisponibles(pois)).toEqual(['nature', 'rando']);
+    expect(bucketsDisponibles(pois).map((c) => c.cle)).toEqual(['nature', 'rando', 'culture']);
   });
 });

@@ -1,15 +1,11 @@
-import type { CataloguePoi, VoteTier } from '@barjotur/shared';
+import type { CataloguePoi } from '@barjotur/shared';
 import { Carte, CarteEntete, CarteTitre, CarteContenu } from '@/ui/primitives/card';
 import { Badge, type BadgeProps } from '@/ui/primitives/badge';
-import { SelecteurTier } from '@/ui/blocs/SelecteurTier';
+import { BoutonVote } from '@/ui/blocs/BoutonVote';
 import { EtiquetteMiseEnAvant } from '@/components/EtiquetteMiseEnAvant';
 
 interface Props {
   poi: CataloguePoi;
-  monTier: VoteTier | null;
-  onVoter: (tier: VoteTier | null) => void;
-  /** false si l'identité n'est pas résolue (on affiche le vote mais désactivé). */
-  peutVoter: boolean;
   /** true si le POI a déjà été ouvert (mémoire d'exploration A11). */
   explore?: boolean;
 }
@@ -32,9 +28,9 @@ function varianteBadge(tier: string): BadgeProps['variant'] {
 // Carte d'un POI dans la liste Explorer : nom, tier par défaut, catégorie/région, présentation en clair
 // (ce que le lieu EST, sans score brut, A11), et le sélecteur de vote si le lieu est votable. Les lieux
 // non votables (repères, services) sont affichés distinctement, sans geste de vote.
-export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter, explore }: Props) {
+export function CartePoiCatalogue({ poi, explore }: Props) {
   return (
-    <Carte className="flex flex-col">
+    <Carte className="flex flex-col transition-[box-shadow,transform] duration-court ease-doux hover:-translate-y-px hover:shadow-charte">
       <CarteEntete>
         <div className="flex items-start justify-between gap-2">
           <CarteTitre>{poi.nom}</CarteTitre>
@@ -59,7 +55,7 @@ export function CartePoiCatalogue({ poi, monTier, onVoter, peutVoter, explore }:
       )}
       <CarteContenu>
         {poi.votable ? (
-          <SelecteurTier monTier={monTier} tierDefaut={poi.tier_defaut} onChoisir={onVoter} disabled={!peutVoter} />
+          <BoutonVote cible={`p:${poi.id}`} tierDefaut={poi.tier_defaut} />
         ) : (
           <span className="text-xs text-muted-foreground">Repère non votable (service, information).</span>
         )}

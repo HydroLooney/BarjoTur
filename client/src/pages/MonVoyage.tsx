@@ -3,6 +3,7 @@ import { useCadence } from '@/stores/cadence';
 import { usePeut } from '@/hooks/usePeut';
 import { MesIncontournables } from '@/components/MesIncontournables';
 import { AppetitsThematiques } from '@/components/AppetitsThematiques';
+import { CarnetNotes } from '@/components/CarnetNotes';
 
 // Espace « Mon voyage » (A26 / M112) : la vision de CHAQUE voyageur. Sa cadence (porte d'entrée simple qui
 // pilotera tous ses budgets temps), ses incontournables, ses envies par thème, et — à venir — son itinéraire
@@ -93,6 +94,8 @@ export default function MonVoyage() {
           <AppetitsThematiques />
         </section>
       ) : null}
+
+      <CarnetNotes />
 
       <section className="space-y-1 rounded-lg border border-dashed border-border p-3">
         <h2 className="text-sm font-medium">Mon itinéraire idéal</h2>

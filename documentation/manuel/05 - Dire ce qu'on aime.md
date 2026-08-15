@@ -4,9 +4,13 @@ C'est le cœur de Barjøtur. L'app ne devine pas ce que chacun veut : elle le de
 
 ## L'esprit du voyage
 
-Avant de se prononcer sur chaque lieu, on dit le genre de voyage qu'on veut, en gros. Cela se fait avec des curseurs, chacun tendu entre deux envies : plutôt calme ou plutôt intense, plutôt nature ou plutôt culture. On pousse le curseur du côté qui vous ressemble. C'est l'esprit du voyage.
+Avant de se prononcer sur chaque lieu, on dit le genre de voyage qu'on veut, en gros. Cela se fait avec trois curseurs, montrés d'emblée, chacun tendu entre deux envies : plutôt calme ou plutôt intense, plutôt nature ou plutôt culture, et la part qu'on donne au paysage. On pousse le curseur du côté qui vous ressemble. C'est l'esprit du voyage. Un dépliant « Affiner » ouvre, pour qui le souhaite, d'autres réglages plus fins ; on peut l'ignorer sans rien perdre.
 
-Cet esprit oriente le moteur sans noter les lieux un par un. Un voyageur qui met le curseur du côté du calme verra l'app privilégier, pour lui, les journées posées plutôt que l'enchaînement des grandes marches.
+Le premier curseur, calme ou intense, mérite un mot à part : c'est la cadence, le rythme du voyage. Poussé vers le calme, il commande des journées posées ; poussé vers l'intense, des journées bien remplies. On le règle ici une fois pour toutes, comme un goût général. On pourra plus tard l'ajuster jour par jour, dans l'espace Mon voyage : c'est le même réglage, vu de deux endroits, l'humeur d'ensemble d'abord, le grain fin ensuite.
+
+Cet esprit oriente le moteur sans noter les lieux un par un. Un voyageur qui met le curseur du côté du calme verra l'app privilégier, pour lui, les journées posées plutôt que l'enchaînement des grandes marches. Et l'effet se voit tout de suite : dès qu'on bouge un curseur, les lieux qu'on vous recommande se rafraîchissent sous vos yeux, le temps d'un souffle, pour montrer où va le réglage.
+
+Pour qui préfère qu'on l'aide à cerner ses goûts, un petit questionnaire est prévu, proposé sur invitation plutôt qu'imposé : quelques questions concrètes dont l'app tire un premier réglage des curseurs, à retoucher ensuite. Ce questionnaire est à venir ; il n'est pas encore dans l'app, et les curseurs se règlent aujourd'hui à la main.
 
 ## Les envies chiffrées
 
@@ -37,4 +41,4 @@ Chacun dispose d'un budget d'avis, pour éviter de tout mettre au sommet. On ne 
 
 ## Pourquoi un avis compte vraiment
 
-Un avis n'est pas un like qui colore une carte. Quand deux envies s'excluent, faute de temps, c'est le calcul de l'itinéraire qui tranche, et ce choix remonte dans le voyage retenu. Un compagnon qui recueillerait des avis sans jamais changer la route serait un décor. Ici, dire ce qu'on aime pèse pour de bon sur le trajet, comme l'explique le chapitre [Composer le trajet](06 - Composer le trajet.md).
+Un avis n'est pas un like qui colore une carte. Quand deux envies s'excluent, faute de temps, c'est le calcul de l'itinéraire qui tranche, et ce choix remonte dans le voyage commun. Un compagnon qui recueillerait des avis sans jamais changer la route serait un décor. Ici, dire ce qu'on aime pèse pour de bon sur le voyage, comme l'explique le chapitre [Notre Voyage](07 - Notre Voyage.md).

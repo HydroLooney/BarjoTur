@@ -5,7 +5,7 @@ import { useArchetypes, useComposer } from '@/lib/queries/composeur';
 import { usePeut } from '@/hooks/usePeut';
 import { basesCandidatesDemo, composeReponseDemo } from '@/lib/fixtures/compose-demo';
 import { transitDemo } from '@/lib/fixtures/voyage-demo';
-import { CarteItineraire } from '@/components/CarteItineraire';
+import { CarteMapLibre } from '@/components/CarteMapLibre';
 import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
 import { MessageErreur } from '@/ui/blocs/EtatVue';
@@ -146,7 +146,7 @@ export function Composeur() {
 
       {geom ? (
         <div className="space-y-1">
-          <CarteItineraire geom={geom} />
+          <CarteMapLibre mode="lecture-ideal" geom={geom} />
           {meta ? (
             <p className="text-xs text-muted-foreground">
               {meta.nuits} nuits · {meta.n_bases} bases · {Math.round(meta.drive_h)} h de route.

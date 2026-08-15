@@ -8,8 +8,9 @@ existe** et **les choix faits**, jamais des intentions.
 
 - **Pour être lu, par tout le monde**, un enfant compris. Des phrases courtes, des exemples concrets, aucune tournure
   de machine.
-- **Zéro mot d'atelier.** On ne dit pas « v3 », « canonique », « MCDA », « orienteering », « dérivées », « empreinte »,
-  « strangler ». On dit le calcul, le voyage idéal, l'itinéraire qui tient debout, les préférences, les réglages.
+- **Zéro mot d'atelier.** On ne dit pas « v3 », « canonique », « MCDA », « orienteering », « leximin », « fige »,
+  « dérivées », « empreinte », « strangler ». On dit le calcul, le voyage idéal, le voyage commun, l'itinéraire qui
+  tient debout, les préférences, les réglages, geler par réservation.
 - **On décrit ce qui est fait**, pas ce qui viendra. Une fonction qui n'existe pas encore n'est pas dans le manuel.
 - **On explique les choix** quand ils aident à comprendre : pourquoi le voyage retenu soigne d'abord la personne la
   moins servie, pourquoi les nuits de route sont en autonomie par défaut, pourquoi un avis déplace vraiment
@@ -26,34 +27,42 @@ existe** et **les choix faits**, jamais des intentions.
 ## Plan du manuel utilisateur
 
 1. **Bienvenue** — ce que l'app fait, pour qui, en une page. L'idée : préparer et vivre un voyage en van, à plusieurs,
-   sans se perdre.
+   sans se perdre. Le miroir Mon voyage / Notre Voyage, la visite guidée relançable.
 2. **Premiers pas** — ouvrir l'app avec son lien personnel, retrouver son voyage, lire d'un coup d'œil où en est le
-   voyage.
+   voyage, se déplacer entre les huit espaces (cinq en barre du bas, trois par l'avatar).
 3. **Le fil du voyage** — comment le voyage avance par étapes, ce qui se décide et se verrouille, ce qu'on peut encore
    changer, comment revenir en arrière.
-4. **Découvrir les lieux** — parcourir en liste ou sur la carte, chercher, filtrer ; les lieux qu'on vous recommande
-   et pourquoi ; garder les siens (vus, explorés, son carnet, ses collections).
-5. **Dire ce qu'on aime** — l'esprit du voyage (calme ou intense, nature ou culture), les envies chiffrées, voter sur
-   les lieux.
-6. **Composer le trajet** — assembler un itinéraire qui tient debout, comparer des variantes, le voyage qui va à tout
-   le monde, ajouter une étape de route pour élargir la boucle.
-7. **La carte du voyage** — voir l'itinéraire se dérouler, jour après jour, les traversées en bateau.
-8. **Préparer le concret** — le budget, les repas, le matériel, les réservations, les nuits en autonomie.
-9. **Régler l'app** — les profils de conduite et de marche, changer un réglage, trouver de l'aide.
-10. **Côté organisateur** — valider une étape, le code, gérer les voyageurs, comprendre ce qui se fige et pourquoi.
-11. **En route** — l'app quand le réseau manque, l'atlas à imprimer, garder le voyage en main au fond d'un fjord.
+4. **Découvrir les lieux** — les portes d'entrée d'Explorer, parcourir en liste ou sur la carte, chercher, filtrer,
+   ne voir que les lieux d'une journée ; les recommandations et pourquoi ; garder les siens et l'À revoir ; voter d'un
+   geste, partout.
+5. **Dire ce qu'on aime** — l'esprit du voyage (calme ou intense, nature ou culture), la cadence, le questionnaire à
+   venir, les envies chiffrées, voter sur les lieux.
+6. **Mon voyage** — son idéal, son écart au voyage commun, sa cadence jour par jour, la frontière avec Mes envies.
+7. **Notre Voyage** — le voyage commun d'abord et sa description, le consensus, mon écart au commun, comparer des
+   variantes, ajouter une étape de route, geler par réservation (lieu réel exigé), les dates qui comptent.
+8. **La carte du voyage** — l'itinéraire animé, le fil et ses perles avec l'agenda en loupe, les traversées en bateau.
+9. **Préparer le concret** — le budget en onglets, les postes fermes (van, ferry), les réservations, les nuits en
+   autonomie ; l'intendance à venir.
+10. **Régler l'app** — les profils de conduite et de marche, les réglages fins derrière un dépliant, changer un
+    réglage, trouver de l'aide.
+11. **Côté organisateur** — valider une étape, composer le voyage commun, poser les dates qui comptent, le code, gérer
+    les voyageurs, comprendre ce qui se fige et pourquoi.
+12. **En route** — l'app quand le réseau manque, l'atlas à imprimer, garder le voyage en main au fond d'un fjord.
 
 ## Plan de l'aide en ligne (par espace, poussée)
 
 Un fil d'aide par espace de l'app, avec pour chaque geste une explication brève et un exemple :
 
-- **Le voyage** — lire le fil, sauter à une étape, comprendre les cadenas (ouvert, fermé).
-- **Explorer** — liste et carte, filtres, recommandations, sa mémoire de lieux.
-- **Mes envies** — poser l'esprit, fixer une envie, voter, échanger un vote quand un quota est plein.
-- **Le trajet** — lancer une composition, lire une variante, le consensus, insérer une étape de route.
-- **Carte** — lire l'itinéraire animé, les traversées, se repérer.
-- **Préparatifs** — le budget et ses postes, les repas, le matériel, marquer une réservation.
-- **Réglages** — les profils, changer un réglage, le glossaire.
+- **Le voyage** — lire le fil, sauter à une étape, comprendre les cadenas (ouvert, fermé), relancer la visite guidée.
+- **Explorer** — les portes d'entrée, liste et carte, filtres, lieux d'une journée, recommandations, sa mémoire de
+  lieux, l'À revoir, voter d'un geste.
+- **Mes envies** — poser l'esprit, régler la cadence, fixer une envie, voter.
+- **Mon voyage** — lire son idéal, suivre son écart, ajuster sa cadence.
+- **Notre Voyage** — lire le voyage commun, lancer une composition, le consensus, comparer, insérer une étape de
+  route, geler par réservation, poser une date qui compte.
+- **Carte** — lire l'itinéraire animé, le fil et ses perles, la loupe selon l'appareil, les traversées, se repérer.
+- **Préparatifs** — le budget et ses postes, les postes fermes, marquer une réservation.
+- **Réglages** — les profils, les réglages fins, changer un réglage, le glossaire.
 
 ## Ce qu'on écrit d'abord
 

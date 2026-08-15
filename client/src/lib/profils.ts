@@ -18,7 +18,9 @@ export interface ProfilModeVue {
 const ORDRE: ModeDeplacement[] = ['van', 'pieton', 'rando', 'tc'];
 
 /** Rapproche un domaine « Profil * » d'un mode de déplacement. `null` si le domaine n'est pas un profil. */
-function modeDeDomaine(domaine: string): ModeDeplacement | null {
+function modeDeDomaine(domaine: string | null | undefined): ModeDeplacement | null {
+  // La donnee reelle peut porter un domaine absent (param sans categorie) : on l'ignore sans planter (R1).
+  if (!domaine) return null;
   const d = domaine.toLowerCase();
   if (!d.includes('profil')) return null;
   if (d.includes('van')) return 'van';

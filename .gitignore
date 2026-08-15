@@ -45,6 +45,9 @@ data/
 
 # artefacts de synchronisation DB1→DB2 (dumps dérivées + manifestes d'empreintes, transitoires par run)
 db/sync/dumps/
+# dumps SQL lourds régénérables (~20-35 Mo chacun) : hors git ; les manifestes .md et empreintes .tsv restent suivis
+db/sync/*.sql
+db/sync/dump-fondateur/
 
 # outillage et espaces de travail internes (hors dépôt) : configuration locale,
 # échanges de coordination et notes de conception vivent en local, la doc publique est dans documentation/
@@ -56,6 +59,10 @@ docs/
 .trash/
 **/.trash/
 
+# backups de travail et échantillons de recette (jamais commités)
+*.bak
+**/_backup_*/
+
 # Captures de vérification Playwright (artefacts, hors repo)
 client/captures-verif/
 client/*.png
@@ -63,3 +70,6 @@ client/*.png
 # Photothèque de dev, curation par POI (sources multiples A + M), pour revue et complément
 # manuel de Guillaume. Volumineuse et à droits hétérogènes : JAMAIS poussée sur GitHub.
 photos/
+
+# Dossier POI canonique (contenu vault + photos, jamais public)
+poi/

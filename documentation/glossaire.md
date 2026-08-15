@@ -18,7 +18,9 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Invité.** Quelqu'un à qui l'on ouvre le voyage en découverte : il voit l'itinéraire retenu, sa carte, les lieux choisis, mais ne vote pas et ne compose pas. Un lien d'invité montre sans donner la main.
 
-**Démonstration.** Un voyage d'exemple, ouvert pour faire le tour de l'app. On y voit tout et on peut essayer de voter, mais rien n'y engage un vrai voyage.
+**Démonstration.** Un voyage d'exemple, ouvert pour faire le tour de l'app. On y voit tout et on peut essayer de voter, mais rien n'y engage un vrai voyage. Cette fonction est à venir.
+
+**Visite guidée.** La présentation vue à la première ouverture, qu'on peut passer et relancer à tout moment depuis le menu de l'avatar. Chaque grande étape a la sienne.
 
 ## Le fil du voyage
 
@@ -50,7 +52,11 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Activité idéale d'une zone.** Ce qu'un guide conseille de faire à tel endroit : du kayak ici, du rafting là. L'app en tient compte pour mettre en avant les lieux de ce genre dans cette zone, d'autant plus pour qui a dit aimer ce thème.
 
+**Voies d'exploration.** Les manières d'entrer dans le catalogue d'Explorer : la carte, la liste, les recommandations, sa mémoire de lieux, la fouille libre. Toutes ouvrent le même catalogue et les mêmes fiches.
+
 **Mes lieux.** La mémoire personnelle de chacun : les lieux déjà vus, les collections, les propositions. Elle est à soi, sans code, et suit d'un appareil à l'autre.
+
+**À revoir.** Le rangement qui réunit tout seul les lieux ouverts mais pas encore notés, pour trancher les avis en suspens. Il ne s'affiche pas tant qu'il est vide.
 
 **Déjà vu.** La marque posée sur un lieu dont on a ouvert la fiche, pour ne pas y repasser.
 
@@ -70,9 +76,11 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Envie par thème.** Dire à quel point on aime un thème, la mer, la faune, le patrimoine, pour que le voyage donne plus de temps aux lieux de ce genre. À la différence de l'envie plafonnée, elle ne compte pas des lieux, elle pèse sur le temps qu'on leur consacre.
 
-## Assembler le voyage
+## Composer le voyage commun
 
-**Le trajet.** L'itinéraire assemblé par l'app : les haltes choisies sous le temps disponible, les vrais chemins, les bateaux, les nuitées.
+**Notre Voyage.** L'espace où le voyage commun se compose, se compare et se verrouille. Il met en avant le voyage retenu et sa description ; les comparaisons viennent en second. Composer y est réservé à l'organisateur.
+
+**Le voyage commun.** L'itinéraire unique de la famille, assemblé par l'app : les haltes choisies sous le temps disponible, les vrais chemins, les bateaux, les nuitées. Ancien nom : le trajet.
 
 **Étape (du trajet).** Une journée du voyage sur la route. Elle est de découverte, où les lieux comptent, ou de route, où l'on rejoint un point à un autre au meilleur coût.
 
@@ -98,9 +106,11 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 ## Mon voyage et le voyage commun
 
-**Mon voyage.** L'espace à soi de chaque voyageur, où l'on façonne son voyage idéal : la densité de ses journées, ses lieux tenus pour incontournables, ses envies. L'app en tire l'itinéraire qu'on ferait seul, gardé comme repère pour mesurer plus tard l'écart au voyage commun.
+**Mon voyage.** L'espace à soi de chaque voyageur, où l'on lit son voyage idéal, son écart au voyage commun et où l'on règle sa cadence. L'app tire l'idéal des goûts dits dans Mes envies et des avis sur les lieux ; il sert de repère pour mesurer l'écart au voyage commun. Personne d'autre ne le voit.
 
-**Densité des journées.** Le curseur entre journées légères et journées denses, propre à chaque voyageur. Vers les journées denses, les visites se resserrent, la flânerie se réduit, on voit plus de lieux ; vers les journées légères, l'inverse. Il donne une densité moyenne, pas la même chaque jour : le voyage alterne des journées denses et des journées plus douces, surtout après une grosse journée et sur les jours communs. Il règle d'un geste tous les temps du voyage, dans des bornes communes qui protègent chacun, les enfants d'abord : pas de journée épuisante, pas de route tard le soir.
+**Mon idéal.** Le voyage que l'app compose pour un voyageur seul, d'après ses goûts et ses avis. Ce n'est pas la route commune, c'est un point de comparaison.
+
+**Cadence.** Le rythme du voyage, entre journées légères et journées denses, réglé d'un curseur. C'est un seul et même réglage, vu depuis Mes envies comme un goût général (calme ou intense) et affiné jour par jour dans Mon voyage. Vers les journées denses, les visites se resserrent, la flânerie se réduit, on voit plus de lieux ; vers les journées légères, l'inverse. Elle donne une cadence moyenne, pas la même chaque jour : le voyage alterne des journées denses et des journées plus douces, surtout après une grosse journée et sur les jours communs. Elle règle d'un geste tous les temps du voyage, dans des bornes communes qui protègent chacun, les enfants d'abord : pas de journée épuisante, pas de route tard le soir.
 
 **Écart à l'idéal.** De combien le voyage commun s'éloigne de l'idéal calculé pour un voyageur donné. Chacun garde le sien sous les yeux ; quand l'itinéraire bouge, on voit tout de suite qui il avantage et qui il lèse, et de combien.
 
@@ -128,7 +138,9 @@ Le vocabulaire de Barjøtur, en un seul endroit. Un mot par chose, le même part
 
 **Nuit en autonomie.** Une nuit passée hors camping payant, préférée par défaut sur les tronçons de route, moins chère et dans l'esprit du van. Chaque nuit se bascule entre autonomie et payant.
 
-**Réservation.** Une dépense payée d'avance qui devient un point fixe, posé à une date, que le reste du voyage respecte et que l'app ne déplace plus.
+**Réservation.** Une dépense payée d'avance qui devient un point fixe, posé à une date et à un lieu réel exigé, adresse ou point sur la carte, que le reste du voyage respecte et que l'app ne déplace plus. Se pose depuis Préparatifs ou depuis Notre Voyage, en épinglant la carte ou en marquant l'étape sur le fil.
+
+**Date qui compte.** Une date importante du voyage, inscrite par l'organisateur, qu'un anniversaire ou une occasion rend particulière. Elle porte un souhait, préférence honorée quand c'est possible ou obligation ferme, que l'app suit en composant. On en pose jusqu'à cinq ; elle apparaît en étoile sur le fil.
 
 ## Régler l'app
 

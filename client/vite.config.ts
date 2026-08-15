@@ -68,10 +68,17 @@ export default defineConfig({
   },
   server: {
     port: 5180,
+    // Le lecteur Conseils (T056) bundle le markdown de `documentation/conseils/` (racine du repo, hors client/)
+    // via import.meta.glob ?raw : on autorise Vite a lire un cran au-dessus de la racine du front (M198 opt.A,
+    // source de verite dans documentation/, zero copie).
+    fs: {
+      allow: ['..'],
+    },
     proxy: {
-      // Le front ne parle qu'au BFF (B) : tout /api est proxifie en dev vers le serveur Node.
+      // Le front ne parle qu'au BFF (B) : tout /api est proxifie en dev vers le serveur Node. Cible réglable
+      // par `BFF_TARGET` (vérif C-10 contre le BFF booté de B sur :8080, M133/B060) ; défaut :3000.
       '/api': {
-        target: 'http://localhost:3000',
+        target: process.env.BFF_TARGET ?? 'http://localhost:3000',
         changeOrigin: true,
       },
     },

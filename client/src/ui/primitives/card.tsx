@@ -8,7 +8,7 @@ export const Carte = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('rounded-lg border border-border bg-card text-card-foreground shadow-charte', className)}
+      className={cn('rounded-lg border border-border bg-card text-card-foreground shadow-posee', className)}
       {...props}
     />
   ),
@@ -24,7 +24,7 @@ CarteEntete.displayName = 'CarteEntete';
 
 export const CarteTitre = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn('font-serif text-lg leading-tight', className)} {...props} />
+    <h3 ref={ref} className={cn('font-serif text-section leading-tight', className)} {...props} />
   ),
 );
 CarteTitre.displayName = 'CarteTitre';

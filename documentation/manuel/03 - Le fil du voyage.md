@@ -9,7 +9,7 @@ Le fil du voyage a six moments, dans l'ordre.
 - **L'idée.** Le cadrage de départ : d'où l'on part, où l'on va, pour combien de temps. Pour le voyage en Norvège, c'est le domicile en Alsace, l'aller et le retour bouclés, les dates de traversée en bateau.
 - **Le van.** Le véhicule qu'on loue. Une fois réservé, il devient un fait : sa consommation, sa taille et sa manière de rouler entrent dans tous les calculs qui suivent.
 - **Explorer.** On découvre les lieux, on se fait une idée de ce qu'il y a à voir, et chacun dit ce qu'il aime.
-- **Composer.** L'app assemble un itinéraire à partir de tout ça.
+- **Composer.** L'app assemble le voyage commun à partir de tout ça, dans l'espace Notre Voyage.
 - **Préparer.** On règle le concret : budget, repas, matériel, réservations.
 - **Le départ.** Le voyage est prêt, on prend la route.
 
@@ -33,4 +33,4 @@ Certaines choses, en revanche, ne se rouvrent jamais. Une réservation payée, u
 
 ## Qui décide
 
-Voter et explorer ne demandent aucun code : c'est ouvert à tous les voyageurs, tout le temps. Ce qui change l'état d'une étape, la valider ou la rouvrir, demande le code de l'organisateur. C'est une garde simple, pour qu'une étape ne se verrouille pas par mégarde, ou qu'un enfant curieux ne rouvre pas tout d'un tapotement. Le détail de ces gestes est au chapitre [Côté organisateur](10 - Côté organisateur.md).
+Voter et explorer ne demandent aucun code : c'est ouvert à tous les voyageurs, tout le temps. Ce qui change l'état d'une étape, la valider ou la rouvrir, demande le code de l'organisateur. C'est une garde simple, pour qu'une étape ne se verrouille pas par mégarde, ou qu'un enfant curieux ne rouvre pas tout d'un tapotement. Le détail de ces gestes est au chapitre [Côté organisateur](11 - Côté organisateur.md).

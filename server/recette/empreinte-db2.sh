@@ -16,8 +16,8 @@
 
 set -euo pipefail
 
-SSH_HOST="${BJT_DB2_SSH:-deploy-host}"
-CONTENEUR="${BJT_DB2_CONTENEUR:-app-db}"
+SSH_HOST="${BJT_DB2_SSH:-bomp4rd}"
+CONTENEUR="${BJT_DB2_CONTENEUR:-norvege-db}"
 DBUSER="${BJT_DB2_USER:-norvege}"
 DBNAME="${BJT_DB2_NAME:-norvege_v2}"
 

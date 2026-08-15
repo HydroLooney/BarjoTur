@@ -1,0 +1,21 @@
+# config.yaml — config Martin CANONIQUE (dev + prod), Martin 1.13 (YAML ; l'ancien config.toml en TOML ne se charge PAS).
+# Auto-publie le schéma `diffusion` (dump final v3, 20260817) → 6 couches TUILES géométriques :
+#   v_web_poi (767, Point) · v_web_decoupage (173, MultiPolygon) · v_web_poi_services_van (1206, Point) ·
+#   v_web_routes_sceniques (18, LineString) · v_web_sentiers (139241, LineString) · v_web_bases_ideales (18, Point, N=18 ré-optimisé).
+#   v_web_poi_photos (685) n'a PAS de géométrie → servie par le BFF (métadonnées photos), pas en tuiles. PAS de v_web_circuits/
+#   fige/base_routes dans le dump final (archétypes = re-solve live ; fige = par-utilisateur) → Martin ne les publie pas (correct).
+#
+# Connexion : MARTIN_DB_URL (env). Dev → norvege_dev (localhost:5433) ; prod → DB2 (norvege_v2, injecté par l'orchestrateur).
+# Lancement : martin --config tiles/config.yaml. Écoute 0.0.0.0:8003 (le proxy amont route /tiles → martin:8003).
+
+listen_addresses: "0.0.0.0:8003"
+keep_alive: 75
+
+cache_size_mb: 200
+
+postgres:
+  connection_string: ${MARTIN_DB_URL}
+  pool_size: 4
+  auto_publish:
+    from_schemas:
+      - diffusion

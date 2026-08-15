@@ -13,12 +13,18 @@ export default function Preparatifs() {
         Ce qu'on prépare avant de partir : le budget prévisionnel du voyage, les recettes, les menus et le
         matériel à emporter.
       </p>
-      <div>
+      <div className="flex flex-wrap gap-2">
         <Link
           to="/atlas"
           className="inline-flex min-h-tactile items-center rounded-md border border-border px-3 py-2 text-sm hover:bg-muted"
         >
           Ouvrir l'atlas du voyage (à imprimer)
+        </Link>
+        <Link
+          to="/agenda"
+          className="inline-flex min-h-tactile items-center rounded-md border border-border px-3 py-2 text-sm hover:bg-muted"
+        >
+          Voir l'agenda du confort
         </Link>
       </div>
       <VueBudget />

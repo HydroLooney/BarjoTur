@@ -17,6 +17,10 @@ export function obtenirPool(): Pool {
       max: 10,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
+      // Durcissement prod (M280) : une requête ne peut pas pendre indéfiniment et épuiser le pool. Au-delà, Postgres
+      // l'annule (erreur → 500 sobre via le middleware d'erreurs). 10 s couvre les requêtes spatiales lourdes.
+      statement_timeout: 10_000,
+      query_timeout: 12_000,
     });
   }
   return pool;

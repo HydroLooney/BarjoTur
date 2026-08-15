@@ -18,6 +18,11 @@ export default function Atlas() {
   const fige = figeLive ?? figeDetailDemo;
 
   const etapes = useMemo(() => [...fige.etapes].sort((a, b) => a.jour - b.jour), [fige]);
+  // Aller / retour (carte animée M218, sous-brique 3 — cohérent tracé/fil/atlas) : bascule à l'apex (au flip =
+  // apex du modèle d'anim via la vraie ancre ; en démo, milieu du voyage). Mêmes jetons que le tracé et le fil.
+  const jApex = useMemo(() => Math.ceil(etapes.length / 2), [etapes]);
+  const aller = useMemo(() => etapes.filter((e) => e.jour <= jApex), [etapes, jApex]);
+  const retour = useMemo(() => etapes.filter((e) => e.jour > jApex), [etapes, jApex]);
 
   return (
     <section className="space-y-4">
@@ -68,14 +73,29 @@ export default function Atlas() {
       ) : null}
 
       <div className="space-y-8">
-        {etapes.map((e) => (
-          <div
-            key={e.jour}
-            className="border-t border-border pt-6 first:border-t-0 first:pt-0 print:[&:not(:last-child)]:break-after-page"
-          >
-            <FicheJour etape={e} niveau={2} />
-          </div>
-        ))}
+        {[
+          { cle: 'aller', titre: 'Aller', couleur: 'var(--fil-aller)', jours: aller },
+          { cle: 'retour', titre: 'Retour', couleur: 'var(--fil-retour)', jours: retour },
+        ]
+          .filter((s) => s.jours.length > 0)
+          .map((s) => (
+            <div key={s.cle} className="space-y-8">
+              {/* En-tête de section aller/retour : couleur franche, cohérente avec le tracé et le fil. */}
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                <span aria-hidden className="inline-block h-2.5 w-8 rounded-full" style={{ backgroundColor: s.couleur }} />
+                {s.titre}
+              </p>
+              {s.jours.map((e) => (
+                <div
+                  key={e.jour}
+                  className="border-l-2 pl-4 pt-1 print:[&:not(:last-child)]:break-after-page"
+                  style={{ borderColor: s.couleur }}
+                >
+                  <FicheJour etape={e} niveau={2} />
+                </div>
+              ))}
+            </div>
+          ))}
       </div>
     </section>
   );

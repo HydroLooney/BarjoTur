@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// Collections perso « légères » (A11 / Q12) : « À revoir », « Pour la mère », « Si beau temps »...
-// Regroupements privés d'un voyageur, PAS un vote (n'entrent pas dans le consensus). Stockées en LOCAL
-// (localStorage) pour la 1re couche ; migrables serveur ensuite. Une collection = un nom -> liste d'osm_id.
-export const COLLECTIONS_DEFAUT = ['À revoir', 'Pour la mère', 'Si beau temps'] as const;
+// Collections perso « légères » (A11 / Q12) : regroupements privés d'un voyageur, PAS un vote (n'entrent pas
+// dans le consensus). Stockées en LOCAL (localStorage) pour la 1re couche ; migrables serveur ensuite. Une
+// collection = un nom -> liste d'osm_id. Noms de CONTENU par défaut (M201/M184 : jamais une personne ni un rôle
+// familial), et pas de collision avec le rail « À revoir » (mémoire d'exploration, distinct).
+export const COLLECTIONS_DEFAUT = ['Coups de cœur', 'À ne pas manquer', 'Si beau temps'] as const;
 
 interface EtatCollections {
   collections: Record<string, string[]>;

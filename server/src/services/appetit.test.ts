@@ -3,7 +3,8 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validerAppetit } from './appetit.js';
+import { validerAppetit, ecrireAppetit } from './appetit.js';
+import type { appelerRpc, ArgRpc } from '../db/rpc.js';
 import { ErreurRequete } from '../http/erreurs.js';
 
 test('validerAppetit accepte { theme non vide, appetit dans [0,1] }', () => {
@@ -19,4 +20,16 @@ test('validerAppetit refuse thème manquant/vide, appetit hors [0,1] ou non num�
   assert.throws(() => validerAppetit({ theme: 'x', appetit: -0.1 }), ErreurRequete); // < 0
   assert.throws(() => validerAppetit({ theme: 'x', appetit: 'beaucoup' }), ErreurRequete); // pas un nombre
   assert.throws(() => validerAppetit('non'), ErreurRequete); // pas un objet
+});
+
+test('ecrireAppetit envoie l’appétit en cast NUMERIC (pas double precision — sinon la RPC numeric ne résout pas, C060)', async () => {
+  const appels: Array<{ fn: string; args: readonly ArgRpc[] }> = [];
+  const rpc = (async (fn: string, args: readonly ArgRpc[] = []) => {
+    appels.push({ fn, args });
+    return fn === 'whoami' ? { membre_id: 2, prenom: 'M', role: 'mamie' } : { ok: true, theme: 'nautique', appetit: 0.8 };
+  }) as typeof appelerRpc;
+  await ecrireAppetit('CODE', { theme: 'nautique', appetit: 0.8 }, rpc);
+  const ecrire = appels.find((a) => a.fn === 'appetit_ecrire');
+  assert.ok(ecrire, 'appetit_ecrire doit être appelée');
+  assert.equal(ecrire!.args[2]!.cast, 'numeric'); // 3e arg = appetit ; JAMAIS 'double precision'
 });

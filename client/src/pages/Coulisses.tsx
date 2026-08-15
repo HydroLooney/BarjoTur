@@ -1,91 +1,98 @@
-import { useMemo } from 'react';
-import { useParametres, type Parametre } from '@/lib/queries/parametres';
-import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
-import { Bouton } from '@/ui/primitives/button';
-import { useOnboarding } from '@/stores/onboarding';
-import { AdminVoyageurs } from '@/components/AdminVoyageurs';
-import { ProfilsDeplacement } from '@/components/ProfilsDeplacement';
-import { ReglageCarburant } from '@/components/ReglageCarburant';
+import { useSearchParams } from 'react-router-dom';
+import { useExpert } from '@/stores/expert';
+import { cn } from '@/lib/utils';
+import { VoletComprendre } from '@/components/coulisses/VoletComprendre';
+import { VoletRegler } from '@/components/coulisses/VoletRegler';
+import { VoletTransparence } from '@/components/coulisses/VoletTransparence';
 
-// Coulisses (C09 / A08) : le registre single-source des paramètres (valeur active + recommandée +
-// justification en clair), groupé par domaine. Anti-cadrage : la méthode et les chiffres vivent ICI,
-// pas devant la famille pendant le vote. Aucune constante en dur : tout vient de `budget.parametre`.
-function grouperParDomaine(params: Parametre[]): Map<string, Parametre[]> {
-  const m = new Map<string, Parametre[]>();
-  for (const p of params) {
-    const liste = m.get(p.domaine) ?? [];
-    liste.push(p);
-    m.set(p.domaine, liste);
-  }
-  return m;
+// Coulisses (M391) : le pole « Reglages » decoupe en 3 ecrans distincts, deux publics servis sans se marcher dessus.
+//  - Comprendre : comment l'app decide (tout public, lecture) — la confiance par la transparence.
+//  - Regler : les parametres tunables (expert, gate capacite) — registre unique, autorite serveur.
+//  - Transparence : ce qui est reel vs estime (tout public, R1) — la sante de la base, honnete.
+// Sous-nav par onglets (deep-linkable ?volet=), tactile, zero clutter. Le « mode expert » est un interrupteur
+// d'affichage opt-in (M390) : il ne donne aucun droit, il surface juste l'affordance ⚙ sur les ecrans qui portent
+// des reglages experts.
+
+type Volet = 'comprendre' | 'regler' | 'transparence';
+
+const VOLETS: { cle: Volet; libelle: string }[] = [
+  { cle: 'comprendre', libelle: 'Comprendre' },
+  { cle: 'regler', libelle: 'Régler' },
+  { cle: 'transparence', libelle: 'Transparence' },
+];
+
+function estVolet(v: string | null): v is Volet {
+  return v === 'comprendre' || v === 'regler' || v === 'transparence';
 }
 
 export default function Coulisses() {
-  const { data, isLoading, isError } = useParametres();
-  const groupes = useMemo(() => grouperParDomaine(data ?? []), [data]);
-  const domaines = useMemo(() => [...groupes.keys()].sort((a, b) => a.localeCompare(b, 'fr')), [groupes]);
-  const vide = (data ?? []).length === 0;
-  const reafficherPremiersPas = useOnboarding((s) => s.reafficher);
+  const [params, setParams] = useSearchParams();
+  const brut = params.get('volet');
+  const actif: Volet = estVolet(brut) ? brut : 'comprendre';
+  const modeExpert = useExpert((s) => s.modeExpert);
+  const basculer = useExpert((s) => s.basculerModeExpert);
+
+  const choisir = (v: Volet) => setParams((p) => {
+    p.set('volet', v);
+    return p;
+  });
 
   return (
     <section className="space-y-4">
-      <h1 className="font-serif text-2xl">Réglages</h1>
-      <p className="max-w-prose text-muted-foreground">
-        La mécanique du choix : les paramètres du registre single-source, leur valeur active et la valeur
-        recommandée par le moteur, avec la justification en clair. Ce qui explique, sans cadrer.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="font-serif text-2xl">Coulisses</h1>
+          <p className="max-w-prose text-sm text-muted-foreground">
+            Comprendre la mécanique, régler ce qui vous revient, voir ce qui est sûr. La méthode et les chiffres
+            vivent ici, pas devant tout le monde pendant le vote.
+          </p>
+        </div>
 
-      <div>
-        <Bouton size="sm" variant="outline" onClick={reafficherPremiersPas}>
-          Revoir les premiers pas
-        </Bouton>
+        {/* Interrupteur mode expert : opt-in, ne donne aucun droit, surface l'affordance ⚙ sur les ecrans concernes. */}
+        <button
+          type="button"
+          role="switch"
+          aria-checked={modeExpert}
+          onClick={basculer}
+          className={cn(
+            'inline-flex min-h-tactile items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors',
+            modeExpert ? 'border-accent bg-accent/10 text-foreground' : 'border-border bg-card text-muted-foreground',
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              'inline-block h-4 w-4 rounded-full border',
+              modeExpert ? 'border-accent bg-accent' : 'border-border bg-muted',
+            )}
+          />
+          Mode expert
+        </button>
       </div>
 
-      <AdminVoyageurs />
+      {/* Sous-nav onglets, tactile, deep-linkable. */}
+      <div role="tablist" aria-label="Volets des coulisses" className="flex flex-wrap gap-1 rounded-lg border border-border bg-muted/40 p-1">
+        {VOLETS.map((v) => (
+          <button
+            key={v.cle}
+            role="tab"
+            aria-selected={actif === v.cle}
+            onClick={() => choisir(v.cle)}
+            className={cn(
+              'min-h-tactile flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+              actif === v.cle ? 'bg-card text-foreground shadow-posee' : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {v.libelle}
+          </button>
+        ))}
+      </div>
 
-      <ProfilsDeplacement />
-
-      <ReglageCarburant />
-
-      {isLoading && vide ? <Chargement libelle="Chargement des paramètres." /> : null}
-      {isError && vide ? (
-        <MessageErreur>Paramètres indisponibles pour l'instant (le service n'est pas branché).</MessageErreur>
-      ) : null}
-      {!isLoading && !isError && vide ? (
-        <MessageVide>Aucun paramètre dans le registre pour l'instant.</MessageVide>
-      ) : null}
-
-      {domaines.map((domaine) => (
-        <div key={domaine} className="space-y-2">
-          <h2 className="text-sm font-medium">{domaine}</h2>
-          <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-3 py-2 text-left font-medium">Paramètre</th>
-                  <th scope="col" className="px-3 py-2 text-left font-medium">Valeur</th>
-                  <th scope="col" className="px-3 py-2 text-left font-medium">Recommandée</th>
-                  <th scope="col" className="px-3 py-2 text-left font-medium">Source</th>
-                  <th scope="col" className="px-3 py-2 text-left font-medium">Justification</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(groupes.get(domaine) ?? []).map((p) => (
-                  <tr key={p.cle} className="border-t border-border align-top">
-                    <td className="px-3 py-2 font-mono text-xs">{p.cle}</td>
-                    <td className="px-3 py-2">{String(p.valeur)}</td>
-                    <td className="px-3 py-2 text-muted-foreground">
-                      {p.valeur_recommandee != null ? String(p.valeur_recommandee) : '·'}
-                    </td>
-                    <td className="px-3 py-2 text-muted-foreground">{p.source}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{p.justification}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ))}
+      <div role="tabpanel">
+        {actif === 'comprendre' ? <VoletComprendre /> : null}
+        {actif === 'regler' ? <VoletRegler /> : null}
+        {actif === 'transparence' ? <VoletTransparence /> : null}
+      </div>
     </section>
   );
 }

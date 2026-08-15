@@ -15,7 +15,9 @@ describe('railIncontournables', () => {
   it('replie sur les tiers majeurs T/S sans score', () => {
     const items = railIncontournables([poi({ id: 't', tier_defaut: 'T' }), poi({ id: 'b', tier_defaut: 'B' })]);
     expect(items.map((i) => i.poi.id)).toEqual(['t']);
-    expect(items[0]?.pourquoi).toMatch(/tier T/);
+    // Langage humain à l'écran, jamais le cran technique « tier » (R7 / M182).
+    expect(items[0]?.pourquoi).toMatch(/incontournable/);
+    expect(items[0]?.pourquoi).not.toMatch(/tier/);
   });
 });
 
@@ -36,7 +38,8 @@ describe('railPourChacun', () => {
   it('garde les POI que j’ai votés T/S/A et dit lequel', () => {
     const items = railPourChacun([poi({ id: 'a' }), poi({ id: 'b' })], { 'p:a': 'S', 'p:b': 'B' });
     expect(items.map((i) => i.poi.id)).toEqual(['a']);
-    expect(items[0]?.pourquoi).toMatch(/en S/);
+    // Libellé humain de l'avis (AVIS['S']), pas le cran brut (R7 / M182).
+    expect(items[0]?.pourquoi).toMatch(/Vraiment envie/);
   });
 });
 

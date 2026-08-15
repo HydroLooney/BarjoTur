@@ -8,25 +8,23 @@
 DROP TABLE IF EXISTS mcda2.isochrone_van;
 CREATE TABLE mcda2.isochrone_van(base_id int, mode text DEFAULT 'van', seuil_min int, n_noeuds int, geom geometry(Geometry,25833));
 
+-- LEAN (le 60 min + hull 0.4 était trop lent) : 30 min seul, grille 1000 m, hull 0.6 (fallback convexe si peu de points).
 DO $$
-DECLARE b RECORD; s int;
+DECLARE b RECORD; np int;
 BEGIN
   FOR b IN SELECT brn.base_id, brn.node_ruteplan FROM staging.base_ruteplan_node brn ORDER BY brn.base_id LOOP
-    DROP TABLE IF EXISTS _dd;
-    CREATE TEMP TABLE _dd AS
-      SELECT d.node, d.agg_cost FROM pgr_drivingDistance(
+    DROP TABLE IF EXISTS _pts;
+    CREATE TEMP TABLE _pts AS
+      SELECT DISTINCT ST_SnapToGrid(rn.geom, 1000) g
+      FROM pgr_drivingDistance(
         'SELECT id, source, target, cost_s AS cost, reverse_cost_s AS reverse_cost FROM staging.ways_ruteplan',
-        b.node_ruteplan, 3600, directed:=true) d;
-    FOREACH s IN ARRAY ARRAY[1800,3600] LOOP
-      INSERT INTO mcda2.isochrone_van(base_id, seuil_min, n_noeuds, geom)
-      SELECT b.base_id, s/60, count(*),
-        CASE WHEN count(*)>=3 THEN ST_ConcaveHull(ST_Collect(g), 0.4, false) ELSE ST_ConvexHull(ST_Collect(g)) END
-      FROM (
-        SELECT DISTINCT ST_SnapToGrid(rn.geom, 500) g
-        FROM _dd dd JOIN staging.ruteplan_node rn ON rn.node = dd.node
-        WHERE dd.agg_cost <= s
-      ) x;
-    END LOOP;
+        b.node_ruteplan, 1800, directed:=true) d
+      JOIN staging.ruteplan_node rn ON rn.node = d.node;
+    SELECT count(*) INTO np FROM _pts;
+    INSERT INTO mcda2.isochrone_van(base_id, seuil_min, n_noeuds, geom)
+    SELECT b.base_id, 30, np,
+      CASE WHEN np>=8 THEN ST_ConcaveHull(ST_Collect(g), 0.6, false) ELSE ST_ConvexHull(ST_Collect(g)) END
+    FROM _pts;
   END LOOP;
 END $$;
 CREATE INDEX ON mcda2.isochrone_van USING gist(geom);

@@ -40,3 +40,23 @@ test('lireCircuits / lireCircuit / lireZonesActivites : passe-plats rendant le j
   assert.equal(await lireCircuit(999, fakeRpc({ circuit_lire: null })), null); // absent → null
   assert.deepEqual(await lireZonesActivites('Lofoten', fakeRpc({ zones_activites_lire: null })), []);
 });
+
+test('dégradation propre : RPC absente (42883, tables d’A pas encore posées) → 200 vide, PAS de 500', async () => {
+  const rpcAbsente = (async () => {
+    const e = new Error('function api.circuits_lire(...) does not exist') as Error & { code?: string };
+    e.code = '42883'; // undefined_function
+    throw e;
+  }) as typeof appelerRpc;
+  assert.deepEqual(await lireCircuits({}, rpcAbsente), []);
+  assert.equal(await lireCircuit(1, rpcAbsente), null);
+  assert.deepEqual(await lireZonesActivites(undefined, rpcAbsente), []);
+});
+
+test('dégradation ciblée : une AUTRE erreur SQL remonte (pas masquée)', async () => {
+  const rpcAutre = (async () => {
+    const e = new Error('relation does not exist') as Error & { code?: string };
+    e.code = '42P01'; // undefined_table — vrai problème, doit remonter
+    throw e;
+  }) as typeof appelerRpc;
+  await assert.rejects(() => lireCircuits({}, rpcAutre));
+});

@@ -4,7 +4,7 @@ import { useIdentite } from '@/stores/identite';
 import { useVoyageContexte } from '@/stores/voyage';
 import { usePeut } from '@/hooks/usePeut';
 import { voyageursDemo } from '@/lib/fixtures/voyageurs-demo';
-import { useChangerRole, useRegenererLien, useVoyageurs } from '@/lib/queries/admin';
+import { useChangerRole, useRegenererLien, useRevoquerLien, useVoyageurs } from '@/lib/queries/admin';
 import { ROLES_LABEL } from '@/lib/libelles';
 import { Badge } from '@/ui/primitives/badge';
 import { Bouton } from '@/ui/primitives/button';
@@ -33,11 +33,13 @@ export function AdminVoyageurs() {
   const serveur = useVoyageurs(voyageId, code, live && peutAdministrer);
   const changerRole = useChangerRole(voyageId, code);
   const regenererLien = useRegenererLien(voyageId, code);
+  const revoquerLien = useRevoquerLien(voyageId, code);
 
   const [roster, setRoster] = useState<Voyageur[]>(voyageursDemo);
   const [pin, setPin] = useState('');
   const [refus, setRefus] = useState<string | null>(null);
   const [confirmLien, setConfirmLien] = useState<number | null>(null);
+  const [confirmRevoc, setConfirmRevoc] = useState<number | null>(null);
 
   useEffect(() => {
     if (live && serveur.data) setRoster(serveur.data);
@@ -72,6 +74,19 @@ export function AdminVoyageurs() {
       else setRefus('Régénération du lien refusée par le service (PIN ou droits).');
     } else {
       remplacer({ ...v, codeLien: `${v.codeLien}-neuf` });
+    }
+  }
+
+  // Révoquer un lien (T057) : le code cible meurt (le voyageur passe « lien coupé »). Geste sensible, confirmé.
+  async function surRevoquer(v: Voyageur) {
+    setRefus(null);
+    setConfirmRevoc(null);
+    if (live) {
+      const r = await revoquerLien.mutateAsync({ code: v.codeLien, pin }).catch(() => null);
+      if (r?.ok) remplacer({ ...v, actif: false });
+      else setRefus('Révocation refusée par le service (PIN ou droits).');
+    } else {
+      remplacer({ ...v, actif: false });
     }
   }
 
@@ -165,6 +180,29 @@ export function AdminVoyageurs() {
                     Régénérer le lien
                   </Bouton>
                 )}
+
+                {/* Révoquer (T057) : seulement si le lien est actif et hors chef. Geste sensible, confirmé. */}
+                {!chef && v.actif ? (
+                  confirmRevoc === v.id ? (
+                    <span className="flex items-center gap-1">
+                      <Bouton size="sm" variant="destructive" disabled={pinManquant && live} onClick={() => surRevoquer(v)}>
+                        Confirmer la révocation
+                      </Bouton>
+                      <Bouton size="sm" variant="ghost" onClick={() => setConfirmRevoc(null)}>
+                        Annuler
+                      </Bouton>
+                    </span>
+                  ) : (
+                    <Bouton
+                      size="sm"
+                      variant="ghost"
+                      disabled={pinManquant && live}
+                      onClick={() => setConfirmRevoc(v.id)}
+                    >
+                      Révoquer
+                    </Bouton>
+                  )
+                ) : null}
               </div>
             </li>
           );

@@ -18,9 +18,9 @@ test('normaliserRole est idempotent sur le vocabulaire contrat', () => {
   assert.equal(normaliserRole('invite'), 'invite');
 });
 
-test('normaliserRole : rôle inconnu retombe sur voyageur, JAMAIS organisateur (défaut prudent)', () => {
-  assert.equal(normaliserRole('n_importe_quoi'), 'voyageur');
-  assert.equal(normaliserRole(''), 'voyageur');
+test('normaliserRole : rôle inconnu retombe sur demo, JAMAIS organisateur (défaut prudent, source unique shared M420)', () => {
+  assert.equal(normaliserRole('n_importe_quoi'), 'demo');
+  assert.equal(normaliserRole(''), 'demo');
 });
 
 test('qualifierDepuisRole dérive la qualification du rôle PHYSIQUE (le lien famille porte l’âge, M052/M082)', () => {
@@ -29,7 +29,7 @@ test('qualifierDepuisRole dérive la qualification du rôle PHYSIQUE (le lien fa
   assert.equal(qualifierDepuisRole('mamie'), 'adulte');
   assert.equal(qualifierDepuisRole('owner'), 'adulte');
   assert.equal(qualifierDepuisRole('organisateur'), 'adulte');
-  assert.equal(qualifierDepuisRole('voyageur'), 'adulte');
+  assert.equal(qualifierDepuisRole('voyageur'), null); // M420 : voyageur générique = qualification indéterminée
   assert.equal(qualifierDepuisRole('demo'), null);
   assert.equal(qualifierDepuisRole('invite'), null);
   assert.equal(qualifierDepuisRole('inconnu'), null);

@@ -1,13 +1,17 @@
 import { create } from 'zustand';
+import type { CleFond } from '@/lib/fonds-carte';
 
 export type Theme = 'clair' | 'sombre';
 
 interface EtatUi {
   theme: Theme;
   panneauOuvert: string | null;
+  /** Fond de carte choisi, PARTAGÉ par toutes les cartes (cohérence app, DOCTRINE-CARTO §2). */
+  fondCarte: CleFond;
   basculerTheme: () => void;
   setTheme: (theme: Theme) => void;
   setPanneau: (id: string | null) => void;
+  setFondCarte: (fond: CleFond) => void;
 }
 
 // Theme initial : preference systeme, surchargeable ensuite par l'utilisateur.
@@ -32,6 +36,7 @@ appliquerThemeAuDom(themeDepart);
 export const useUi = create<EtatUi>((set) => ({
   theme: themeDepart,
   panneauOuvert: null,
+  fondCarte: 'graybeard',
   basculerTheme: () =>
     set((s) => {
       const theme: Theme = s.theme === 'clair' ? 'sombre' : 'clair';
@@ -43,4 +48,5 @@ export const useUi = create<EtatUi>((set) => ({
     set({ theme });
   },
   setPanneau: (panneauOuvert) => set({ panneauOuvert }),
+  setFondCarte: (fondCarte) => set({ fondCarte }),
 }));

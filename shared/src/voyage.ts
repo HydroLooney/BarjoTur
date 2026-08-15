@@ -24,8 +24,29 @@ export interface Voyage {
 }
 
 /**
+ * Nature d'une opération logistique sur un transit aller/retour (A19 §8, source `canon/points_fixes.json`).
+ * Les étapes obligatoires ne sont pas que du roulage : enlèvement, chargement, embarquement (2 h avant),
+ * traversée, halte de nuit, arrivée, puis au retour nettoyage/déchargement/restitution. Chacune porte un
+ * budget temps précis et une marge de sécurité. Le composeur les traite comme des jalons obligatoires.
+ */
+export type TypeOperationTransit =
+  | 'enlevement_van'
+  | 'chargement'
+  | 'roulage'
+  | 'halte_nuit'
+  | 'embarquement_ferry'
+  | 'traversee_ferry'
+  | 'arrivee'
+  | 'nettoyage_van'
+  | 'dechargement'
+  | 'restitution_van';
+
+/**
  * Un arrêt candidat du faisceau d'une étape de transit (A19 §2). Les arrêts sont des candidats, pas des POI
  * obligatoires ; l'optimisation transit en choisit. `epingle` = imposé (par l'utilisateur OU une réservation).
+ * Un point fixe non négociable (enlèvement/ferry/restitution) est un arrêt `epingle`+`reserve` porteur d'une
+ * `operation` typée, d'une `marge_securite_min` (ex. 120 = « être à l'embarquement 2 h avant ») et d'une
+ * `checklist` de sécurité (récupérer, charger, décharger, nettoyer, état des lieux).
  */
 export interface ArretTransit {
   id: string;
@@ -38,6 +59,14 @@ export interface ArretTransit {
   reserve: boolean;
   /** Nuit en autonomie (aire/bivouac, défaut privilégié A19 §8.4) vs hébergement payant. */
   autonomie: boolean;
+  /** Opération logistique portée par cet arrêt (null = simple candidat de halte, pas d'opération). */
+  operation?: TypeOperationTransit | null;
+  /** Horodatage contraint de l'opération (ISO), ex. enlèvement van 2027-08-03T09:00, ferry 16:15. Null si libre. */
+  datetime?: string | null;
+  /** Marge de sécurité en minutes à réserver AVANT l'opération (ex. 120 pour l'embarquement ferry). */
+  marge_securite_min?: number | null;
+  /** Checklist de sécurité de l'opération (prise en main, état des lieux, chargement, nettoyage, restitution). */
+  checklist?: string[];
 }
 
 /**

@@ -14,7 +14,15 @@ Cette garde est là pour la commodité, pas pour la sécurité lourde : elle emp
 
 Valider une étape, c'est dire « ce point est acté, on passe à la suite ». Selon l'étape, la validation la laisse encore modifiable, cadenas ouvert, ou la ferme pour de bon, cadenas fermé. Ce qui est fermé repose sur un fait du monde réel, une réservation, une date, une traversée en bateau, et ne se rouvre plus.
 
-Valider libère la suite. Tant que l'idée de départ n'est pas posée, l'app ne compose pas le trajet ; tant que le trajet n'est pas retenu, la préparation attend. C'est le fil qui tient tout.
+Valider libère la suite. Tant que l'idée de départ n'est pas posée, l'app ne compose pas le voyage commun ; tant que le voyage n'est pas retenu, la préparation attend. C'est le fil qui tient tout.
+
+## Composer le voyage commun
+
+Recomposer le voyage de tout le monde est un geste réservé à l'organisateur. Les autres votent, règlent leur idéal et leur cadence, mais ne retapent pas la route commune : elle ne doit pas se défaire sous les pieds de la famille à chaque avis nouveau. L'organisateur lance et relance la composition, compare les variantes, et arrête celle qu'on garde. Le détail de ce travail est au chapitre [Notre Voyage](07 - Notre Voyage.md).
+
+## Les dates qui comptent
+
+L'organisateur inscrit les dates importantes du voyage, un anniversaire, une occasion à honorer, et l'app en tient compte quand elle compose. Chaque date porte un souhait, une préférence que l'app suit quand elle le peut, ou une contrainte ferme qu'elle respecte à coup sûr. On en pose jusqu'à cinq, de quoi baliser les grands rendez-vous sans corseter l'itinéraire. Elles s'ajoutent au cadre déjà fixe des traversées en bateau. Le détail est au chapitre [Notre Voyage](07 - Notre Voyage.md).
 
 ## Rouvrir, et ce que ça entraîne
 
@@ -26,7 +34,7 @@ Certaines étapes ne se rouvrent jamais. Un paiement, une réservation confirmé
 
 Chaque voyageur a son lien personnel, qui le reconnaît et garde ses avis. L'organisateur peut fabriquer un nouveau lien pour quelqu'un, si l'ancien a fuité ou s'est perdu ; l'ancien cesse alors de fonctionner. Il peut aussi confier le rôle d'organisateur à un autre voyageur. Ces gestes touchent à l'identité des personnes : ils sont, eux aussi, protégés par le code.
 
-L'organisation prévoit un organisateur principal, celui qui tranche en dernier ressort, et la possibilité d'en déléguer d'autres. Cela ouvre la voie, plus tard, à des voyages menés à plusieurs mains.
+L'organisation prévoit un organisateur principal, celui qui tranche en dernier ressort et détient le code. La possibilité de déléguer le rôle à d'autres, pour mener un voyage à plusieurs mains, est prévue mais pas encore ouverte ; elle viendra plus tard. Aujourd'hui, un seul organisateur tient la barre.
 
 ## Ce qui se fige et pourquoi
 

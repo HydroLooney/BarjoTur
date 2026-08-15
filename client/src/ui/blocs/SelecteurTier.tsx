@@ -28,8 +28,8 @@ interface Props {
 // Recliquer sur mon tier actuel = dévoter.
 export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, className }: Props) {
   return (
-    <div className={cn('flex items-center justify-between gap-2', className)}>
-      <div className="flex gap-1" role="group" aria-label="Mon vote">
+    <div className={cn('space-y-1', className)}>
+      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Mon vote">
         {TIERS.map((t) => {
           const actif = monTier === t;
           return (
@@ -52,15 +52,22 @@ export function SelecteurTier({ monTier, tierDefaut, onChoisir, disabled, classN
             </button>
           );
         })}
-      </div>
-      <div className="flex flex-col items-end text-xs leading-tight">
+        {/* 5e « bouton » DÉFAUT (M388) : NON ACTIONNABLE, sur la MÊME LIGNE, visuellement distinct (contour tireté,
+            inerte) → rappelle le tier CALCULÉ (« proposé par défaut ») sans être cliquable. */}
         {tierDefaut ? (
-          <span className="text-muted-foreground">
-            défaut <span className="font-medium text-foreground">{tierDefaut}</span>
+          <span
+            aria-label={`Proposé par défaut : ${AVIS[tierDefaut as keyof typeof AVIS] ?? tierDefaut}`}
+            title={`Proposé par défaut : ${AVIS[tierDefaut as keyof typeof AVIS] ?? tierDefaut}`}
+            className="flex h-11 min-w-[2.75rem] cursor-default select-none flex-col items-center justify-center rounded-full border border-dashed border-border px-2 leading-none text-muted-foreground"
+          >
+            <span className="text-[0.5rem] uppercase tracking-wide">défaut</span>
+            <span className="mt-0.5 text-sm font-semibold">{tierDefaut}</span>
           </span>
         ) : null}
-        {!monTier ? <span className="text-muted-foreground">pas encore voté</span> : null}
       </div>
+      {!monTier ? (
+        <p className="text-xs text-muted-foreground">Proposé par défaut ; touchez un cran pour ajuster.</p>
+      ) : null}
     </div>
   );
 }

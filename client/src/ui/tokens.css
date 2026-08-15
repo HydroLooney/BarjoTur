@@ -20,10 +20,87 @@
   --ocre: #c0873c; /* accent chaud, actif */
   --glacier: #3d7080; /* accent froid, liens */
   --granite: #9a9c98; /* texte secondaire, meta */
+  --ardoise: #64707c; /* neutre FROID plus sombre que granite (famille carto « Étape & table » utilitaire, M262) */
   --filet: #cfc7b7; /* bordures, separateurs */
   --rouge: #c0392b; /* alerte */
   --papier: #fffdf8; /* fond des cartes et panneaux */
   --vert: #2e7d4a; /* ok / verifie / famille */
+
+  /* --- Fond de carte PERSONNALISE (DOCTRINE-CARTO §2) : on patche le style graybeard hebergé (VersaTiles) aux
+     couleurs de la charte, sans rien heberger. Parti-pris distinctif : un fond de PAPIER CHAUD (ecru), pas le gris
+     froid generique — le fond « carnet » de Barjøtur. Ces jetons ne colorent QUE le basemap (background, eau,
+     couvert vegetal, routes, etiquettes) ; la donnee posee dessus (decoupage, bases, POI) garde ses propres
+     jetons. Contraste AA tenu, jamais criard, la donnee reste le heros. --- */
+  --carte-terre: #f0e9d8; /* fond terrestre (background), un cran plus clair que --carte-fond */
+  --carte-eau: #cddde0; /* plans d'eau, fjords, mer : glacier tres desature et clair */
+  --carte-couvert: #dee6d3; /* bois, parcs, couvert vegetal : vert eteint tres doux */
+  --carte-route: #e2d8c4; /* voirie : filet chaud, discret */
+  --carte-etiquette: #6b6157; /* texte des etiquettes du fond : encre adoucie (meta, recule) */
+  --carte-etiquette-halo: #f7f2e8; /* halo des etiquettes : papier, pour le detachement AA */
+
+  /* --- Voiles d'accent (CHARTE v3 §1.1, repris v2) : fonds discrets sans aplat (badges, survols, liseres,
+     alertes). C'est ce qui rend possible « touche de couleur sans aplat » (SPEC). --- */
+  --ocre-voile: rgba(192, 135, 60, 0.12);
+  --glacier-voile: rgba(61, 112, 128, 0.12);
+  --rouge-voile: rgba(192, 57, 43, 0.1);
+  --vert-voile: rgba(46, 125, 74, 0.13);
+  --granite-voile: rgba(154, 156, 152, 0.14); /* meta / puce neutre */
+
+  /* --- Etats des accents interactifs (CHARTE v3 §1.1) : survol un cran plus sombre, actif deux crans (au lieu
+     d'opacity-90 qui desature). L'opacite ne sert plus qu'au desactive. --- */
+  --ocre-survol: #ab7833;
+  --ocre-actif: #96692c;
+  --glacier-survol: #34606e;
+  --glacier-actif: #2b5260;
+  --rouge-survol: #a83226;
+  --vert-survol: #276b40;
+  --desactive-opacite: 0.5; /* jeton pour l'etat disabled, remplace le 0.5 en dur */
+
+  /* Regle de contraste (CHARTE v3 §1.1, R1) : --glacier = accent TEXTE (AA ~4.7:1 sur papier) ; --ocre = accent
+     de FOND/pictogramme (texte blanc dessus, gros/gras seulement, ~2.4:1 en texte = insuffisant) ; --granite =
+     meta seulement. JAMAIS de texte de contenu en ocre/granite/vert/rouge sur clair. */
+
+  /* --- Voile du GuideEcran (M166) : encre a ~80 %, assombrit l'ecran pendant le guide (voile annote). --- */
+  --voile: rgba(43, 39, 36, 0.82);
+
+  /* --- Fil d'itineraire COLLECTIF (A32 / M151), tranche par Guillaume sur apercu --- */
+  --fil-jour: #f5840c; /* perle de jour */
+  --fil-nuit: #ffb347; /* perle de nuit (etape d'autonomie) */
+  --fil-halo: #ffffff; /* halo blanc autour de la perle courante */
+
+  /* --- ALLER / RETOUR (carte animee M218, sous-brique 3) : couleurs DISTINCTES et coherentes sur les 4 supports
+     (trace + barre d'animation + agenda + carnet). Alias de glacier (aller, froid = on part) / ocre (retour, chaud
+     = on revient), lisibles sur fond clair ET sombre. Retunable ici sans toucher au code. --- */
+  --fil-aller: var(--glacier);
+  --fil-retour: var(--ocre);
+
+  /* --- Fil d'itineraire INDIVIDUEL (Mon voyage), tranche par Guillaume sur apercu (M162) : couple miroir
+     chaud/froid (Notre Voyage orange / Mon voyage glacier). Halo blanc de la perle courante inchange. --- */
+  --fil-indiv-jour: #3d7080; /* glacier (perle de jour) */
+  --fil-indiv-nuit: #6ba0b0; /* glacier clair (perle de nuit d'autonomie) */
+  --fil-indiv-halo: var(--fil-halo);
+
+  /* --- Identite couleur PAR ESPACE (M162), accent DISCRET : lisere en tete + pastille d'onglet, JAMAIS
+     d'aplat plein (on garde l'ecru). Codes tranches par Guillaume sur apercu (dans la charte, pas de violet). */
+  --espace-le-voyage: #c0873c; /* ocre */
+  --espace-explorer: #3d7080; /* glacier */
+  --espace-notre-voyage: #d9772b; /* orange chaud */
+  --espace-carte: #2e7d4a; /* vert */
+  --espace-mon-voyage: #4a6f86; /* glacier profond */
+  --espace-mes-envies: #b06a4a; /* terracotta */
+  --espace-preparatifs: #8a7350; /* brun sable */
+  --espace-reglages: #9a9c98; /* granite */
+
+  /* --- Voile PAR ESPACE (CHARTE v3 §1.2) : meme teinte a ~12 %, pour materialiser le lisere en tete et la
+     pastille active proprement (au lieu d'un background teinte a la main). Le libelle d'onglet reste neutre. --- */
+  --espace-le-voyage-voile: rgba(192, 135, 60, 0.12);
+  --espace-explorer-voile: rgba(61, 112, 128, 0.12);
+  --espace-notre-voyage-voile: rgba(217, 119, 43, 0.12);
+  --espace-carte-voile: rgba(46, 125, 74, 0.12);
+  --espace-mon-voyage-voile: rgba(74, 111, 134, 0.12);
+  --espace-mes-envies-voile: rgba(176, 106, 74, 0.12);
+  --espace-preparatifs-voile: rgba(138, 115, 80, 0.12);
+  --espace-reglages-voile: rgba(154, 156, 152, 0.14);
 
   /* --- Tiers TSAB (source unique, cf A11/A14) --- */
   --tier-T: var(--ocre);
@@ -37,11 +114,54 @@
   --serif: 'Fraunces', Georgia, serif;
   --italique: 'Spectral', var(--serif);
 
+  /* Echelle typographique nommee (CHARTE v3 §5, rem pour respecter le zoom navigateur, base 16px). Titres
+     (hero->section) = Fraunces graisse 600 interligne serre ; corps = IBM Plex ; meta/micro = granite. */
+  --t-hero: 2.375rem; /* 38px : grande valeur hero (total budget, van) */
+  --t-carte: 1.5rem; /* 24px : chiffre cle d'une carte-poste */
+  --t-titre: 1.375rem; /* 22px : h2 de panneau, titre d'espace */
+  --t-section: 1.1875rem; /* 19px : nom de fiche, titre de section */
+  --t-corps: 0.875rem; /* 14px : texte courant */
+  --t-meta: 0.75rem; /* 12px : meta granite */
+  --t-micro: 0.6875rem; /* 11px : eyebrow / libelle majuscules */
+  --t-nav-bas: 0.625rem; /* 10px : libelles de la barre de nav basse (M201, avec whitespace-nowrap + pastille omise pour que « Notre Voyage » tienne sur 1 ligne a 390px) */
+  --graisse-normale: 400;
+  --graisse-medium: 500; /* boutons, libelles d'action */
+  --graisse-forte: 600; /* titres sans-serif, valeurs, tiers */
+  --interligne-serre: 1.15; /* titres Fraunces */
+  --interligne-corps: 1.55; /* paragraphes lisibles */
+  --interligne-meta: 1.35;
+
   /* --- Formes, ombres, cible tactile --- */
-  --rayon: 12px;
-  --rayon-s: 8px;
+  /* Echelle de 4 rayons nommes (CHARTE v3 §2, preference « legers arrondis »). JAMAIS d'arrondi sur un trace
+     geographique ni sur la toile MapLibre (le conteneur oui, en overflow-hidden ; son contenu non). */
+  --rayon-xs: 4px; /* pastille carree, vignette, coin de tag serre */
+  --rayon-s: 8px; /* boutons, champs, badges */
+  --rayon: 12px; /* cartes, panneaux, popovers, modales, feuilles */
+  --rayon-plein: 999px; /* pilules : onglets, chips, poignee SplitScreen, pastilles rondes */
   --cible-tactile: 44px; /* tactile d'abord, A06 */
-  --ombre: 0 1px 2px rgba(43, 39, 36, 0.1), 0 8px 30px rgba(43, 39, 36, 0.08);
+
+  /* Espacement semantique (CHARTE v3 §3) : on ne nomme que les 3 gouttieres recurrentes ; le pas 4/8 reste
+     porte par Tailwind. Permet de basculer la densite par format sans toucher chaque composant. */
+  --espace-carte: 16px; /* padding interne des cartes/panneaux (= p-4) */
+  --espace-bloc: 12px; /* gouttiere entre blocs d'une meme carte (= gap-3) */
+  --espace-serre: 8px; /* gouttiere serree : badge<->texte, ligne de liste (= gap-2) */
+
+  /* Elevation a 3 niveaux (CHARTE v3 §4), teintee encre (pas de gris froid). La toile MapLibre ne porte pas
+     d'ombre ; les panneaux poses dessus, oui (niv.2/3). */
+  --ombre-posee: 0 1px 2px rgba(43, 39, 36, 0.08); /* niv.1 : carte au repos, tuile */
+  --ombre: 0 1px 2px rgba(43, 39, 36, 0.1), 0 8px 30px rgba(43, 39, 36, 0.08); /* niv.2 : carte elevee, popover */
+  --ombre-flottante: 0 4px 12px rgba(43, 39, 36, 0.14), 0 16px 48px rgba(43, 39, 36, 0.12); /* niv.3 : modale, sheet, menu, slide-over */
+
+  /* --- Mouvement (CHARTE v3 §6 / T054) : micro-animations DISCRETES, jamais clinquantes. Court par principe
+     (une app sobre anime vite et peu). Quatre durees, trois courbes. Coupees si l'utilisateur demande le
+     mouvement reduit (media query en bas + bloc global de globals.css). --- */
+  --anim-instant: 90ms; /* etat immediat : couleur de survol, focus */
+  --anim-court: 160ms; /* defaut : hover d'elevation, pastille, apparition de tooltip */
+  --anim-moyen: 240ms; /* ouverture/fermeture : accordeon, popover, menu, bottom sheet */
+  --anim-long: 360ms; /* reserve : slide-over d'aide, voile du GuideEcran (rare) */
+  --easing-sortie: cubic-bezier(0.4, 0, 1, 1); /* ce qui se ferme (accelere) */
+  --easing-entree: cubic-bezier(0, 0, 0.2, 1); /* ce qui s'ouvre (decelere, doux) */
+  --easing-doux: cubic-bezier(0.4, 0, 0.2, 1); /* defaut symetrique (hover, deplacement) */
 
   /* --- Jetons semantiques (consommes par Tailwind + shadcn/ui). Mode clair. --- */
   --background: var(--ecru);
@@ -88,4 +208,55 @@
   --border: #3a352f;
   --input: #3a352f;
   --ring: #5b93a4;
+
+  /* Fil individuel + identites d'espace eclaircis d'un cran en sombre (M162), comme ocre/glacier. */
+  --fil-indiv-jour: #5b93a4;
+  --fil-indiv-nuit: #8fbccb;
+  --espace-le-voyage: #d2924a;
+  --espace-explorer: #5b93a4;
+  --espace-notre-voyage: #e89150;
+  --espace-carte: #4a9e6a;
+  --espace-mon-voyage: #6b93a8;
+  --espace-mes-envies: #c98868;
+  --espace-preparatifs: #a89072;
+  --espace-reglages: #b8bab6;
+  --ardoise: #8b95a1; /* neutre froid éclairci d'un cran en sombre (comme les accents), lisible sur fond sombre */
+
+  /* Voiles d'accent + etats + elevation en sombre (CHARTE v3) : voiles montent un peu en opacite, ombres
+     renforcees (une ombre encre est invisible sur fond sombre), accents eclaircis d'un cran. */
+  --ocre-voile: rgba(210, 146, 74, 0.18);
+  --glacier-voile: rgba(91, 147, 164, 0.18);
+  --rouge-voile: rgba(224, 100, 89, 0.16);
+  --vert-voile: rgba(74, 158, 106, 0.18);
+  --granite-voile: rgba(184, 186, 182, 0.14);
+  --ocre-survol: #dd9f5b;
+  --ocre-actif: #e8ac6a;
+  --glacier-survol: #6ba0b0;
+  --glacier-actif: #7db0c0;
+  --rouge-survol: #e8776c;
+  --vert-survol: #5aab77;
+  --ombre-posee: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ombre: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.4);
+  --ombre-flottante: 0 4px 12px rgba(0, 0, 0, 0.55), 0 16px 48px rgba(0, 0, 0, 0.5);
+
+  /* Fond de carte en sombre : papier chaud profond, eau ardoise, etiquettes ecrues (le fond recule, la donnee
+     ressort). Meme role que le clair, echelle sombre. */
+  --carte-terre: #211e1a;
+  --carte-eau: #1e2a2d;
+  --carte-couvert: #222a22;
+  --carte-route: #332e28;
+  --carte-etiquette: #b3a99c;
+  --carte-etiquette-halo: #1b1815;
+}
+
+/* Mouvement reduit (M185 §2) : si l'utilisateur le demande au niveau systeme, on annule les durees a la
+   SOURCE (les jetons passent a 0ms), donc toute transition qui consomme var(--anim-*) se fige sans retouche
+   composant par composant. Accessibilite d'abord : jamais de mouvement impose. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --anim-instant: 0ms;
+    --anim-court: 0ms;
+    --anim-moyen: 0ms;
+    --anim-long: 0ms;
+  }
 }

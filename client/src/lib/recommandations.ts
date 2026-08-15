@@ -1,5 +1,5 @@
 import type { CataloguePoi, VoteTier } from '@barjotur/shared';
-import { RECOMMANDATIONS } from '@/lib/libelles';
+import { AVIS, RECOMMANDATIONS } from '@/lib/libelles';
 
 // Rails de recommandation de l'Explorer (A20 §11 / M057). Recommander, pas lister à plat : des rails curés
 // au-dessus du parcours libre. Honnêteté R1 : chaque item dit POURQUOI il est là (qualité ? votre vote ?
@@ -35,15 +35,15 @@ export function railIncontournables(pois: CataloguePoi[]): ItemRecommande[] {
   return pois
     .filter((p) => p.tier_defaut === 'T' || p.tier_defaut === 'S')
     .slice(0, MAX)
-    .map((poi) => ({ poi, pourquoi: `Repère majeur (tier ${poi.tier_defaut} par défaut).` }));
+    .map((poi) => ({ poi, pourquoi: 'Un incontournable de la région.' }));
 }
 
-/** La famille adore : les valeurs sûres (tier A par défaut, en attendant le consensus réel des votes). */
+/** La famille adore : les valeurs sûres (repli sur le défaut « famille », en attendant le consensus des votes). */
 export function railFamille(pois: CataloguePoi[]): ItemRecommande[] {
   return pois
     .filter((p) => p.tier_defaut === 'A')
     .slice(0, MAX)
-    .map((poi) => ({ poi, pourquoi: 'Classé « famille » par défaut (tier A).' }));
+    .map((poi) => ({ poi, pourquoi: 'Une valeur sûre pour toute la famille.' }));
 }
 
 /** Pépites : les trouvailles signalées (flag pépite). */
@@ -59,7 +59,10 @@ export function railPourChacun(pois: CataloguePoi[], mesTiers: Record<string, Vo
       return t === 'T' || t === 'S' || t === 'A';
     })
     .slice(0, MAX)
-    .map((poi) => ({ poi, pourquoi: `Vous l'avez mis en ${mesTiers[`p:${poi.id}`]}.` }));
+    .map((poi) => {
+      const t = mesTiers[`p:${poi.id}`] as keyof typeof AVIS;
+      return { poi, pourquoi: `Vous avez dit « ${AVIS[t] ?? 'votre avis'} ».` };
+    });
 }
 
 /** Construit les rails non vides, dans l'ordre d'affichage. */

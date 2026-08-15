@@ -1,7 +1,7 @@
 import { Composeur } from '@/components/Composeur';
 import { EtapesTransit } from '@/components/EtapesTransit';
 
-// Composeur d'itinéraire mixte (A20 « Le trajet » / M059) : UNE seule surface qui présente le voyage comme
+// Composeur d'itinéraire mixte (A20 « Notre Voyage » / M059) : UNE seule surface qui présente le voyage comme
 // une suite d'étapes typées — les étapes d'EXPÉRIENCE (la boucle, on maximise le beau) et les étapes de
 // TRANSIT (repositionnement, on minimise) qui les relient. On compose l'expérience et on gère les transits
 // au même endroit, pas deux vues séparées.

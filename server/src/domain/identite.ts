@@ -1,47 +1,29 @@
-// Type identité désormais CANONIQUE dans @barjotur/shared/role.ts (câblé par M, M011). Re-export.
-// `Whoami` = retour de api.whoami (bootstrap identité depuis le lien perso, non gaté PIN).
-//
-// NORMALISATION DU RÔLE (M052, option A2) : le physique DB2 (`membre.role`) n'est PAS migré (Q11 : l'identité reste
-// canonique derrière une couche). C'est `whoami` qui NORMALISE le rôle physique vers le vocabulaire d'ACCÈS du contrat
-// (@barjotur/shared/role.ts). whoami devient ainsi la source de vérité unique du rôle d'accès de l'app.
+// Type identité CANONIQUE dans @barjotur/shared/role.ts. Re-export + normalisation via la SOURCE UNIQUE shared
+// `normaliserRoleBrut` (M420) : le rôle physique DB2 (`membre.role` : owner/mamie/enfant/demo/…) → rôle d'ACCÈS canonique
+// + qualification. Le BFF (services/identite.ts lireWhoami) est le POINT D'APPLICATION UNIQUE ; whoami fournit le rôle brut
+// + l'attribut `conducteur` (colonne membre.conducteur, 013/019), lu à part.
 
-export type { Whoami } from '@barjotur/shared';
+import { normaliserRoleBrut } from '@barjotur/shared';
+import type { Role, Qualification, Whoami } from '@barjotur/shared';
 
-import type { Role, Qualification } from '@barjotur/shared';
+export type { Whoami };
 
-/** Table de correspondance rôle PHYSIQUE (DB2) → rôle d'ACCÈS (contrat). Le lien famille (mamie…) est un attribut
- *  d'affichage distinct, hors rôle d'accès (M052). */
-const MAP_ROLE_PHYSIQUE: Readonly<Record<string, Role>> = {
-  owner: 'organisateur_principal',
-  organisateur_principal: 'organisateur_principal',
-  organisateur: 'organisateur',
-  mamie: 'voyageur',
-  enfant: 'voyageur',
-  voyageur: 'voyageur',
-  demo: 'demo',
-  invite: 'invite',
-};
-
-/** Normalise un rôle physique vers le vocabulaire d'accès du contrat. Défaut PRUDENT = `voyageur` : un rôle physique
- *  inconnu n'est JAMAIS organisateur par défaut (M052). Pure. */
-export function normaliserRole(physique: string): Role {
-  return MAP_ROLE_PHYSIQUE[physique] ?? 'voyageur';
+/** Retour BRUT de api.whoami (M052/019) : rôle PHYSIQUE (non normalisé) + attribut conducteur (colonne membre.conducteur). */
+export interface WhoamiBrut {
+  membre_id: number;
+  prenom: string;
+  role: string;
+  conducteur?: boolean;
 }
 
-/** Table de correspondance rôle PHYSIQUE → qualification (âge). Le rôle physique porte le lien famille : `enfant` est
- *  un enfant ; `owner`/`mamie`/organisateur/voyageur sont des adultes ; `demo`/`invite` n'ont pas de qualification. */
-const MAP_QUALIFICATION_PHYSIQUE: Readonly<Record<string, Qualification>> = {
-  enfant: 'enfant',
-  owner: 'adulte',
-  mamie: 'adulte',
-  organisateur: 'adulte',
-  organisateur_principal: 'adulte',
-  voyageur: 'adulte',
-  adulte: 'adulte',
-};
+// `conducteur` est désormais dans le contrat shared `Whoami` (M423) → plus de type BFF-local : lireWhoami rend `Whoami`.
 
-/** Dérive la qualification (adulte/enfant) du rôle PHYSIQUE (M082). Pas de colonne dédiée dans membre.membre : le lien
- *  famille du rôle porte l'âge (M052). `null` si non qualifiable (demo, invité, inconnu). Pure. */
+/** Normalise un rôle physique DB2 vers le rôle d'accès canonique. Délègue à la SOURCE UNIQUE shared (M420). Pure. */
+export function normaliserRole(physique: string): Role {
+  return normaliserRoleBrut(physique).role;
+}
+
+/** Dérive la qualification (adulte/enfant/null) du rôle physique. Délègue à la SOURCE UNIQUE shared (M420). Pure. */
 export function qualifierDepuisRole(physique: string): Qualification | null {
-  return MAP_QUALIFICATION_PHYSIQUE[physique] ?? null;
+  return normaliserRoleBrut(physique).qualification;
 }

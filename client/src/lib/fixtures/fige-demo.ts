@@ -17,13 +17,23 @@ export const figeGeomDemo: MultiLineString = {
       [5.5, 59.2],
       [5.3, 59.41],
     ],
-    // Troncon 2 : apres une traversee (ferry) vers Bergen, puis remontee des fjords.
+    // Troncon 2 : apres une traversee (ferry) vers Bergen, puis remontee des fjords jusqu'a l'APEX (Flam).
     [
       [6.15, 60.39],
       [6.6, 60.55],
       [7.2, 60.7],
       [7.9, 61.1],
       [8.5, 61.5],
+    ],
+    // Troncon 3 : RETOUR vers Kristiansand par l'INTERIEUR (est, distinct de la cote de l'aller) pour reprendre
+    // le ferry. Rend l'aller/retour lisible sur la carte animee (sous-brique 3) ; le vrai voyage boucle ainsi.
+    [
+      [8.5, 61.5],
+      [8.7, 60.6],
+      [9.0, 59.7],
+      [8.7, 59.0],
+      [8.3, 58.5],
+      [8.0, 58.15],
     ],
   ],
 };

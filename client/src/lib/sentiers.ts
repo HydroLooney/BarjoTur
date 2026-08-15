@@ -21,7 +21,8 @@ export const DIFFICULTES: NiveauDifficulte[] = [
   { code: 'moyen', libelle: 'Moyen', token: '--accent' },
   { code: 'difficile', libelle: 'Difficile', token: '--ocre' },
   { code: 'expert', libelle: 'Expert', token: '--destructive' },
-  { code: 'non gradé', libelle: 'Non gradé', token: '--muted-foreground' },
+  // Code EXACT de la donnée A (Turrutebasen) = `non_grade` ; 1988/2817 (la source ne les gradue pas) → gris, R1.
+  { code: 'non_grade', libelle: 'Non gradé', token: '--muted-foreground' },
 ];
 
 /** Libellé lisible d'une difficulté (repli sur la valeur brute si inconnue). */

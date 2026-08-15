@@ -40,6 +40,16 @@ class Cadre:
 
 
 @dataclass
+class CourbesVoyageurLieu:
+    """Courbes de valeur PAR VOYAGEUR pour un lieu (A25 leximin, M255). Miroir du contrat shared `CourbesVoyageurLieu`.
+    `par_voyageur[voyageur_id]` = la courbe marginale de ce voyageur pour ce lieu (même longueur/bornes que la courbe
+    consensus du lieu). Sert au max-min ÉGALITARISTE par voyageur du CP-SAT (V_t = Σ marginaux_t·x)."""
+
+    lieu_id: int
+    par_voyageur: dict[int, list[float]]
+
+
+@dataclass
 class EntreeAllocation:
     # `lieux` porte la courbe CONSENSUS par lieu (déjà agrégée, cf `agreger_egalitariste`).
     lieux: list[CourbeLieu]
@@ -47,6 +57,9 @@ class EntreeAllocation:
     cadre: Cadre
     mode: str = "full_auto"  # "manuel" | "assiste" | "full_auto"
     nuits_imposees: dict[int, int] = field(default_factory=dict)
+    # Option (a) M255 : courbes par voyageur, alignées sur `lieux` (mêmes lieu_id/bornes). PRÉSENTES → le CP-SAT vise le
+    # max-min par voyageur (leximin, validé par leximin_ref) ; ABSENTES (None) → allocation utilitaire sur `lieux`.
+    courbes_par_voyageur: Optional[list[CourbesVoyageurLieu]] = None
 
 
 @dataclass
@@ -279,9 +292,23 @@ def entree_depuis_json(payload: dict) -> EntreeAllocation:
     cad = payload["cadre"]
     cadre = Cadre(total_nuits=int(cad["total_nuits"]), depart=int(cad["depart"]), arrivee=int(cad["arrivee"]))
     nuits_imposees = {int(k): int(v) for k, v in (payload.get("nuits_imposees") or {}).items()}
+    brut = payload.get("courbes_par_voyageur")
+    courbes_par_voyageur = (
+        [
+            CourbesVoyageurLieu(
+                lieu_id=int(c["lieu_id"]),
+                # clés voyageur en string côté JSON (Record<number,…>) → int
+                par_voyageur={int(vid): [float(x) for x in courbe] for vid, courbe in c["par_voyageur"].items()},
+            )
+            for c in brut
+        ]
+        if brut is not None
+        else None
+    )
     return EntreeAllocation(
         lieux=lieux, couts_trajet=couts, cadre=cadre,
         mode=payload.get("mode", "full_auto"), nuits_imposees=nuits_imposees,
+        courbes_par_voyageur=courbes_par_voyageur,
     )
 
 
@@ -310,11 +337,15 @@ def resoudre_allocation_cpsat(entree: EntreeAllocation) -> Resultat:
     rendement décroissant est capté sans non-linéarité (maximiser prend d'abord les meilleurs crans). Contraintes :
     somme des crans = total_nuits ; min via `x[k] >= x[0]` pour k < min. Objectif : somme des marginaux pris.
 
-    EXTENSIONS FLIP (notées, non codées ici pour ne pas livrer d'inexécutable) :
-      * max-min ÉGALITARISTE : une valeur par voyageur `V_t = Σ marginaux_t[k]·x[l][k]`, variable `m ≤ V_t ∀t`,
-        maximiser `m` (+ tie-break somme) — soigne d'abord la personne la moins bien servie (A25).
-      * ROUTAGE : circuit sur les lieux retenus (`AddCircuit`), coût de trajet réel (matrice A), faisabilité van.
-    Requiert `ortools` (absent ici) ; lève une erreur claire si indisponible."""
+    OBJECTIF (M255) : si `entree.courbes_par_voyageur` est présent → max-min ÉGALITARISTE par voyageur
+    `V_t = Σ marginaux_t[k]·x[l][k]`, variable `m ≤ V_t ∀t`, maximiser `m` (utilitaire en tie-break) — soigne d'abord
+    la personne la moins bien servie (A25) ; validé par `leximin_ref.leximin_optimal`. Sinon → utilitaire sur la courbe
+    consensus (statu quo). NB : ceci code le PREMIER cran du leximin ; la cascade complète (2e plus faible, etc.) est une
+    itération ultérieure, utile seulement si des ex æquo sur le min pèsent.
+
+    EXTENSION FLIP restante : ROUTAGE — circuit sur les lieux retenus (`AddCircuit`), coût de trajet réel (matrice A),
+    faisabilité van. Requiert `ortools` (absent de cet env) ; lève une erreur claire si indisponible ; ce chemin est
+    validé au déploiement (test_cpsat_equiv, gate ortools)."""
     try:
         from ortools.sat.python import cp_model  # import tardif : le pur n'en dépend pas
     except ImportError as exc:  # pragma: no cover - dépend de l'env
@@ -333,13 +364,44 @@ def resoudre_allocation_cpsat(entree: EntreeAllocation) -> Resultat:
 
     model.Add(sum(x[l.lieu_id][k] for l in entree.lieux for k in range(l.borne_max())) == total)
     # marginaux mis à l'échelle entière (CP-SAT est entier).
-    model.Maximize(
-        sum(
-            int(round(l.marginaux[k] * 1000)) * x[l.lieu_id][k]
+    ECH = 1000
+    util = sum(
+        int(round(l.marginaux[k] * ECH)) * x[l.lieu_id][k]
+        for l in entree.lieux
+        for k in range(l.borne_max())
+    )
+    if entree.courbes_par_voyageur:
+        # Option (a) M255 : max-min par voyageur. V_t = Σ marginaux_t[lieu][k]·x[lieu][k].
+        par_lieu = {c.lieu_id: c.par_voyageur for c in entree.courbes_par_voyageur}
+        voyageurs = sorted({t for c in entree.courbes_par_voyageur for t in c.par_voyageur})
+        v_terms: dict[int, list] = {t: [] for t in voyageurs}
+        for l in entree.lieux:
+            courbes_t = par_lieu.get(l.lieu_id, {})
+            for t in voyageurs:
+                courbe = courbes_t.get(t)
+                if not courbe:
+                    continue
+                for k in range(l.borne_max()):
+                    if k < len(courbe):
+                        v_terms[t].append(int(round(courbe[k] * ECH)) * x[l.lieu_id][k])
+        borne_m = sum(
+            max(0, int(round(v * ECH)))
+            for c in entree.courbes_par_voyageur
+            for courbe in c.par_voyageur.values()
+            for v in courbe
+        )
+        u_max = sum(
+            max(0, int(round(l.marginaux[k] * ECH)))
             for l in entree.lieux
             for k in range(l.borne_max())
         )
-    )
+        m = model.NewIntVar(0, borne_m if borne_m > 0 else 1, "m_min")
+        for t in voyageurs:
+            model.Add(m <= sum(v_terms[t]))  # sum([]) = 0 ⇒ un voyageur non servi plafonne le min à 0 (comme l'oracle)
+        # m PRIMAIRE (poids > tout utilitaire possible), utilitaire en départage déterministe.
+        model.Maximize(m * (u_max + 1) + util)
+    else:
+        model.Maximize(util)
 
     solver = cp_model.CpSolver()
     solver.Solve(model)

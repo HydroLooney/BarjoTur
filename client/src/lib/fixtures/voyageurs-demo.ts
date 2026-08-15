@@ -3,45 +3,47 @@ import type { Voyageur } from '@barjotur/shared';
 // Rôle de la famille pour l'admin des voyageurs (T039), hors live. Le contrat `Voyageur` existe déjà
 // (shared/role.ts) ; seuls les endpoints d'admin (lister, régénérer un lien, changer un rôle) restent à
 // poser par B. Cette fixture alimente le panneau tant que `VITE_ADMIN_LIVE`/`?admin` est off (flip-ready).
+// M184 (R2) : prénoms et codes FICTIFS (Alex/Sam/Léa/Noé/Mika), jamais la famille réelle — les captures de
+// l'admin sont ainsi public-safe.
 export const voyageursDemo: Voyageur[] = [
   {
     id: 1,
-    prenom: 'Guillaume',
+    prenom: 'Alex',
     role: 'organisateur_principal',
     qualification: 'adulte',
-    codeLien: 'roadtrip-guillaume',
+    codeLien: 'roadtrip-alex',
     actif: true,
   },
   {
     id: 2,
-    prenom: 'Cécile',
+    prenom: 'Sam',
     role: 'organisateur',
     qualification: 'adulte',
-    codeLien: 'roadtrip-cecile',
+    codeLien: 'roadtrip-sam',
     actif: true,
   },
   {
     id: 3,
-    prenom: 'Mamie',
+    prenom: 'Léa',
     role: 'voyageur',
     qualification: 'adulte',
-    codeLien: 'roadtrip-mamie',
+    codeLien: 'roadtrip-lea',
     actif: true,
   },
   {
     id: 4,
-    prenom: 'Lou',
+    prenom: 'Noé',
     role: 'voyageur',
     qualification: 'enfant',
-    codeLien: 'roadtrip-lou',
+    codeLien: 'roadtrip-noe',
     actif: true,
   },
   {
     id: 5,
-    prenom: 'Nino',
+    prenom: 'Mika',
     role: 'voyageur',
     qualification: 'enfant',
-    codeLien: 'roadtrip-nino',
+    codeLien: 'roadtrip-mika',
     actif: false,
   },
 ];

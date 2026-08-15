@@ -3,7 +3,7 @@
 // circuit_lire / zones_activites_lire, RPC injectée (défaut appelerRpc) pour l'e2e. Flip-ready : les données réelles
 // viennent d'A (tables circuit / zone_activite_ideale) au flip ; d'ici là fixtures. Ne connaît pas Express.
 
-import { appelerRpc, argTexte, argEntier } from '../db/rpc.js';
+import { appelerRpc, argTexte, argEntier, siRpcAbsente } from '../db/rpc.js';
 import { Erreurs } from '../http/erreurs.js';
 import type { Circuit, ZoneActiviteIdeale, ModeCircuit, DureeCircuit } from '../domain/circuit.js';
 
@@ -45,21 +45,24 @@ export function validerFiltresCircuit(query: unknown): FiltresCircuit {
 
 /** Bibliothèque des circuits, filtrée. Passe-plat (filtres → args RPC, null = pas de filtre). */
 export async function lireCircuits(filtres: FiltresCircuit, rpc = appelerRpc): Promise<Circuit[]> {
-  const res = await rpc<Circuit[] | null>('circuits_lire', [
-    argTexte(filtres.zone ?? null),
-    argTexte(filtres.duree ?? null),
-    argTexte(filtres.mode ?? null),
-  ]);
+  const res = await siRpcAbsente(
+    rpc<Circuit[] | null>('circuits_lire', [
+      argTexte(filtres.zone ?? null),
+      argTexte(filtres.duree ?? null),
+      argTexte(filtres.mode ?? null),
+    ]),
+    null,
+  );
   return res ?? [];
 }
 
 /** Détail d'un circuit (étapes ordonnées). Passe-plat ; null si absent. */
 export async function lireCircuit(id: number, rpc = appelerRpc): Promise<Circuit | null> {
-  return rpc<Circuit | null>('circuit_lire', [argEntier(id)]);
+  return siRpcAbsente(rpc<Circuit | null>('circuit_lire', [argEntier(id)]), null);
 }
 
 /** Activité idéale par zone (filtrable par zone). Passe-plat. */
 export async function lireZonesActivites(zone: string | undefined, rpc = appelerRpc): Promise<ZoneActiviteIdeale[]> {
-  const res = await rpc<ZoneActiviteIdeale[] | null>('zones_activites_lire', [argTexte(zone ?? null)]);
+  const res = await siRpcAbsente(rpc<ZoneActiviteIdeale[] | null>('zones_activites_lire', [argTexte(zone ?? null)]), null);
   return res ?? [];
 }

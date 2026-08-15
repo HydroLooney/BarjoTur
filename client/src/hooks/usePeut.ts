@@ -9,6 +9,9 @@ import { useIdentite } from '@/stores/identite';
 export function usePeut(capacite: Capacite): boolean {
   const role = useIdentite((s) => s.role);
   const qualification = useIdentite((s) => s.qualification);
+  // `conducteur` (attribut orthogonal au rôle) gate `regler_conduite` : sans lui, ce réglage ne serait jamais
+  // éditable côté front, même pour un vrai conducteur. On le porte à `peut()` comme le serveur (autorité B).
+  const conducteur = useIdentite((s) => s.conducteur);
   if (!role) return false;
-  return peut(role, capacite, qualification);
+  return peut(role, capacite, qualification, conducteur);
 }

@@ -38,6 +38,12 @@ export function ReglageCarburant() {
   const consoEff = consoEffectiveL100(surconsoPct);
   const coutBrut = coutCarburantEur(KM_DEMO, surconsoPct, prixDiesel);
   const coutPrudent = appliquerMarge(coutBrut, margePct);
+  // Marge EFFECTIVE affichee (note R1 M438) : on la derive des euros ARRONDIS montres a l'ecran, pas du parametre
+  // nominal, pour que le libelle ne puisse jamais contredire les deux chiffres visibles (l'arrondi peut decaler le
+  // ratio d'un point). Le nominal reste le curseur ; ce qu'on ANNONCE est ce qu'on voit.
+  const brutAffiche = Math.round(coutBrut);
+  const prudentAffiche = Math.round(coutPrudent);
+  const margeEffectiveAffichee = brutAffiche > 0 ? Math.round((prudentAffiche / brutAffiche - 1) * 100) : 0;
 
   return (
     <section className="space-y-4 rounded-lg border border-border p-3">
@@ -102,7 +108,9 @@ export function ReglageCarburant() {
           <dd className="tabular-nums">{euro(coutBrut)}</dd>
         </div>
         <div className="flex justify-between gap-2">
-          <dt>Avec marge {nombre(margePct, 0)} %</dt>
+          <dt>
+            Avec marge <span className="text-muted-foreground">(+{nombre(margeEffectiveAffichee, 0)} %)</span>
+          </dt>
           <dd className="font-medium tabular-nums">{euro(coutPrudent)}</dd>
         </div>
       </dl>
