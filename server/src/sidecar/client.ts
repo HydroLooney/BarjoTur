@@ -7,6 +7,7 @@
 
 import { lireEnv } from '../env.js';
 import type { ComposeReponse } from '../domain/composeur.js';
+import type { SignatureComposeur } from '../domain/philosophie.js';
 
 /** Appelle GET /health du sidecar. Sert au /health du BFF pour indiquer si le composeur est up. */
 export async function santesSidecar(): Promise<{ ok: boolean; ortools: string | null; bases: number }> {
@@ -22,6 +23,8 @@ export async function santesSidecar(): Promise<{ ok: boolean; ortools: string | 
 export interface ComposeReqSidecar {
   bases: number[];
   archetype_key?: string | null;
+  /** Signature d'objectif inline (M513) : override archetype_key, calculée depuis le profil philosophie du voyageur. */
+  signature?: SignatureComposeur | null;
   avec_agenda?: boolean;
   avec_geom?: boolean;
   persister?: boolean;

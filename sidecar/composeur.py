@@ -268,9 +268,14 @@ def reward_base(
     # Biais géographique : préférence nord ou contraire
     geo_pref = arch["biais_nord"] * v["latn"] + (1.0 - arch["biais_nord"]) * (1.0 - v["latn"])
     r = max(0.05, qual) * (0.4 + 1.6 * geo_pref)
-    # Thèmes de l'archétype
-    fav = _THEME_FAV.get(arch["code"], [])
-    theme_match = (sum(v.get("th_" + k, 0.0) for k in fav) / len(fav)) if fav else 0.0
+    # Thèmes : poids d'envie inline (signature philosophie, M513) sinon liste favorite de l'archétype.
+    themes_w = arch.get("themes")
+    if themes_w:
+        tot = sum(themes_w.values())
+        theme_match = (sum(v.get("th_" + k, 0.0) * w for k, w in themes_w.items()) / tot) if tot > 0 else 0.0
+    else:
+        fav = _THEME_FAV.get(arch["code"], [])
+        theme_match = (sum(v.get("th_" + k, 0.0) for k in fav) / len(fav)) if fav else 0.0
     r *= 1.0 + prm["THEME_W"] * theme_match
     # Prix (critère orthogonal)
     r -= prm["SENS_PRIX"] * (v["cout"] / prm["COUT_REF"])
@@ -754,6 +759,12 @@ class ComposeReq(BaseModel):
     """Corps de POST /compose : liste de bases candidates + budget temps + options."""
     bases: list[int] = Field(..., description="Identifiants de bases candidates (base_id). Doit être non vide.")
     archetype_key: str | None = Field(None, description="Code d'archétype à utiliser comme signature. Si absent : signature neutre.")
+    signature: dict[str, Any] | None = Field(
+        None,
+        description="Signature d'objectif INLINE (M513) : {w_nat..autonomie, biais_nord, cap_hard_h, cadence, themes}. "
+        "Fournie par le BFF depuis le profil philosophie du voyageur (Mon voyage, profilVersSignature). "
+        "Prioritaire sur archetype_key ; fusionnée sur la neutre (champs manquants tolérés).",
+    )
     avec_agenda: bool = Field(True, description="Calculer l'agenda journée (micro-OP jour). False pour un aperçu rapide.")
     avec_geom: bool = Field(True, description="Calculer la géométrie continue (A* live ou fallback).")
     persister: bool = Field(False, description="Écrire le résultat dans fige (api.fige_enregistrer_systeme).")
@@ -807,8 +818,18 @@ def compose(req: ComposeReq) -> dict[str, Any]:
     prm = charger_params()
     cost, path_repli = apsp(legs)
 
-    # Signature : archétype demandé ou signature neutre équilibrée
-    if req.archetype_key is not None:
+    # Signature : neutre équilibrée par défaut, surchargée par archetype_key, PUIS par la signature inline (M513).
+    # Ordre de priorité : signature (profil philosophie du voyageur) > archetype_key > neutre.
+    neutre = {
+        "code": "compose_ad_hoc",
+        "w_nat": 1.0, "w_gra": 1.0, "w_tra": 1.0, "w_ran": 1.0, "w_biv": 1.0, "w_inc": 1.0,
+        "biais_nord": 0.5, "cap_hard_h": 6.0, "cadence": 2.0,
+        "anti_foule": 0.5, "autonomie": 0.5,
+    }
+    if req.signature is not None:
+        # Fusion sur la neutre : les champs manquants gardent une valeur sûre (pas de KeyError dans reward_base).
+        arch = {**neutre, **req.signature, "code": "philosophie"}
+    elif req.archetype_key is not None:
         arch = next((a for a in archs if a["code"] == req.archetype_key), None)
         if arch is None:
             connus = [a["code"] for a in archs]
@@ -817,13 +838,7 @@ def compose(req: ComposeReq) -> dict[str, Any]:
                 detail=f"Archétype inconnu : {req.archetype_key}. Connus : {connus}",
             )
     else:
-        # Signature neutre : poids égaux, biais nord 0.5, cadence 2 nuits, cap 6h
-        arch = {
-            "code": "compose_ad_hoc",
-            "w_nat": 1.0, "w_gra": 1.0, "w_tra": 1.0, "w_ran": 1.0, "w_biv": 1.0, "w_inc": 1.0,
-            "biais_nord": 0.5, "cap_hard_h": 6.0, "cadence": 2.0,
-            "anti_foule": 0.5, "autonomie": 0.5,
-        }
+        arch = neutre
 
     # Filtrer bf sur les bases candidates (sous-ensemble de l'OP)
     bf_candidates = {b: v for b, v in bf.items() if b in req.bases}

@@ -10,7 +10,9 @@
 import { Erreurs } from '../http/erreurs.js';
 import { query } from '../db/query.js';
 import { composerViaSidecar } from '../sidecar/client.js';
+import { lirePhilosophie, profilVersSignature } from './philosophie.js';
 import type { ComposeInput, ComposeReponse } from '../domain/composeur.js';
+import type { SignatureComposeur } from '../domain/philosophie.js';
 
 /**
  * Valide et normalise l'entrée du composeur. Lève une ErreurRequete si invalide.
@@ -83,11 +85,12 @@ export async function resoudreBases(
  * en lui transmettant les paramètres validés. Le sidecar gère OR-Tools, la géométrie (dont les ancres
  * ferry début+fin via _etape_depot), l'agenda 21 nuits et la persistance fige le cas échéant.
  */
-export async function composer(input: ComposeInput): Promise<ComposeReponse> {
+export async function composer(input: ComposeInput, signature?: SignatureComposeur | null): Promise<ComposeReponse> {
   const bases = await resoudreBases(input.bases);
   const reponse = await composerViaSidecar({
     bases,
     archetype_key: input.archetype_key ?? null,
+    signature: signature ?? null,
     avec_agenda: input.avec_agenda ?? true,
     avec_geom: true,
     persister: input.persister ?? false,
@@ -96,4 +99,18 @@ export async function composer(input: ComposeInput): Promise<ComposeReponse> {
   // Le sidecar peut répondre ok:false avec un message d'erreur métier (INFEASIBLE, archétype inconnu, etc.).
   // On laisse passer la réponse telle quelle : le client HTTP du front gère ok:false.
   return reponse;
+}
+
+/**
+ * Compose « Mon voyage » (M513) : si un lien voyageur est fourni, on lit son profil philosophie et on en dérive la
+ * signature d'objectif (profilVersSignature) passée au composeur. Sans lien, comportement inchangé (auto-compose neutre
+ * ou archétype). Le leximin famille « Notre voyage » (N signatures) = v3.1 (M496).
+ */
+export async function composerAvecProfil(input: ComposeInput, code: string | null): Promise<ComposeReponse> {
+  let signature: SignatureComposeur | null = null;
+  if (code) {
+    const philo = await lirePhilosophie(code);
+    signature = profilVersSignature(philo.profil);
+  }
+  return composer(input, signature);
 }
