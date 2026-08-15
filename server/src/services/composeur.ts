@@ -8,22 +8,32 @@
 //   - Si persister:false, on renvoie l'aperçu sans écriture en base.
 
 import { Erreurs } from '../http/erreurs.js';
+import { query } from '../db/query.js';
 import { composerViaSidecar } from '../sidecar/client.js';
 import type { ComposeInput, ComposeReponse } from '../domain/composeur.js';
 
-/** Valide et normalise l'entrée du composeur. Lève une ErreurRequete si invalide. */
+/**
+ * Valide et normalise l'entrée du composeur. Lève une ErreurRequete si invalide.
+ * M469 (parité v2) : `bases` absent ou vide ⇒ mode AUTO. Le champ vaut alors [] et
+ * `composer` auto-remplit depuis le vivier ; l'utilisateur n'a jamais à choisir une base.
+ * `bases` fourni non vide ⇒ mode manuel, chaque base_id doit être un entier strictement positif.
+ */
 export function validerComposeInput(corps: unknown): ComposeInput {
   if (typeof corps !== 'object' || corps === null || Array.isArray(corps)) {
     throw Erreurs.requeteInvalide('Le corps attendu est un objet JSON.');
   }
   const c = corps as Record<string, unknown>;
 
-  if (!Array.isArray(c['bases']) || (c['bases'] as unknown[]).length === 0) {
-    throw Erreurs.requeteInvalide('Le champ "bases" doit etre un tableau non vide d\'entiers.');
-  }
-  const bases = c['bases'] as unknown[];
-  if (!bases.every((b) => typeof b === 'number' && Number.isInteger(b) && b > 0)) {
-    throw Erreurs.requeteInvalide('Chaque base_id doit être un entier strictement positif.');
+  let bases: number[] = [];
+  if (c['bases'] !== undefined && c['bases'] !== null) {
+    if (!Array.isArray(c['bases'])) {
+      throw Erreurs.requeteInvalide('Le champ "bases", s\'il est fourni, doit être un tableau d\'entiers.');
+    }
+    const brut = c['bases'] as unknown[];
+    if (!brut.every((b) => typeof b === 'number' && Number.isInteger(b) && b > 0)) {
+      throw Erreurs.requeteInvalide('Chaque base_id doit être un entier strictement positif.');
+    }
+    bases = brut as number[];
   }
 
   const archetype_key =
@@ -36,16 +46,47 @@ export function validerComposeInput(corps: unknown): ComposeInput {
   const avec_agenda = c['avec_agenda'] === undefined ? true : Boolean(c['avec_agenda']);
   const persister = c['persister'] === undefined ? false : Boolean(c['persister']);
 
-  return { bases: bases as number[], archetype_key, avec_agenda, persister };
+  return { bases, archetype_key, avec_agenda, persister };
 }
 
 /**
- * Orchestre la composition : délègue au sidecar en lui transmettant les paramètres validés.
- * Le sidecar gère OR-Tools, la géométrie, l'agenda et la persistance fige le cas échéant.
+ * Lit le vivier des bases candidates : toutes les bases que le sidecar sait scorer
+ * (mcda2.base_reward_inputs, la même table que le solveur lit pour f1-6/reward). C'est la
+ * liste des candidats, pas une valeur v2 dérivée — le solveur choisit ensuite le meilleur sous-ensemble.
+ */
+export async function lireVivierBases(): Promise<number[]> {
+  const rows = await query<{ base_id: number }>(
+    'SELECT base_id FROM mcda2.base_reward_inputs ORDER BY base_id',
+  );
+  return rows.map((r) => r.base_id);
+}
+
+/**
+ * Résout les bases effectives. Mode manuel : on respecte les bases fournies. Mode auto (M469,
+ * parité v2) : bases vide ⇒ on prend tout le vivier, l'utilisateur n'a jamais à choisir une base.
+ * Le vivier est injectable pour les tests. Lève si le vivier est vide (rien à composer).
+ */
+export async function resoudreBases(
+  bases: number[],
+  lireVivier: () => Promise<number[]> = lireVivierBases,
+): Promise<number[]> {
+  if (bases.length > 0) return bases;
+  const vivier = await lireVivier();
+  if (vivier.length === 0) {
+    throw Erreurs.requeteInvalide('Aucune base candidate disponible pour composer automatiquement.');
+  }
+  return vivier;
+}
+
+/**
+ * Orchestre la composition : auto-remplit les bases si besoin (parité v2), puis délègue au sidecar
+ * en lui transmettant les paramètres validés. Le sidecar gère OR-Tools, la géométrie (dont les ancres
+ * ferry début+fin via _etape_depot), l'agenda 21 nuits et la persistance fige le cas échéant.
  */
 export async function composer(input: ComposeInput): Promise<ComposeReponse> {
+  const bases = await resoudreBases(input.bases);
   const reponse = await composerViaSidecar({
-    bases: input.bases,
+    bases,
     archetype_key: input.archetype_key ?? null,
     avec_agenda: input.avec_agenda ?? true,
     avec_geom: true,
