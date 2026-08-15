@@ -51,6 +51,8 @@ export interface EtapeTransit {
   vers: PointVoyage;
   /** Date fixe qui contraint l'optimisation (ex. départ ferry). Null si libre. */
   jalon_date: string | null;
+  /** Budget de route (minutes) de cette étape obligatoire ; null si étape libre. Aligné sur `voyage.ancre.budget_roulage_min` (ancre ferry/transit). Contrainte dure du composeur (garde `FenetreFerry`). */
+  budget_min?: number | null;
   /** Le faisceau d'arrêts candidats. */
   faisceau: ArretTransit[];
 }
