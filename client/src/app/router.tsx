@@ -19,6 +19,10 @@ const PreparatifsBudget = lazy(() => import('@/pages/preparatifs/Budget'));
 const PreparatifsIntendance = lazy(() => import('@/pages/preparatifs/Intendance'));
 const PreparatifsFerry = lazy(() => import('@/pages/preparatifs/Ferry'));
 const PreparatifsReservations = lazy(() => import('@/pages/preparatifs/Reservations'));
+// Sous-onglets de Mes envies (M546) : chacun son chunk lazy.
+const MesEnviesFacon = lazy(() => import('@/pages/mes-envies/Facon'));
+const MesEnviesCarnet = lazy(() => import('@/pages/mes-envies/Carnet'));
+const MesEnviesVotes = lazy(() => import('@/pages/mes-envies/Votes'));
 const MonVoyage = lazy(() => import('@/pages/MonVoyage')); // « Mon voyage » (par voyageur, A26)
 const MesEnvies = lazy(() => import('@/pages/MesEnvies')); // « Mes envies »
 const Coulisses = lazy(() => import('@/pages/Coulisses')); // « Réglages »
@@ -100,7 +104,7 @@ export const router = createBrowserRouter([
       { path: 'explorer/:osm', element: <FichePoi /> },
       // Ossature d'activité V2 (M473) : Voter / Composer / Notre voyage / Compter. Les anciens chemins restent
       // servis (compat liens + QA) ; la nav primaire pointe sur ces espaces d'activité.
-      { path: 'voter', element: <MesEnvies /> },
+      { path: 'voter', loader: () => redirect('/mes-envies') },
       { path: 'composer', element: <LeTrajet /> },
       { path: 'notre-voyage', element: <Carte /> },
       { path: 'compter', element: <Compter /> },
@@ -122,7 +126,20 @@ export const router = createBrowserRouter([
         ],
       },
       { path: 'mon-voyage', element: <MonVoyage /> },
-      { path: 'mes-envies', element: <MesEnvies /> },
+      {
+        // Mes envies = layout à sous-onglets (M546). Index → dernier onglet (mémoire nav), défaut « Ma façon de voyager ».
+        path: 'mes-envies',
+        element: <MesEnvies />,
+        children: [
+          {
+            index: true,
+            loader: () => redirect(`/mes-envies/${useNavigation.getState().dernier['mes-envies'] ?? 'facon'}`),
+          },
+          { path: 'facon', element: <MesEnviesFacon /> },
+          { path: 'carnet', element: <MesEnviesCarnet /> },
+          { path: 'votes', element: <MesEnviesVotes /> },
+        ],
+      },
       { path: 'mes-paniers', element: <Paniers /> },
       { path: 'reglages', element: <Coulisses /> },
       { path: 'jour/:date', element: <JourImprimable /> },
