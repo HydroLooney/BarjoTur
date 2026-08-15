@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { VueBudget } from '@/components/VueBudget';
+import { ConvertisseurCouronnes } from '@/components/ConvertisseurCouronnes';
 import { Intendance } from '@/components/Intendance';
 
 // Espace « Préparatifs » (A20 §10, ex-Intendance) : le budget prévisionnel et l'intendance (recettes, menus,
@@ -28,6 +29,7 @@ export default function Preparatifs() {
         </Link>
       </div>
       <VueBudget />
+      <ConvertisseurCouronnes />
       <Intendance />
     </section>
   );
