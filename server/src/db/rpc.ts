@@ -90,6 +90,8 @@ export const RPC_AUTORISEES = [
   // versionné. Le profil pilote la signature du composeur (Mon voyage). Absentes avant le flip 020 → 42883.
   'philosophie_lire',
   'philosophie_ecrire',
+  // Budget vivant (M547, #3, migration 022) : réservations réelles depuis prepa.reservation (SECURITY DEFINER).
+  'reservations_lire',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];

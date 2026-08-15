@@ -3,7 +3,6 @@
 // DB2, lecture directe). Total EUR-only ; NOK indicatif (C181). Suivi (dépenses vécues) = [] tant que non saisi (R1).
 // ÉCRITURES (réservations/dépenses) = migration app-schema + gate + accord DIRECT Guillaume (DB2 précieux) — pas ici.
 
-import { query } from '../db/query.js';
 import { appelerRpc } from '../db/rpc.js';
 import { margeEffectivePct } from '@barjotur/shared';
 import type {
@@ -92,13 +91,10 @@ export function construireBudgetVivant(
   };
 }
 
-/** Lit les réservations réelles (prepa.reservation, DB2). Lecture directe (pas d'écriture). */
+/** Lit les réservations réelles via api.reservations_lire (SECURITY DEFINER : le rôle BFF n'a pas USAGE sur prepa). */
 export async function lireReservations(): Promise<Reservation[]> {
-  const rows = await query<ReservationBrute>(
-    `SELECT id, type, libelle, to_char(date_arr,'YYYY-MM-DD') AS date_arr, statut, montant, devise, note
-     FROM prepa.reservation ORDER BY date_arr NULLS LAST, id`,
-  );
-  return rows.map(mapReservation);
+  const rows = await appelerRpc<ReservationBrute[] | null>('reservations_lire', []);
+  return (rows ?? []).map(mapReservation);
 }
 
 /**
