@@ -19,6 +19,8 @@ Activite       = { poi_id:int, cout_eur:float|None, payant:bool, voyageurs:list[
 ReglageOrg     = { budget_soft_eur:float, budget_hard_eur:float }  # posé par les organisateurs (regler_composition)
 Enveloppe      = { total_eur:float, par_voyageur: dict[voyageur_id,float], statut: 'souple'|'serre'|'depasse',
                    marge_soft_eur:float, marge_hard_eur:float, ajustements: list[dict] }   # leviers +/- entre soft et hard
+OptionTrajet   = { modes: list['van'|'marche'|'ferry'|'tc'], temps_s:int, euros:float,
+                   segments: list[dict] }   # une variante multimodale src→tgt (chaînage van+marche+TC, A177)
 ```
 
 ## `reward.py` (A) — récompense + coût multimodal
@@ -27,7 +29,11 @@ def reward_base(base_id: int, signature: Signature) -> float
     # Récompense d'une base pour une signature (f1-f6 pondérés + envies th_* + incontournables - foule, geo_pref nord, prix).
     # CORPS = pré-design #2 orness / #6 V_poi (attend M+Guillaume). Signature STABLE.
 def cout_multimodal(src_base: int, tgt_base: int) -> CoutTrajet
-    # Depuis diffusion.base_base_multimodal_v31 (conduite_s/ferry_s/peage_eur/ferry_eur ; carburant = length_m * param).
+    # VAN par défaut (stable, DÉJÀ implémenté A174). Depuis diffusion.base_base_multimodal_v31
+    # (conduite_s/ferry_s/peage_eur/ferry_eur ; carburant = length_m * param).
+def cout_multimodal_options(src_base: int, tgt_base: int) -> list[OptionTrajet]   # ADDITIF (A177, chaînage multimodal)
+    # Les variantes van / van+marche / van+TC+marche (Turrutebasen pied + transit Entur wirés), chacune (temps_s, euros).
+    # Utilisé quand le chaînage multimodal est actif ; le van-only reste cout_multimodal (contrat de fer inchangé).
 ```
 
 ## `allocation.py` (A) — leximin + courbe valeur-par-nuit  (modules DORMANTS à réveiller, B160)
