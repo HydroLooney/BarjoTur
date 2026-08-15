@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { CataloguePoi } from '@barjotur/shared';
+import { Bouton } from '@/ui/primitives/button';
 import { useCatalogue } from '@/lib/queries/catalogue';
 import { filtrerCatalogue } from '@/lib/filtrer-catalogue';
 import { trierCatalogue, TRIS, type TriCatalogue } from '@/lib/trier-catalogue';
@@ -14,6 +15,7 @@ import { BarreFiltres } from '@/components/BarreFiltres';
 import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
 import { CarteMapLibre } from '@/components/CarteMapLibre';
 import { Recommandations } from '@/components/Recommandations';
+import { QuestionnaireVoyageur } from '@/components/QuestionnaireVoyageur';
 import { Chargement, MessageErreur, MessageVide } from '@/ui/blocs/EtatVue';
 import { cn } from '@/lib/utils';
 
@@ -40,9 +42,10 @@ export default function Explorer() {
   const { data: mesVotes } = useMesVotes(code);
   const explores = useMemoireExploration((s) => s.explores);
 
-  // Overlays repliables (la carte reste la vedette) : recos ouvertes par défaut sur desktop, repliées au mobile.
+  // Overlays repliables (la carte reste la vedette). Le questionnaire (M486) est REJOUABLE en overlay d'ici.
   const [recosOuvertes, setRecosOuvertes] = useState(false);
   const [listeOuverte, setListeOuverte] = useState(false);
+  const [questionnaireOuvert, setQuestionnaireOuvert] = useState(false);
 
   const astuceVoteVue = useOnboarding((s) => s.astuceVoteVue);
   const masquerAstuceVote = useOnboarding((s) => s.masquerAstuceVote);
@@ -106,38 +109,48 @@ export default function Explorer() {
   );
 
   return (
-    <section className="relative -mx-4 -mt-4 h-[calc(100dvh-8.5rem)] md:-mx-4 md:h-[calc(100dvh-6.5rem)]">
-      {/* LA CARTE, plein cadre. Les POI, le clic → fiche, le vote, le découpage, les sentiers : tout est déjà dedans (v3). */}
-      <CarteMapLibre mode="exploration" hauteur="100%" />
+    <section className="-mx-4 -mt-4 flex h-[calc(100dvh-8.5rem)] flex-col md:h-[calc(100dvh-6.5rem)]">
+      {/* BARRE D'ACTIONS (M485) : boutons COURTS en haut, DISTINCTS des panneaux de données (qui restent en overlay
+          sur la carte). Action = barre haute ; données (recos, liste) = overlay. La carte reste la vue. */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-border bg-card px-3 py-2">
+        {/* Le questionnaire de voyage, REJOUABLE en overlay d'ici (M486) : gros, guidé, écrit le même profil que
+            les sliders de Voter. « Commencer ici » = régler sa façon de voyager. */}
+        <Bouton size="sm" onClick={() => setQuestionnaireOuvert(true)}>
+          Commencer ici
+        </Bouton>
+        <Bouton size="sm" variant="outline" onClick={() => setQuestionnaireOuvert(true)}>
+          Philosophie du voyage
+        </Bouton>
+        <Bouton size="sm" variant="outline" onClick={() => setRecosOuvertes(true)}>
+          ❤ La famille adore
+        </Bouton>
+        <Bouton size="sm" variant="outline" onClick={() => setListeOuverte(true)}>
+          Voir la liste <span className="chiffres">{liste.length}</span>
+        </Bouton>
+      </div>
 
-      {/* Overlay « La famille adore » (Recommandations) — flottant repliable, JAMAIS empilé au-dessus (M468). */}
-      <div className="pointer-events-none absolute inset-x-2 top-2 z-10 flex flex-col items-start gap-2 sm:inset-x-auto sm:left-2 sm:max-w-sm">
-        <button
-          type="button"
-          onClick={() => setRecosOuvertes((v) => !v)}
-          className="pointer-events-auto inline-flex min-h-tactile items-center gap-2 rounded-full border border-border bg-card/95 px-3 py-1.5 text-sm font-medium shadow-flottante backdrop-blur-sm hover:bg-card"
-        >
-          <span aria-hidden>❤</span> La famille adore
-          <span aria-hidden className="text-muted-foreground">{recosOuvertes ? '▴' : '▾'}</span>
-        </button>
+      <div className="relative flex-1">
+        {/* LA CARTE, plein cadre. POI, clic → fiche, vote, découpage, sentiers : tout est déjà dedans (v3). */}
+        <CarteMapLibre mode="exploration" hauteur="100%" />
+
+        {/* Panneau de DONNÉES « La famille adore » (Recommandations) — OVERLAY flottant, ouvert par « Commencer ici ». */}
         {recosOuvertes ? (
-          <div className="pointer-events-auto max-h-[60vh] w-full overflow-y-auto rounded-lg border border-border bg-card/97 p-3 shadow-flottante backdrop-blur-sm">
+          <div className="absolute inset-x-2 top-2 z-10 max-h-[60vh] overflow-y-auto rounded-lg border border-border bg-card/97 p-3 shadow-flottante backdrop-blur-sm sm:inset-x-auto sm:left-2 sm:max-w-sm">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-sm font-medium">❤ La famille adore</h2>
+              <button
+                type="button"
+                onClick={() => setRecosOuvertes(false)}
+                className="min-h-tactile px-2 text-muted-foreground hover:text-foreground"
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+            </div>
             <Recommandations pois={pois} mesTiers={mesVotes?.tiers ?? {}} />
           </div>
         ) : null}
-      </div>
 
-      {/* Bouton + panneau LISTE — overlay ouvrable (la carte reste dessous), pas une pile. */}
-      <div className="absolute right-2 top-2 z-10">
-        <button
-          type="button"
-          onClick={() => setListeOuverte(true)}
-          className="inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/95 px-3 py-1.5 text-sm font-medium shadow-flottante backdrop-blur-sm hover:bg-card"
-        >
-          <span aria-hidden>☰</span> Liste
-          <span className="chiffres text-muted-foreground">{liste.length}</span>
-        </button>
-      </div>
       {listeOuverte ? (
         <div className="absolute inset-0 z-20 flex" role="dialog" aria-modal="true" aria-label="Liste des lieux">
           <button type="button" aria-label="Fermer" className="flex-1 bg-granite/30" onClick={() => setListeOuverte(false)} />
@@ -177,6 +190,10 @@ export default function Explorer() {
           </button>
         </div>
       ) : null}
+      </div>
+
+      {/* Questionnaire de voyage REJOUABLE en overlay (M486) — le mode guidé, même profil que les sliders de Voter. */}
+      {questionnaireOuvert ? <QuestionnaireVoyageur onClose={() => setQuestionnaireOuvert(false)} /> : null}
     </section>
   );
 }

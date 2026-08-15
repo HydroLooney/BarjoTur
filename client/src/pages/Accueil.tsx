@@ -5,8 +5,10 @@ import { FilDepuisDerniereVisite } from '@/components/FilDepuisDerniereVisite';
 import { FilDuParcours } from '@/components/FilDuParcours';
 import { usePeut } from '@/hooks/usePeut';
 import { useIdentite } from '@/stores/identite';
+import { useRecos } from '@/lib/queries/recos';
+import { RECOS_TEST } from '@/lib/fixtures/recos-test';
 import { jetonEspace } from '@/lib/espaces-couleur';
-import { ESPACES } from '@/lib/libelles';
+import { ESPACES, humaniserTexte } from '@/lib/libelles';
 
 // ACCUEIL = HUB « Où en est-on ? » (ossature V2, M471/M473). Point d'entrée qui RACONTE et ORIENTE : un mot
 // d'accueil + le compte à rebours, la prochaine action (v3 : « à toi de jouer »), l'onboarding (v3 : PremiersPas),
@@ -28,14 +30,15 @@ interface Espace {
   ownerOnly?: boolean;
 }
 
+// Les 8 espaces (M499 §3), « un même voyage », circulation libre. Le voyage = cette page ; les 7 autres en cartes.
 const ESPACES_HUB: Espace[] = [
-  { to: '/explorer', titre: ESPACES.explorer, quoi: 'Découvrir les lieux sur la carte.' },
-  { to: '/voter', titre: ESPACES.voter, quoi: 'Dire ce qu’on aime, sans classer personne.' },
-  { to: '/composer', titre: ESPACES.composer, quoi: 'Bâtir l’itinéraire ensemble.' },
-  { to: '/notre-voyage', titre: ESPACES.notreVoyage, quoi: 'Le voyage jour après jour, sur la carte.' },
-  { to: '/preparatifs', titre: ESPACES.preparer, quoi: 'Le van, le ferry, les repas, le matériel.' },
-  { to: '/compter', titre: ESPACES.compter, quoi: 'Le budget prévisionnel du voyage.' },
-  { to: '/reglages', titre: ESPACES.coulisses, quoi: 'Régler et comprendre la mécanique.', ownerOnly: true },
+  { to: '/explorer', titre: ESPACES.explorer, quoi: 'Découvrir les lieux et voter.' },
+  { to: '/mes-envies', titre: ESPACES.envies, quoi: 'Votre façon de voyager : rythme, paysages, thèmes.' },
+  { to: '/mon-voyage', titre: ESPACES.monVoyage, quoi: 'Votre itinéraire idéal et votre écart au commun.' },
+  { to: '/le-trajet', titre: ESPACES.notreVoyage, quoi: 'Composer, décider et figer en famille.' },
+  { to: '/carte', titre: ESPACES.carte, quoi: 'L’itinéraire animé, jour après jour.' },
+  { to: '/preparatifs', titre: ESPACES.preparatifs, quoi: 'Budget, réservations, intendance.' },
+  { to: '/reglages', titre: ESPACES.coulisses, quoi: 'Réglages, aide, glossaire.', ownerOnly: true },
 ];
 
 function CarteEspace({ e }: { e: Espace }) {
@@ -55,9 +58,14 @@ function CarteEspace({ e }: { e: Espace }) {
 
 export default function Accueil() {
   const prenom = useIdentite((s) => s.prenom);
+  const code = useIdentite((s) => s.code);
   const peutCoulisses = usePeut('administrer_voyageurs');
   const jours = joursAvantDepart();
   const espaces = ESPACES_HUB.filter((e) => !e.ownerOnly || peutCoulisses);
+  // 6 recommandations personnalisées à explorer (M485) : « Voici des lieux pour toi. » Clic → fiche.
+  // Jeu de test DEV (R1, balisé, retiré au flip) tant que l'endpoint rend [] — comme l'Explorer.
+  const recosReel = useRecos(code).data?.recos ?? [];
+  const recos = (recosReel.length ? recosReel : import.meta.env.DEV ? RECOS_TEST : []).slice(0, 6);
 
   return (
     <section className="space-y-6">
@@ -77,10 +85,29 @@ export default function Accueil() {
         ) : null}
       </div>
 
-      {/* Prochaine action + onboarding (avancées v3 gardées). */}
+      {/* Prochaine action + onboarding (avancées v3 gardées) — le « guide » du parcours (M475/M485). */}
       <PremiersPas />
       <BandeauAToiDeJouer />
       <FilDepuisDerniereVisite />
+
+      {/* 6 recommandations personnalisées à explorer (M485). */}
+      {recos.length > 0 ? (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-muted-foreground">Des lieux pour vous, à explorer</h2>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {recos.map((r) => (
+              <Link
+                key={r.cle}
+                to={`/explorer/${encodeURIComponent(r.cle)}`}
+                className="flex items-center gap-2 rounded-lg border border-border bg-card p-3 text-sm shadow-posee transition-colors duration-court hover:bg-muted"
+              >
+                <span aria-hidden className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: 'var(--ocre)' }} />
+                <span className="font-medium">{humaniserTexte(r.nom)}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {/* Les espaces, en cartes (hub v2). */}
       <div className="space-y-2">

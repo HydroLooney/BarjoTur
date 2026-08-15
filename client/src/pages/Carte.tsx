@@ -27,7 +27,7 @@ export default function Carte() {
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1 className="font-serif text-2xl">Notre voyage</h1>
+        <h1 className="font-serif text-2xl">Carte</h1>
         {/* Overlay expert (M343) : reglages ecran='carte', gate mode expert + capacite. Invisible sinon. */}
         <AffordanceExpert ecran="carte" />
       </div>

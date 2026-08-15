@@ -49,18 +49,19 @@ function LabelNav({ to, libelle, pastille = true }: { to: string; libelle: strin
 // Barre principale = OSSATURE V2 par activité (M471, directive Guillaume) : Accueil (hub « Où en est-on ? ») +
 // Explorer · Décider · Préparer · Compter · Le réel. Chaque mot est une action, chaque espace répond à UNE
 // question. Coulisses (owner) reste dans le menu avatar. Fini le bandeau « Parcours » incohérent (retiré ci-dessous).
+// Nav DÉFINITIVE (M499 §3 + doc AGENDA-JOUR-BARRE-ANIMATION-NAV-v3.md) : barre du bas primaire à 5 —
+// Le voyage · Explorer · Notre Voyage · Carte · Préparatifs. Le perso/transverse (Mes envies · Mon voyage ·
+// Réglages) passe par le menu avatar. « Notre Voyage » = composer/décider/figer ; « Carte » = itinéraire animé
+// jour par jour. Circulation libre, fil naturel, grand texte (famille).
 const PRIMAIRES = [
-  { to: '/', libelle: ESPACES.accueil, exact: true },
+  { to: '/', libelle: ESPACES.voyage, exact: true },
   { to: '/explorer', libelle: ESPACES.explorer, exact: false },
-  { to: '/voter', libelle: ESPACES.voter, exact: false },
-  { to: '/composer', libelle: ESPACES.composer, exact: false },
-  { to: '/notre-voyage', libelle: ESPACES.notreVoyage, exact: false },
-  { to: '/preparatifs', libelle: ESPACES.preparer, exact: false },
-  { to: '/compter', libelle: ESPACES.compter, exact: false },
+  { to: '/le-trajet', libelle: ESPACES.notreVoyage, exact: false },
+  { to: '/carte', libelle: ESPACES.carte, exact: false },
+  { to: '/preparatifs', libelle: ESPACES.preparatifs, exact: false },
 ] as const;
-// Barre BASSE mobile : sous-ensemble CORE (7 entrées ne tiennent pas au pouce) ; Accueil = logo-maison, Compter +
-// Coulisses via l'accueil-hub + l'avatar. Desktop montre tout en tête.
-const PRIMAIRES_MOBILE = PRIMAIRES.filter((l) => l.to !== '/' && l.to !== '/compter');
+// 5 entrées tiennent au pouce → la barre basse mobile les montre TOUTES (Accueil compris).
+const PRIMAIRES_MOBILE = PRIMAIRES;
 
 export function Coquille() {
   const basculerTheme = useUi((s) => s.basculerTheme);

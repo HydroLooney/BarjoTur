@@ -43,10 +43,10 @@ export default function LeTrajet() {
   return (
     <section className="space-y-6">
       <header className="space-y-1">
-        <h1 className="font-serif text-2xl">Composer</h1>
+        <h1 className="font-serif text-2xl">Notre Voyage</h1>
         <p className="max-w-prose text-muted-foreground">
           Le voyage de toute la famille prend forme ici : la carte de l'itinéraire d'abord, puis les outils pour le
-          bâtir, l'écart de chacun et la comparaison des alternatives.
+          composer, décider et figer ensemble, l'écart de chacun et la comparaison des alternatives.
         </p>
       </header>
 

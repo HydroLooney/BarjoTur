@@ -89,9 +89,9 @@ export const ESPACES = {
   // Ossature d'activité V2 (M473, référence définitive) :
   accueil: 'Accueil',
   explorer: 'Explorer',
-  voter: 'Voter',
+  voter: 'Mes envies',
   composer: 'Composer',
-  notreVoyage: 'Notre voyage',
+  notreVoyage: 'Notre Voyage',
   preparer: 'Préparer',
   compter: 'Compter',
   coulisses: 'Coulisses',

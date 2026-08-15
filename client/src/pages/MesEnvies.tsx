@@ -28,10 +28,10 @@ export default function MesEnvies() {
   return (
     <section className="space-y-4">
       <div className="space-y-1">
-        <h1 className="font-serif text-2xl">Voter</h1>
+        <h1 className="font-serif text-2xl">Mes envies</h1>
         <p className="max-w-prose text-muted-foreground">
-          Dites ce que vous aimez, sans classer personne. D'abord votre façon de voyager, puis vos envies et vos
-          lieux.
+          Votre façon de voyager (le rythme, les paysages, les thèmes), vos envies et vos lieux. Sans classer
+          personne.
         </p>
       </div>
 

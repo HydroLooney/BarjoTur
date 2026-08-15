@@ -6,14 +6,14 @@ import { ESPACES } from '@/lib/libelles';
 import { jetonEspace } from '@/lib/espaces-couleur';
 import { cn } from '@/lib/utils';
 
-// Menu perso derrière l'avatar (A33 / M158) : « Mon voyage » et « Mes envies » (et « Réglages ») s'atteignent ici,
-// en haut à droite, pas par un onglet de la barre principale. L'avatar montre l'initiale du prénom (identité de
-// session). Menu simple, refermable (clic dehors / Échap), cibles au pouce.
+// Menu perso/transverse derrière l'avatar (M499 §3) : « Mes envies » (philosophie + envies) · « Mon voyage »
+// (idéal + écart au commun) · « Réglages » (+ l'aide/les conseils). En haut à droite, hors de la barre primaire.
+// L'avatar montre l'initiale du prénom. Menu simple, refermable (clic dehors / Échap), cibles au pouce.
 const LIENS = [
-  { to: '/mon-voyage', libelle: ESPACES.monVoyage },
   { to: '/mes-envies', libelle: ESPACES.envies },
-  { to: '/conseils', libelle: 'Les conseils' },
+  { to: '/mon-voyage', libelle: ESPACES.monVoyage },
   { to: '/reglages', libelle: ESPACES.reglages },
+  { to: '/conseils', libelle: 'Les conseils' },
 ] as const;
 
 export function MenuAvatar() {

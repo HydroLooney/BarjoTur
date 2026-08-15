@@ -3,6 +3,7 @@ import { usePhilosophie } from '@/stores/philosophie';
 import { useIdentite } from '@/stores/identite';
 import { useProfilPhilo, useEcrireProfilPhilo, philoLive } from '@/lib/queries/philosophie';
 import { AXES_PHILO, resumeAxe, syntheseHumaine, type AxePhilo } from '@/lib/philosophie';
+import { QuestionnaireVoyageur } from '@/components/QuestionnaireVoyageur';
 import { Bouton } from '@/ui/primitives/button';
 
 // « Ta façon de voyager » (AUDIT-FRONT P0 #1, cœur de Voter). Les 8 axes de philosophie en sliders continus ANCRÉS
@@ -36,47 +37,6 @@ function CurseurAxe({ axe, valeur, onChange }: { axe: AxePhilo; valeur: number; 
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>{axe.gauche}</span>
         <span>{axe.droite}</span>
-      </div>
-    </div>
-  );
-}
-
-// Questionnaire guidé : un axe à la fois, gros et lisible (Mamie + enfants), avance/recule, ferme quand fini.
-function Questionnaire({ onClose }: { onClose: () => void }) {
-  const valeurs = usePhilosophie((s) => s.valeurs);
-  const regler = usePhilosophie((s) => s.regler);
-  const [i, setI] = useState(0);
-  const axe = AXES_PHILO[i]!;
-  const dernier = i === AXES_PHILO.length - 1;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label="Questionnaire ta façon de voyager">
-      <button type="button" aria-label="Fermer" className="absolute inset-0 bg-granite/40" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-lg space-y-5 rounded-t-2xl border border-border bg-card p-5 shadow-flottante sm:rounded-2xl">
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
-            Question <span className="chiffres">{i + 1}</span> / {AXES_PHILO.length}
-          </p>
-          <button type="button" onClick={onClose} className="min-h-tactile px-2 text-lg text-muted-foreground hover:text-foreground" aria-label="Fermer">
-            ×
-          </button>
-        </div>
-        <h3 className="font-serif text-xl">{axe.titre} ?</h3>
-        <CurseurAxe axe={axe} valeur={valeurs[axe.cle] ?? 50} onChange={(v) => regler(axe.cle, v)} />
-        <div className="flex items-center justify-between gap-2 pt-1">
-          <Bouton variant="ghost" size="sm" disabled={i === 0} onClick={() => setI((n) => Math.max(0, n - 1))}>
-            Précédent
-          </Bouton>
-          {dernier ? (
-            <Bouton size="sm" onClick={onClose}>
-              Terminer
-            </Bouton>
-          ) : (
-            <Bouton size="sm" onClick={() => setI((n) => Math.min(AXES_PHILO.length - 1, n + 1))}>
-              Suivant
-            </Bouton>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -131,7 +91,7 @@ export function PhilosophieVoyage() {
         </Bouton>
       </div>
 
-      {questionnaire ? <Questionnaire onClose={() => setQuestionnaire(false)} /> : null}
+      {questionnaire ? <QuestionnaireVoyageur onClose={() => setQuestionnaire(false)} /> : null}
     </section>
   );
 }
