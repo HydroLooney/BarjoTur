@@ -14,7 +14,7 @@ import { useMesVotes } from '@/lib/queries/votes';
 import { useRecos } from '@/lib/queries/recos';
 import { RECOS_TEST } from '@/lib/fixtures/recos-test';
 import { BarreFiltres } from '@/components/BarreFiltres';
-import { CartePoiCatalogue } from '@/components/CartePoiCatalogue';
+import { LignePoiCatalogue } from '@/components/LignePoiCatalogue';
 import { CarteMapLibre, type CibleCamera } from '@/components/CarteMapLibre';
 import { Recommandations } from '@/components/Recommandations';
 import { QuestionnaireVoyageur } from '@/components/QuestionnaireVoyageur';
@@ -77,13 +77,18 @@ export default function Explorer() {
   const montrerAstuce = peutVoter && !astuceVoteVue && !aVote;
 
   const panneauListe = (
-    <div className="space-y-4">
-      {/* La liste reflète l'EMPRISE de la carte (M505 §2b) : les lieux dans la vue, cohérent « N dans la vue ». */}
+    <div className="space-y-3">
+      {/* EN-TÊTE compact (M515 §2) : compteur d'emprise + FILTRE REPLIABLE + tri. Ne mord jamais sur la liste. */}
       <p className="text-xs text-muted-foreground">
         <span className="chiffres text-foreground">{listeVue.length}</span> lieu{listeVue.length === 1 ? '' : 'x'} dans la vue
         {bbox ? ' · dézoomez pour en voir plus' : ''}
       </p>
-      <BarreFiltres pois={pois} />
+      <details className="rounded-lg border border-border">
+        <summary className="min-h-tactile cursor-pointer px-3 py-1.5 text-sm font-medium">Filtres</summary>
+        <div className="border-t border-border p-3">
+          <BarreFiltres pois={pois} />
+        </div>
+      </details>
       {listeVue.length > 1 ? (
         <div className="flex items-center gap-2 text-sm" role="group" aria-label="Trier les lieux">
           <span className="text-muted-foreground">Trier :</span>
@@ -112,27 +117,28 @@ export default function Explorer() {
       {!isLoading && !isError && listeVue.length === 0 && pois.length > 0 ? (
         <MessageVide>Aucun lieu dans la vue. Déplacez ou dézoomez la carte, ou élargissez les filtres.</MessageVide>
       ) : null}
+      {/* LES LIEUX EN LIGNES (M515 §1) : une ligne par lieu, dense, zéro chevauchement. Groupées par zone si beaucoup. */}
       {doitGrouper(listeVue) ? (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {grouperParZone(listeVue).map((g) => (
-            <section key={g.zone} aria-label={g.zone} className="space-y-2">
-              <h2 className="text-sm font-medium">
+            <section key={g.zone} aria-label={g.zone}>
+              <h2 className="mb-1 text-sm font-medium">
                 {g.zone} <span className="font-normal text-muted-foreground">· {g.pois.length}</span>
               </h2>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <ul>
                 {g.pois.map((p) => (
-                  <CartePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
+                  <LignePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
                 ))}
-              </div>
+              </ul>
             </section>
           ))}
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <ul>
           {listeVue.map((p) => (
-            <CartePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
+            <LignePoiCatalogue key={p.id} poi={p} explore={explores.includes(p.id)} />
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
@@ -144,7 +150,7 @@ export default function Explorer() {
     setListeOuverte(quoi === 'liste');
   };
   const chipFlottant =
-    'pointer-events-auto inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/90 px-3 py-1.5 text-sm font-medium shadow-flottante backdrop-blur-sm transition-colors hover:bg-card';
+    'pointer-events-auto inline-flex min-h-tactile items-center gap-1.5 rounded-full border border-border bg-card/95 px-3 py-1.5 text-sm font-medium shadow-flottante backdrop-blur-sm transition-colors hover:bg-card';
 
   return (
     // CARTE PLEINE LARGEUR de fenêtre (full-bleed, M505) : on sort du conteneur centré ; les contrôles FLOTTENT
@@ -213,7 +219,7 @@ export default function Explorer() {
           la carte reste VISIBLE et centrale, pas d'overlay opaque plein écran. */}
       {listeOuverte ? (
         <div
-          className="absolute inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-border bg-card/95 p-4 shadow-flottante backdrop-blur-sm sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-2/5 sm:min-w-[22rem] sm:max-w-md sm:rounded-none sm:border-l sm:border-t-0"
+          className="absolute inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-border bg-card/97 p-4 shadow-flottante backdrop-blur-sm sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-2/5 sm:min-w-[22rem] sm:max-w-md sm:rounded-none sm:border-l sm:border-t-0"
           role="dialog"
           aria-label="Liste des lieux"
         >
