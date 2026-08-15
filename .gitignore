@@ -48,6 +48,8 @@ db/sync/dumps/
 # dumps SQL lourds régénérables (~20-35 Mo chacun) : hors git ; les manifestes .md et empreintes .tsv restent suivis
 db/sync/*.sql
 db/sync/dump-fondateur/
+# backups schema-only/dumps horodatés avant DROP ou re-sync (régénérables, transitoires) : hors git
+db/_pg_backups/
 
 # outillage et espaces de travail internes (hors dépôt) : configuration locale,
 # échanges de coordination et notes de conception vivent en local, la doc publique est dans documentation/
