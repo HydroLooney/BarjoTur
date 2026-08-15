@@ -86,6 +86,10 @@ export const RPC_AUTORISEES = [
   'paniers_lire',
   'poser_hors_budget',
   'cascade_declassement',
+  // Philosophie de voyage (M508, migration 020) : catalogue + profil par voyageur (7 curseurs + 4 envies + cap_nord),
+  // versionné. Le profil pilote la signature du composeur (Mon voyage). Absentes avant le flip 020 → 42883.
+  'philosophie_lire',
+  'philosophie_ecrire',
 ] as const;
 
 export type RpcAutorisee = (typeof RPC_AUTORISEES)[number];
