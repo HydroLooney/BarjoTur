@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react';
+import type { MonVoyageIdeal } from '@barjotur/shared';
 import { CurseurValeur } from '@/ui/primitives/curseur';
 import { useCadence } from '@/stores/cadence';
 import { usePeut } from '@/hooks/usePeut';
+import { useIdentite } from '@/stores/identite';
+import { useMonVoyageIdeal } from '@/lib/queries/mon-voyage';
 import { MesIncontournables } from '@/components/MesIncontournables';
 import { AppetitsThematiques } from '@/components/AppetitsThematiques';
 import { CarnetNotes } from '@/components/CarnetNotes';
+import { VueMonVoyageIdeal } from '@/components/VueMonVoyageIdeal';
 
 // Espace « Mon voyage » (A26 / M112) : la vision de CHAQUE voyageur. Sa cadence (porte d'entrée simple qui
 // pilotera tous ses budgets temps), ses incontournables, ses envies par thème, et — à venir — son itinéraire
@@ -18,6 +23,17 @@ export default function MonVoyage() {
   const setFlanerie = useCadence((s) => s.setFlanerie);
   const setPlafondJour = useCadence((s) => s.setPlafondJour);
   const peutVoter = usePeut('voter');
+
+  // Mon voyage idéal (#2, endpoint M554 GET /api/mon-voyage/:code) : l'itinéraire composé pour MON profil + mon écart
+  // au commun. Se remplit dès le bff redéployé ; en DEV `?mon-voyage` charge un aperçu de structure (R1, hors prod).
+  const code = useIdentite((s) => s.code);
+  const { data } = useMonVoyageIdeal(code);
+  const [apercuVoyage, setApercuVoyage] = useState<MonVoyageIdeal | null>(null);
+  useEffect(() => {
+    const veut = import.meta.env.DEV && new URLSearchParams(window.location.search).has('mon-voyage');
+    if (veut && !data) void import('@/lib/fixtures/mon-voyage-demo').then((m) => setApercuVoyage(m.monVoyageIdealDemo));
+  }, [data]);
+  const monVoyage = data ?? apercuVoyage;
 
   return (
     <section className="space-y-6">
@@ -97,13 +113,18 @@ export default function MonVoyage() {
 
       <CarnetNotes />
 
-      <section className="space-y-1 rounded-lg border border-dashed border-border p-3">
-        <h2 className="text-sm font-medium">Mon itinéraire idéal</h2>
-        <p className="max-w-prose text-sm text-muted-foreground">
-          Bientôt : à partir de votre cadence, de vos coups de cœur et de vos envies, le voyage vous proposera VOTRE
-          version idéale. On y travaille.
-        </p>
-      </section>
+      {/* Mon itinéraire idéal (#2) : rendu dès que l'endpoint répond ; sinon un mot honnête (R1), pas de simulation. */}
+      {monVoyage ? (
+        <VueMonVoyageIdeal data={monVoyage} />
+      ) : (
+        <section className="space-y-1 rounded-lg border border-dashed border-border p-3">
+          <h2 className="text-sm font-medium">Mon itinéraire idéal</h2>
+          <p className="max-w-prose text-sm text-muted-foreground">
+            À partir de votre cadence, de vos coups de cœur et de vos envies, le voyage compose VOTRE version idéale.
+            Elle apparaît ici dès qu'elle est prête.
+          </p>
+        </section>
+      )}
     </section>
   );
 }
