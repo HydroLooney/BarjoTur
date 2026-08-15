@@ -47,6 +47,15 @@ services:
     networks: [web]
     restart: unless-stopped
 
+  # Service MÉDIA (M465) : sert les binaires photos (poi/**/photos/) en statique. Le client route /media/ dessus (strip →
+  # /poi/…/photos/x.jpg). Volume = les photos transférées sur l'hôte (gitignorées, transfert data séparé comme les dumps).
+  media:
+    image: nginx:alpine
+    volumes:
+      - ./media-photos:/usr/share/nginx/html:ro
+    networks: [web]
+    restart: unless-stopped
+
   client:
     build:
       context: ..
